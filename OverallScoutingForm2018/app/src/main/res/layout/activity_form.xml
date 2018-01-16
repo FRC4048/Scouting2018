@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shreya.overallscoutingform2018.Form">
+
+    <View
+        android:id="@+id/penaltiesDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/redBlueSwitchOwnershipBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/black" />
+
+    <View
+        android:id="@+id/gamePlayDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/redRightLbl"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/basicLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Basics"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+
+    <TextView
+        android:id="@+id/scoutNameLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/basicLbl"
+        android:layout_alignTop="@+id/basicLbl"
+        android:layout_marginTop="45dp"
+        android:layout_marginStart="10dp"
+        android:text="Scout Name"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/matchNumLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/blueLeftEditTxt"
+        android:layout_marginStart="49dp"
+        android:layout_toEndOf="@+id/redPowerUpLbl"
+        android:text="Match Number"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <AutoCompleteTextView
+        android:id="@+id/scoutNameEditTxt"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/scoutNameLbl"
+        android:layout_alignBottom="@+id/scoutNameLbl"
+        android:layout_below="@+id/basicLbl"
+        android:layout_marginLeft="105dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/scoutNameLbl"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <EditText
+        android:id="@+id/matchNumEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/scoutNameEditTxt"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:layout_alignStart="@+id/matchNumLbl"
+        android:layout_marginStart="125dp"
+        android:ems="10"
+        android:inputType="number"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/redLeftLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/scoutNameEditTxt"
+        android:layout_marginTop="60dp"
+        android:layout_alignStart="@+id/scoutNameLbl"
+        android:layout_below="@+id/scoutNameEditTxt"
+        android:text="Red Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <TextView
+        android:id="@+id/redCenterLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redLeftLbl"
+        android:layout_alignTop="@+id/redLeftLbl"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/redLeftLbl"
+        android:text="Red Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <TextView
+        android:id="@+id/redRightLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redCenterLbl"
+        android:layout_below="@+id/redCenterLbl"
+        android:layout_alignTop="@+id/redCenterLbl"
+        android:layout_marginTop="40dp"
+        android:text="Red Right"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <EditText
+        android:id="@+id/redLeftEditTxt"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/redLeftLbl"
+        android:layout_alignEnd="@+id/scoutNameEditTxt"
+        android:layout_alignStart="@+id/scoutNameEditTxt"
+        android:layout_below="@+id/scoutNameEditTxt"
+        android:layout_marginStart="-5dp"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/redCenterEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/redLeftEditTxt"
+        android:layout_below="@+id/redLeftEditTxt"
+        android:layout_alignBottom="@+id/redCenterLbl"
+        android:layout_toEndOf="@+id/scoutNameLbl"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/redRightEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/redCenterEditTxt"
+        android:layout_alignStart="@+id/redCenterEditTxt"
+        android:layout_alignBottom="@+id/redRightLbl"
+        android:layout_below="@+id/redCenterEditTxt"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/blueLeftLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/redLeftLbl"
+        android:layout_alignLeft="@+id/matchNumLbl"
+        android:layout_alignStart="@+id/matchNumLbl"
+        android:layout_alignTop="@+id/redLeftLbl"
+        android:text="Blue Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/blueCenterLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueLeftLbl"
+        android:layout_below="@+id/blueLeftLbl"
+        android:layout_alignTop="@+id/blueLeftLbl"
+        android:layout_alignBottom="@+id/redCenterLbl"
+        android:layout_marginTop="40dp"
+        android:text="Blue Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <TextView
+        android:id="@+id/blueRightLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueCenterLbl"
+        android:layout_alignTop="@+id/blueCenterLbl"
+        android:layout_alignBottom="@+id/redRightLbl"
+        android:layout_marginTop="40dp"
+        android:text="Blue Right"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <EditText
+        android:id="@+id/blueLeftEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/blueLeftLbl"
+        android:layout_alignEnd="@+id/matchNumEditTxt"
+        android:layout_alignStart="@+id/matchNumEditTxt"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/blueCenterEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueLeftEditTxt"
+        android:layout_alignBottom="@+id/blueCenterLbl"
+        android:layout_alignEnd="@+id/matchNumEditTxt"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/blueRightEditTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueCenterEditTxt"
+        android:layout_alignBottom="@+id/blueRightLbl"
+        android:layout_alignEnd="@+id/matchNumEditTxt"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/gamePlayLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/basicLbl"
+        android:layout_alignTop="@+id/gamePlayDivider"
+        android:layout_marginTop="5dp"
+        android:text="Game Play"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <Button
+        android:id="@+id/redOwnershipScaleBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redOwnershipLbl"
+        android:layout_below="@+id/redOwnershipLbl"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Scale Ownership"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/redSwitchOwnershipBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redOwnershipScaleBtn"
+        android:layout_below="@+id/redOwnershipScaleBtn"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Switch Ownership"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/redBlueSwitchOwnershipBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redSwitchOwnershipBtn"
+        android:layout_below="@+id/redSwitchOwnershipBtn"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Blue Switch Ownership"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/blueScaleOwnershipBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/blueOwnershipLbl"
+        android:layout_toEndOf="@+id/bluePowerUpLbl"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Scale Ownership"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/blueSwitchOwnershipBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueScaleOwnershipBtn"
+        android:layout_below="@+id/blueScaleOwnershipBtn"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Switch Ownership"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/blueRedSwitchOwnershipBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueSwitchOwnershipBtn"
+        android:layout_below="@+id/redBoostBtn"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Red Switch Ownership"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/redOwnershipLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/gamePlayLbl"
+        android:layout_below="@+id/gamePlayLbl"
+        android:text="Red Alliance Got..."
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/blueOwnershipLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/redPowerUpLbl"
+        android:layout_alignBottom="@+id/redPowerUpLbl"
+        android:layout_toEndOf="@+id/bluePowerUpLbl"
+        android:text="Blue Alliance Got..."
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/redPowerUpLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/redOwnershipLbl"
+        android:layout_alignBottom="@+id/redOwnershipLbl"
+        android:layout_toEndOf="@+id/redOwnershipScaleBtn"
+        android:text="Red Alliance Used..."
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <Button
+        android:id="@+id/redLevitateBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/redBoostBtn"
+        android:layout_below="@+id/redPowerUpLbl"
+        android:layout_toEndOf="@+id/redOwnershipScaleBtn"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Levitate"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/redBoostBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/redBlueSwitchOwnershipBtn"
+        android:layout_below="@+id/redOwnershipScaleBtn"
+        android:layout_toEndOf="@+id/redOwnershipScaleBtn"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Boost"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/redForceBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/redBlueSwitchOwnershipBtn"
+        android:layout_alignEnd="@+id/redBoostBtn"
+        android:layout_below="@+id/redSwitchOwnershipBtn"
+        android:layout_toEndOf="@+id/redSwitchOwnershipBtn"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Force"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/bluePowerUpLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/blueOwnershipLbl"
+        android:layout_alignBottom="@+id/blueOwnershipLbl"
+        android:layout_alignEnd="@+id/matchNumLbl"
+        android:text="Blue Alliance Used..."
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <Button
+        android:id="@+id/blueLevitateBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/blueSwitchOwnershipBtn"
+        android:layout_alignStart="@+id/bluePowerUpLbl"
+        android:layout_below="@+id/bluePowerUpLbl"
+        android:layout_toStartOf="@+id/blueScaleOwnershipBtn"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Levitate"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/blueBoostBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/blueSwitchOwnershipBtn"
+        android:layout_alignEnd="@+id/blueLevitateBtn"
+        android:layout_alignStart="@+id/blueLevitateBtn"
+        android:layout_below="@+id/blueLevitateBtn"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:text="Boost" />
+
+    <Button
+        android:id="@+id/blueForceBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/blueRedSwitchOwnershipBtn"
+        android:layout_alignEnd="@+id/blueBoostBtn"
+        android:layout_alignStart="@+id/blueBoostBtn"
+        android:layout_alignTop="@+id/blueRedSwitchOwnershipBtn"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Force"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/penaltiesLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/penaltiesDivider"
+        android:layout_alignTop="@+id/penaltiesDivider"
+        android:layout_marginTop="5dp"
+        android:text="Penalties"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <TextView
+        android:id="@+id/yellowCardLbl"
+        android:layout_width="273dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/penaltiesLbl"
+        android:layout_below="@+id/penaltiesLbl"
+        android:layout_marginTop="2dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:text="The following teams got a yellow card..." />
+
+    <CheckBox
+        android:id="@+id/redLeftYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/yellowCardLbl"
+        android:layout_below="@+id/yellowCardLbl"
+        android:layout_marginTop="2dp"
+        android:text="Red Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/redCenterYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redLeftYellowChk"
+        android:layout_below="@+id/redLeftYellowChk"
+        android:layout_marginTop="2dp"
+        android:text="Red Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/redRightYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redCenterYellowChk"
+        android:layout_below="@+id/redCenterYellowChk"
+        android:layout_marginTop="2dp"
+        android:text="Red Right"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueLeftYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redCenterYellowChk"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/yellowCardLbl"
+        android:layout_marginTop="2dp"
+        android:text="Blue Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueCenterYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueLeftYellowChk"
+        android:layout_below="@+id/blueLeftYellowChk"
+        android:layout_marginTop="2dp"
+        android:text="Blue Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueRightYellowChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueCenterYellowChk"
+        android:layout_below="@+id/blueCenterYellowChk"
+        android:layout_marginTop="2dp"
+        android:text="Blue Right"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <TextView
+        android:id="@+id/redCardLbl"
+        android:layout_width="273dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/yellowCardLbl"
+        android:layout_below="@+id/penaltiesLbl"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="2dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:text="The following teams got a red card..." />
+
+    <CheckBox
+        android:id="@+id/redLeftRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redCardLbl"
+        android:layout_below="@+id/redCardLbl"
+        android:layout_marginTop="2dp"
+        android:text="Red Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/redCenterRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redLeftRedChk"
+        android:layout_below="@+id/redLeftRedChk"
+        android:layout_marginTop="2dp"
+        android:text="Red Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/redRightRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redCenterRedChk"
+        android:layout_below="@+id/redCenterRedChk"
+        android:layout_marginTop="2dp"
+        android:text="Red Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueLeftRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redCenterRedChk"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/redCardLbl"
+        android:layout_marginTop="2dp"
+        android:text="Blue Left"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueCenterRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueLeftRedChk"
+        android:layout_below="@+id/blueLeftRedChk"
+        android:layout_marginTop="2dp"
+        android:text="Blue Center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <CheckBox
+        android:id="@+id/blueRightRedChk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/blueCenterRedChk"
+        android:layout_below="@+id/blueCenterRedChk"
+        android:layout_marginTop="2dp"
+        android:text="Blue Right"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <View
+        android:id="@+id/pointsDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/redRightYellowChk"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/pointsLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/pointsDivider"
+        android:layout_alignTop="@+id/pointsDivider"
+        android:layout_marginTop="5dp"
+        android:text="Points"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <TextView
+        android:id="@+id/redScoreLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/pointsLbl"
+        android:layout_below="@+id/pointsLbl"
+        android:layout_alignTop="@+id/saveFormBtn"
+        android:text="Red Alliance Score"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+    <TextView
+        android:id="@+id/blueScoreLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/redScoreLbl"
+        android:layout_below="@+id/redScoreLbl"
+        android:layout_marginTop="30dp"
+        android:text="Blue Alliance Score"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <EditText
+        android:id="@+id/redScoreEditTxt"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redScoreLbl"
+        android:layout_alignTop="@+id/redScoreLbl"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/blueScoreEditTxt"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/blueScoreLbl"
+        android:layout_alignTop="@id/blueScoreLbl"
+        android:layout_below="@+id/redScoreEditTxt"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/redFoulLbl"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redScoreEditTxt"
+        android:layout_below="@+id/pointsLbl"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="40dp"
+        android:text="Red Foul Points"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <EditText
+        android:id="@+id/redFoulEditTxt"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redFoulLbl"
+        android:layout_alignTop="@+id/redFoulLbl"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/blueFoulLbl"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/redScoreEditTxt"
+        android:layout_below="@+id/redFoulLbl"
+        android:layout_marginTop="30dp"
+        android:layout_alignStart="@id/redFoulLbl"
+        android:text="Blue Foul Points"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <EditText
+        android:id="@+id/blueFoulEditTxt"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/blueFoulLbl"
+        android:layout_alignTop="@+id/blueFoulLbl"
+        android:ems="10"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/saveFormBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/redFoulEditTxt"
+        android:layout_toEndOf="@id/redFoulEditTxt"
+        android:layout_marginStart="10dp"
+        android:text="Save Form" />
+
+    <Button
+        android:id="@+id/transferFormBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/saveFormBtn"
+        android:layout_alignStart="@id/saveFormBtn"
+        android:text="Transfer Form" />
+
+    <Button
+        android:id="@+id/viewTimelineBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/transferFormBtn"
+        android:layout_alignStart="@id/transferFormBtn"
+        android:text="View Timeline" />
+
+
+</RelativeLayout>

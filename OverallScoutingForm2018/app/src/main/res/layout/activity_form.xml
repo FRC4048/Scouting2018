@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="shreya.overallscoutingform2018.Form">
+    tools:context="shreya.overallscoutingform2018.FormActivity">
 
     <View
         android:id="@+id/penaltiesDivider"
@@ -231,7 +231,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/basicLbl"
         android:layout_alignTop="@+id/gamePlayDivider"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:text="Game Play"
         android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
@@ -410,7 +410,6 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/penaltiesDivider"
         android:layout_alignTop="@+id/penaltiesDivider"
-        android:layout_marginTop="5dp"
         android:text="Penalties"
         android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
@@ -575,7 +574,7 @@
         android:layout_height="1dp"
         android:layout_alignBottom="@+id/redRightYellowChk"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="-10dp"
+        android:layout_marginBottom="-30dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_centerHorizontal="true"
@@ -587,7 +586,6 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/pointsDivider"
         android:layout_alignTop="@+id/pointsDivider"
-        android:layout_marginTop="5dp"
         android:text="Points"
         android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
@@ -698,6 +696,30 @@
         android:layout_below="@+id/transferFormBtn"
         android:layout_alignStart="@id/transferFormBtn"
         android:text="View Timeline" />
+
+    <Button
+        android:id="@+id/addTimerBtn"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/scoutNameEditTxt"
+        android:layout_alignTop="@+id/basicLbl"
+        android:text="+" />
+
+    <Button
+        android:id="@+id/startTimerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/addTimerBtn"
+        android:layout_toEndOf="@+id/addTimerBtn"
+        android:text="Start Timer" />
+
+    <Button
+        android:id="@+id/subtractTimerBtn"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/startTimerBtn"
+        android:layout_toEndOf="@+id/startTimerBtn"
+        android:text="-" />
 
 
 </RelativeLayout>

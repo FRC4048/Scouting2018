@@ -11,6 +11,7 @@ public class Form {
 	private int teamNum;
 	private int matchNum;
 	private String scoutName;
+	private int formID;
 	// database report id
 	private int reportID;
 	ArrayList<Record> records;
@@ -20,7 +21,7 @@ public class Form {
 	public static final String ID_DELIMITER = ",";
 	
 	public enum FormType {
-		PRESCOUTING_FORM, MATCH_FORM
+		PRESCOUTING_FORM, MATCH_FORM, OVERALL_FORM
 	}
 	
 	public static final class FormOrder {

@@ -82,7 +82,22 @@ public class OverallForm extends Form {
         String rawForm = form.getRawForm();
         if (rawForm != null)
         {
-            
+            String[] items = rawForm.split("\\" + ITEM_DELIMITER);
+            String teamNumsString = items[FormOrder.TEAM_NUM];
+            String[] teamNumsStrings = teamNumsString.split("\\" + ID_DELIMITER);
+            int[] teamNums = new int[teamNumsStrings.length];
+            for (int i = 0; i < teamNums.length; i++)
+            {
+                teamNums[i] = Integer.parseInt(teamNumsStrings[i]);
+            }
+
+
+            form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
+            int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
+            if (type == FormType.MATCH_FORM.ordinal()) form.setFormType(FormType.MATCH_FORM);
+            else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
+            else if (type == FormType.OVERALL_FORM.ordinal()) form.setFormType(FormType.OVERALL_FORM);
+            form.setFormID(Integer.parseInt(items[FormOrder.ALLIANCE]));
         }
 
     }

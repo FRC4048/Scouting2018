@@ -11,6 +11,7 @@ public class Form {
 	private int teamNum;
 	private int matchNum;
 	private String scoutName;
+	private int alliance;
 	private int formID;
 	// database report id
 	private int reportID;
@@ -19,6 +20,9 @@ public class Form {
 	public static final String FORM_DELIMITER = "||";
 	public static final String ITEM_DELIMITER = "|";
 	public static final String ID_DELIMITER = ",";
+
+	public static final int RED_ALLIANCE_NUMBER = 0;
+	public static final int BLUE_ALLIANCE_NUMBER = 1;
 	
 	public enum FormType {
 		PRESCOUTING_FORM, MATCH_FORM, OVERALL_FORM
@@ -29,57 +33,70 @@ public class Form {
 		public static final int TABLET_NUM = 1;
 		public static final int SCOUT_NAME = 2;
 		public static final int TEAM_NUM = 3;
-		public static final int MATCH_NUM = 4;
+		public static final int ALLIANCE = 4;
+		public static final int FORM_ID = 5;
+		public static final int MATCH_NUM = 6;
 		
 		public static final int highestIndex() {
 			return MATCH_NUM;
 		}
 	}
-	
-	public Form(FormType formType, int tabletNum, int teamNum, String scoutName) {
+
+	// For the scenario of trying to save a form to the database. Do not know the formID yet.
+	public Form(FormType formType, int tabletNum, int teamNum, String scoutName, int alliance) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
 		this.teamNum = teamNum;
 		this.matchNum = -1;
 		this.scoutName = scoutName;
 		this.reportID = -1;
+		this.alliance = alliance;
 		records = new ArrayList<>();
 		this.rawForm = null;
 	}
 
-	public Form(FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName) {
+    // For the scenario of trying to save a form to the database. Do not know the formID yet.
+	public Form(FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
 		this.teamNum = teamNum;
 		this.matchNum = matchNum;
 		this.scoutName = scoutName;
 		this.reportID = -1;
+		this.alliance = alliance;
 		records = new ArrayList<>();
 		this.rawForm = null;
 	}
-	
-	public Form(int reportID, FormType formType, int tabletNum, int teamNum, String scoutName) {
+
+	// For the scenario of fetching from the database. Do know the formID.
+	public Form(int reportID, FormType formType, int tabletNum, int teamNum, String scoutName, int alliance, int formID) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
 		this.teamNum = teamNum;
 		this.matchNum = -1;
 		this.scoutName = scoutName;
 		this.reportID = reportID;
+		this.alliance = alliance;
+		this.formID = formID;
 		records = new ArrayList<>();
 		this.rawForm = null;
 	}
 
-	public Form(int reportID, FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName) {
+    // For the scenario of fetching from the database. Do know the formID.
+	public Form(int reportID, FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
 		this.teamNum = teamNum;
 		this.matchNum = matchNum;
 		this.scoutName = scoutName;
 		this.reportID = reportID;
+		this.alliance = alliance;
+		this.formID = formID;
 		records = new ArrayList<>();
 		this.rawForm = null;
 	}
-	
+
+	// For the scenario of trying to transfer a form to the Java processing app.
 	public Form(String rawForm) {
 		this.rawForm = rawForm;
 		records = new ArrayList<>();
@@ -107,13 +124,19 @@ public class Form {
 		return teamNum;
 	}
 
-	public int getFormID() {
+	public int getReportID() {
 		return reportID;
 	}
 	
 	public int getMatchNum() {
 		return matchNum;
 	}
+
+	public int getAlliance() { return alliance; }
+
+	public int getFormID() { return formID; }
+
+	public void setAlliance(int alliance) { this.alliance = alliance; }
 
 	public void setMatchNum(int matchNum) {
 		this.matchNum = matchNum;
@@ -131,9 +154,11 @@ public class Form {
 		this.teamNum = teamNum;
 	}
 
-	public void setFormID(int reportID) {
+	public void setReportID(int reportID) {
 		this.reportID = reportID;
 	}
+
+	public void setFormID(int formID) { this.formID = formID; }
 	
 	public String getScoutName() {
 		return scoutName;
@@ -198,9 +223,12 @@ public class Form {
 			int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
 			if (type == FormType.MATCH_FORM.ordinal()) form.setFormType(FormType.MATCH_FORM);
 			else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
+			else if (type == FormType.OVERALL_FORM.ordinal()) form.setFormType(FormType.OVERALL_FORM);
 			form.setTabletNum(Integer.parseInt(items[FormOrder.TABLET_NUM]));
 			form.setTeamNum(Integer.parseInt(items[FormOrder.TEAM_NUM]));
 			form.setScoutName(items[FormOrder.SCOUT_NAME]);
+            form.setAlliance(Integer.parseInt(items[FormOrder.ALLIANCE]));
+            form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
 			form.setMatchNum(Integer.parseInt(items[FormOrder.MATCH_NUM]));
 			String rawRecords = "";
 			for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {
@@ -229,6 +257,8 @@ public class Form {
 			rawForm += tabletNum + ITEM_DELIMITER;
 			rawForm += scoutName + ITEM_DELIMITER;
 			rawForm += teamNum + ITEM_DELIMITER;
+			rawForm += alliance + ITEM_DELIMITER;
+			rawForm += formID + ITEM_DELIMITER;
 			rawForm += matchNum;
 			for (int i = 0; i < records.size(); i++)
 				rawForm += ITEM_DELIMITER + records.get(i).toString();

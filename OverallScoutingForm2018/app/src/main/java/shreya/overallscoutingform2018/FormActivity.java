@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -58,6 +59,7 @@ public class FormActivity extends AppCompatActivity {
     Button startTimerBtn;
     Button addTimerBtn;
     Button subtractTimerBtn;
+    final int teamNumLabelLength = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,230 +115,123 @@ public class FormActivity extends AppCompatActivity {
         addTimerBtn = (Button) findViewById(R.id.addTimerBtn);
         subtractTimerBtn = (Button) findViewById(R.id.subtractTimerBtn); 
 
-        // Update team labels when team numbers are entered
+        EditTextWatcher textWatcher = new EditTextWatcher();
 
-//        /*EditText[] redAllianceNumbers = {redLeft, redCenter, redRight};
-//        final CheckBox[][] redPenaltyOptions = {{redLeftYellowLbl, redLeftRedLbl}, {redCenterYellowLbl, redCenterRedLbl}, {redRightYellowLbl, redRightRedLbl}};
-//
-//        for (int i = 0; i < redAllianceNumbers.length; i++)
-//        {
-//            final int currIndex = i;
-//            final EditText currTeam = redAllianceNumbers[i];
-//            currTeam.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable editable) {
-//                    if (currTeam.getText().toString().length() > 0)
-//                    {
-//                        int penaltyIndex = 0;
-//                        if (currIndex == 0) penaltyIndex = currIndex;
-//                        else penaltyIndex = currIndex + 1;
-//                        while (penaltyIndex < currIndex + 2) {
-//                            CheckBox[] currTeamPenaltyOptions = redPenaltyOptions[penaltyIndex];
-//                            for (int k = 0; k < currTeamPenaltyOptions.length; k++)
-//                            {
-//                                currTeamPenaltyOptions[k].setText(currTeam.getText().toString());
-//                            }
-//                        }
-//                    }
-//
-//                }
-//            });
-//        }*/
-
-        redLeft.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (redLeft.getText().toString().length() > 0) {
-                    String teamNum = redLeft.getText().toString();
-                    while (teamNum.length() < 7)
-                    {
-                        teamNum += " ";
-                    }
-                    redLeftYellowLbl.setText(teamNum);
-                    redLeftRedLbl.setText(teamNum);
-                }
-
-
-
-            }
-        });
-
-        redCenter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (redCenter.getText().toString().length() > 0) {
-                    String teamNum = redCenter.getText().toString();
-                    while (teamNum.length() < 10)
-                    {
-                        teamNum += " ";
-                    }
-                    redCenterYellowLbl.setText(teamNum);
-                    redCenterRedLbl.setText(teamNum);
-                }
-
-
-            }
-        });
-
-        redRight.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (redRight.getText().toString().length() > 0) {
-                    String teamNum = redRight.getText().toString();
-                    while (teamNum.length() < 9)
-                    {
-                        teamNum += " ";
-                    }
-                    redRightYellowLbl.setText(teamNum);
-                    redRightRedLbl.setText(teamNum);
-                }
-
-
-            }
-        });
-
-        blueLeft.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (blueLeft.getText().toString().length() > 0) {
-                    String teamNum = blueLeft.getText().toString();
-                    while (teamNum.length() < 9)
-                    {
-                        teamNum += " ";
-                    }
-                    blueLeftYellowLbl.setText(teamNum);
-                    blueLeftRedLbl.setText(teamNum);
-                }
-
-
-            }
-        });
-
-        blueCenter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (blueCenter.getText().toString().length() > 0) {
-                    String teamNum = blueCenter.getText().toString();
-                    while (teamNum.length() < 11)
-                    {
-                        teamNum += " ";
-                    }
-                    blueCenterYellowLbl.setText(teamNum);
-                    blueCenterRedLbl.setText(teamNum);
-                }
-
-
-            }
-        });
-
-        blueRight.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (blueRight.getText().toString().length() > 0) {
-                    String teamNum = blueRight.getText().toString();
-                    while (teamNum.length() < 10)
-                    {
-                        teamNum += " ";
-                    }
-                    blueRightYellowLbl.setText(teamNum);
-                    blueRightRedLbl.setText(teamNum);
-                }
-
-
-            }
-        });
-
+        redLeft.addTextChangedListener(textWatcher);
+        redCenter.addTextChangedListener(textWatcher);
+        redRight.addTextChangedListener(textWatcher);
+        blueLeft.addTextChangedListener(textWatcher);
+        blueCenter.addTextChangedListener(textWatcher);
+        blueRight.addTextChangedListener(textWatcher);
 
     }
 
-//    private class EditTextWatcher extends TextWatcher
-//    {
-//
-//        @Override
-//        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable editable) {
-//
-//        }
-//    }
+    private class EditTextWatcher implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            EditText currEditText = (EditText) getCurrentFocus();
+            int currId = currEditText.getId();
+            switch (currId)
+            {
+                case R.id.redLeftEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        redLeftYellowLbl.setText(teamNum);
+                        redLeftRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                case R.id.redCenterEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        redCenterYellowLbl.setText(teamNum);
+                        redCenterRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                case R.id.redRightEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        redRightYellowLbl.setText(teamNum);
+                        redRightRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                case R.id.blueLeftEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        blueLeftYellowLbl.setText(teamNum);
+                        blueLeftRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                case R.id.blueCenterEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        blueCenterYellowLbl.setText(teamNum);
+                        blueCenterRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                case R.id.blueRightEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String teamNum = currEditText.getText().toString();
+                        while (teamNum.length() < teamNumLabelLength)
+                        {
+                            teamNum += " ";
+                        }
+                        blueRightYellowLbl.setText(teamNum);
+                        blueRightRedLbl.setText(teamNum);
+                        break;
+                    }
+                }
+                default: System.out.println("ERROR.");
+            }
+        }
+    }
 
 }
 

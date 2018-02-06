@@ -7,7 +7,10 @@ import java.util.ArrayList;
  */
 
 public class OverallForm extends Form {
-    ArrayList<Form> teamForms;
+    // [FORM TYPE]|[TABLET_NUMBER]|[SCOUT_NAME]|[RED_LEFT], [RED_CENTER], [RED_RIGHT], [BLUE_LEFT], [BLUE_CENTER], [BLUE_RIGHT]|[FORM_ID]|[MATCH_NUM]|records....
+    private ArrayList<Form> teamForms;
+    private int[] teamNums;
+
     public static final class Items {
         public static final Item RED_OWNS_RED_SWITCH = new Item(135, "Red Owns Red Switch", Item.Datatype.INTEGER);
         public static final Item RED_OWNS_SCALE = new Item(136, "Red Owns Scale", Item.Datatype.INTEGER);
@@ -37,11 +40,23 @@ public class OverallForm extends Form {
 
     public OverallForm(int tabletNum, int[] teamNums, int matchNum, String scoutName)
     {
-        super(FormType.OVERALL_FORM, teamNums[0], tabletNum, matchNum, scoutName); // Create an encapsulating form that contains the forms for the 5 other teams.
-        // This form should have all of the records for the overall form.
+        /** Create an encapsulating form that contains the forms for the 5 other teams.
+        This form should have all of the records for the overall form. **/
+        super(FormType.OVERALL_FORM, teamNums[0], tabletNum, matchNum, scoutName, RED_ALLIANCE_NUMBER);
+
+        this.teamNums = new int[teamNums.length];
+        for (int i = 0; i < this.teamNums.length; i++)
+        {
+            this.teamNums[i] = teamNums[i];
+        }
+
         for (int i = 1; i < teamNums.length; i++)
         {
-            Form teamForm = new Form(FormType.OVERALL_FORM, tabletNum, teamNums[i], matchNum, scoutName);
+            Form teamForm;
+            if (i < 2)
+                teamForm = new Form(FormType.OVERALL_FORM, tabletNum, teamNums[i], matchNum, scoutName, RED_ALLIANCE_NUMBER);
+            else
+                teamForm = new Form(FormType.OVERALL_FORM, tabletNum, teamNums[i], matchNum, scoutName, BLUE_ALLIANCE_NUMBER);
             teamForms.add(teamForm);
         }
     }
@@ -51,8 +66,24 @@ public class OverallForm extends Form {
         super(rawForm);
     }
 
+    public int[] getTeamNums() { return teamNums; }
+
+    public void setTeamNums(int[] teamNums) {
+        this.teamNums = new int[teamNums.length];
+        for (int i = 0; i < this.teamNums.length; i++)
+        {
+            this.teamNums[i] = teamNums[i];
+        }
+    }
+
     /** Overridden from parent class. **/
-    private static void breakDownForm(Form form) {
+    private static void breakDownForm(Form form)
+    {
+        String rawForm = form.getRawForm();
+        if (rawForm != null)
+        {
+            
+        }
 
     }
 
@@ -60,5 +91,6 @@ public class OverallForm extends Form {
     private static Record[] breakDownRecords(String rawRecords, FormType type)
     {
 
+        return new Record[0];
     }
 }

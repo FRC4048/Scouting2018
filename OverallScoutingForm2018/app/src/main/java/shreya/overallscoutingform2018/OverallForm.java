@@ -77,7 +77,7 @@ public class OverallForm extends Form {
     }
 
     /** Overridden from parent class. **/
-    private static void breakDownForm(Form form)
+    protected static Form breakDownForm(Form form)
     {
         String rawForm = form.getRawForm();
         if (rawForm != null)
@@ -91,21 +91,22 @@ public class OverallForm extends Form {
                 teamNums[i] = Integer.parseInt(teamNumsStrings[i]);
             }
 
-
             form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
-            int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
-            if (type == FormType.MATCH_FORM.ordinal()) form.setFormType(FormType.MATCH_FORM);
-            else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
-            else if (type == FormType.OVERALL_FORM.ordinal()) form.setFormType(FormType.OVERALL_FORM);
-            form.setFormID(Integer.parseInt(items[FormOrder.ALLIANCE]));
-        }
+            form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
 
+            String rawRecords = "";
+            for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {
+                if (i == 0) rawRecords += items[FormOrder.highestIndex()+i+1];
+                else rawRecords += ITEM_DELIMITER + items[FormOrder.highestIndex()+i+1];
+            }
+            if (!rawRecords.isEmpty()) form.addRecords(breakDownRecords(rawRecords, form.getFormType()));
+        }
+        return form;
     }
 
     /** Overridden from parent class. **/
-    private static Record[] breakDownRecords(String rawRecords, FormType type)
+    protected static Record[] breakDownRecords(String rawRecords, FormType type)
     {
-
-        return new Record[0];
+        return Form.breakDownRecords(rawRecords, type);
     }
 }

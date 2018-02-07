@@ -216,7 +216,7 @@ public class Form {
 		return bool;
 	}
 	
-	private static void breakDownForm(Form form) {
+	protected static void breakDownForm(Form form) {
 		String rawForm = form.getRawForm();
 		if (rawForm != null) {
 			String[] items = rawForm.split("\\" + ITEM_DELIMITER);
@@ -239,7 +239,7 @@ public class Form {
 		}
 	}
 	
-	private static Record[] breakDownRecords(String rawRecords, FormType type) {
+	protected static Record[] breakDownRecords(String rawRecords, FormType type) {
 		ArrayList<Record> formRecords = new ArrayList<>();
 		String[] records = rawRecords.split("\\" + ITEM_DELIMITER);
 		for (String record : records) {

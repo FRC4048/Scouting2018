@@ -221,15 +221,27 @@ public class Form {
 		if (rawForm != null) {
 			String[] items = rawForm.split("\\" + ITEM_DELIMITER);
 			int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
-			if (type == FormType.MATCH_FORM.ordinal()) form.setFormType(FormType.MATCH_FORM);
+			if (type == FormType.MATCH_FORM.ordinal())
+			{
+				form = new MatchForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]),
+						Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
+				form.setAlliance(Integer.parseInt(items[FormOrder.ALLIANCE])); // Change this; set the team's alliance
+				form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID])); // change this; set the form's ID
+			}
 			else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
-			else if (type == FormType.OVERALL_FORM.ordinal()) form.setFormType(FormType.OVERALL_FORM);
-			form.setTabletNum(Integer.parseInt(items[FormOrder.TABLET_NUM]));
-			form.setTeamNum(Integer.parseInt(items[FormOrder.TEAM_NUM]));
-			form.setScoutName(items[FormOrder.SCOUT_NAME]);
-            form.setAlliance(Integer.parseInt(items[FormOrder.ALLIANCE]));
-            form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
-			form.setMatchNum(Integer.parseInt(items[FormOrder.MATCH_NUM]));
+			else if (type == FormType.OVERALL_FORM.ordinal())
+			{
+				String teamNumsString = items[FormOrder.TEAM_NUM];
+				String[] teamNumsStrings = teamNumsString.split("\\" + ID_DELIMITER);
+				int[] teamNums = new int[teamNumsStrings.length];
+				for (int i = 0; i < teamNums.length; i++)
+				{
+					teamNums[i] = Integer.parseInt(teamNumsStrings[i]);
+				}
+
+				form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
+				form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
+			}
 			String rawRecords = "";
 			for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {
 				if (i == 0) rawRecords += items[FormOrder.highestIndex()+i+1];

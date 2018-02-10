@@ -76,37 +76,26 @@ public class OverallForm extends Form {
         }
     }
 
-    /** Overridden from parent class. **/
-    protected static Form breakDownForm(Form form)
+    public String toString()
     {
-        String rawForm = form.getRawForm();
-        if (rawForm != null)
+        String returnString = "";
+        returnString += getFormType() + Form.ITEM_DELIMITER;
+        returnString += getTabletNum() + Form.ITEM_DELIMITER;
+        returnString += getScoutName() + Form.ITEM_DELIMITER;
+        for (int i = 0; i < teamNums.length - 1; i++)
         {
-            String[] items = rawForm.split("\\" + ITEM_DELIMITER);
-            String teamNumsString = items[FormOrder.TEAM_NUM];
-            String[] teamNumsStrings = teamNumsString.split("\\" + ID_DELIMITER);
-            int[] teamNums = new int[teamNumsStrings.length];
-            for (int i = 0; i < teamNums.length; i++)
-            {
-                teamNums[i] = Integer.parseInt(teamNumsStrings[i]);
-            }
-
-            form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
-            form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
-
-            String rawRecords = "";
-            for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {
-                if (i == 0) rawRecords += items[FormOrder.highestIndex()+i+1];
-                else rawRecords += ITEM_DELIMITER + items[FormOrder.highestIndex()+i+1];
-            }
-            if (!rawRecords.isEmpty()) form.addRecords(breakDownRecords(rawRecords, form.getFormType()));
+            returnString += teamNums[i] + Form.ID_DELIMITER;
         }
-        return form;
-    }
+        returnString += teamNums[teamNums.length-1] + Form.ITEM_DELIMITER;
+        returnString += "-1" + Form.ITEM_DELIMITER; // Ignore the alliance
+        returnString += getFormID() + Form.ITEM_DELIMITER;
+        returnString += getMatchNum();
+        ArrayList<Record> records = getAllRecords();
+        for (int i = 0; i < records.size(); i++)
+        {
+            returnString += Form.ITEM_DELIMITER + records.get(i).toString();
+        }
 
-    /** Overridden from parent class. **/
-    protected static Record[] breakDownRecords(String rawRecords, FormType type)
-    {
-        return Form.breakDownRecords(rawRecords, type);
+        return returnString;
     }
 }

@@ -30,7 +30,7 @@ import java.util.Set;
  * Created by Dan on 1/14/18.
  */
 
-abstract public class AbstractForm extends Activity{
+abstract public class AbstractForm extends Activity {
 
     // File names
     static final String STATE_SAVE_FILE = "stateSave.txt";

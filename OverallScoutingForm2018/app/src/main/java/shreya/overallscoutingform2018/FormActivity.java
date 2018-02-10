@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class FormActivity extends AppCompatActivity {
 
     // Objects for visual elements
@@ -60,6 +62,8 @@ public class FormActivity extends AppCompatActivity {
     Button addTimerBtn;
     Button subtractTimerBtn;
     final int teamNumLabelLength = 11;
+
+    ArrayList<Record> allRecords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +128,105 @@ public class FormActivity extends AppCompatActivity {
         blueCenter.addTextChangedListener(textWatcher);
         blueRight.addTextChangedListener(textWatcher);
 
+        CheckBoxHandler checkBoxHandler = new CheckBoxHandler();
+        if (redLeftYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(redLeftYellowLbl);
+        if (redCenterYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(redCenterRedLbl);
+        if (redRightYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(redRightYellowLbl);
+        if (blueLeftYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueLeftYellowLbl);
+        if (blueCenterYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueCenterYellowLbl);
+        if (blueRightYellowLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueRightYellowLbl);
+        if (redLeftRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(redLeftRedLbl);
+        if (redCenterRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(redCenterRedLbl);
+        if (redRightRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(redRightRedLbl);
+        if (blueLeftRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueLeftRedLbl);
+        if (blueCenterRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueCenterRedLbl);
+        if (blueRightRedLbl.isChecked()) checkBoxHandler.checkBoxClicked(blueRightRedLbl);
+
+    }
+
+    private class CheckBoxHandler {
+        public void checkBoxClicked(CheckBox checkbox)
+        {
+            int currId = checkbox.getId();
+            int yellowCardID = OverallForm.Items.YELLOW_CARD.getId();
+            int redCardID = OverallForm.Items.RED_CARD.getId();
+            switch (currId)
+            {
+                case R.id.redLeftYellowChk:
+                {
+                    Record redLeftYellow = new Record(redLeft.getText().toString(), yellowCardID);
+                    allRecords.add(redLeftYellow);
+                    break;
+                }
+                case R.id.redCenterYellowChk:
+                {
+                    Record redCenterYellow = new Record(redCenter.getText().toString(), yellowCardID);
+                    allRecords.add(redCenterYellow);
+                    break;
+                }
+                case R.id.redRightYellowChk:
+                {
+                    Record redRightYellow = new Record(redRight.getText().toString(), yellowCardID);
+                    allRecords.add(redRightYellow);
+                    break;
+                }
+                case R.id.blueLeftYellowChk:
+                {
+                    Record blueLeftYellow = new Record(blueLeft.getText().toString(), yellowCardID);
+                    allRecords.add(blueLeftYellow);
+                    break;
+                }
+                case R.id.blueCenterYellowChk:
+                {
+                    Record blueCenterYellow = new Record(blueCenter.getText().toString(), yellowCardID);
+                    allRecords.add(blueCenterYellow);
+                    break;
+                }
+                case R.id.blueRightYellowChk:
+                {
+                    Record blueRightYellow = new Record(blueRight.getText().toString(), yellowCardID);
+                    allRecords.add(blueRightYellow);
+                    break;
+                }
+                case R.id.redLeftRedChk:
+                {
+                    Record redLeftRed = new Record(redLeft.getText().toString(), redCardID);
+                    allRecords.add(redLeftRed);
+                    break;
+                }
+                case R.id.redCenterRedChk:
+                {
+                    Record redCenterRed = new Record(redCenter.getText().toString(), redCardID);
+                    allRecords.add(redCenterRed);
+                    break;
+                }
+                case R.id.redRightRedChk:
+                {
+                    Record redRightRed = new Record(redRight.getText().toString(), redCardID);
+                    allRecords.add(redRightRed);
+                    break;
+                }
+                case R.id.blueLeftRedChk:
+                {
+                    Record blueLeftRed = new Record(blueLeft.getText().toString(), redCardID);
+                    allRecords.add(blueLeftRed);
+                    break;
+                }
+                case R.id.blueCenterRedChk:
+                {
+                    Record blueCenterRed = new Record(blueCenter.getText().toString(), redCardID);
+                    allRecords.add(blueCenterRed);
+                    break;
+                }
+                case R.id.blueRightRedChk:
+                {
+                    Record blueRightRed = new Record(blueRight.getText().toString(), redCardID);
+                    allRecords.add(blueRightRed);
+                    break;
+                }
+                default: System.out.println("Can't tell which checkbox was clicked.");
+            }
+        }
     }
 
     private class EditTextWatcher implements TextWatcher {

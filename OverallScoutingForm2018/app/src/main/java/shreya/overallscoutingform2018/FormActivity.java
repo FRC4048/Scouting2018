@@ -216,109 +216,125 @@ public class FormActivity extends AppCompatActivity {
                 {
                     System.out.println("Increased timer.");
                     adjustment += 1000;
+                    updateRecords(1.0);
                     updateTimerText();
-                    checkRecords();
-                    System.out.println("Time: " + timeInMilliseconds);
                     break;
                 }
                 case R.id.subtractTimerBtn:
                 {
                     System.out.println("Decreased timer.");
                     adjustment -= 2000;
+                    updateRecords(-1.0);
                     updateTimerText();
-                    checkRecords();
-                    System.out.println("Time: " + timeInMilliseconds);
                     break;
                 }
                 case R.id.redOwnershipScaleBtn:
                 {
                     System.out.println("Red alliance gained ownership of the scale.");
-                    Record redScale = new Record(Double.toString((timeInMilliseconds+adjustment)/1000), OverallForm.Items.RED_OWNS_SCALE.getId());
+                    Record redScale = new Record(Double.toString((timeInMilliseconds+adjustment)/1000.0), OverallForm.Items.RED_OWNS_SCALE.getId());
                     allRecords.add(redScale);
-                    System.out.println(redScale);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.redSwitchOwnershipBtn:
                 {
                     System.out.println("Red alliance gained ownership of red switch.");
-                    Record redSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.RED_OWNS_RED_SWITCH.getId());
+                    Record redSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.RED_OWNS_RED_SWITCH.getId());
                     allRecords.add(redSwitch);
-                    System.out.println(redSwitch);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.redBlueSwitchOwnershipBtn:
                 {
                     System.out.println("Red alliance gained ownership of the blue switch.");
-                    Record redBlueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.RED_OWNS_BLUE_SWITCH.getId());
+                    Record redBlueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.RED_OWNS_BLUE_SWITCH.getId());
                     allRecords.add(redBlueSwitch);
-                    System.out.println(redBlueSwitch);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.redBoostBtn:
                 {
                     System.out.println("Red alliance used boost.");
-                    Record redBoost = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.RED_USED_BOOST.getId());
+                    Record redBoost = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.RED_USED_BOOST.getId());
                     allRecords.add(redBoost);
-                    System.out.println(redBoost);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.redForceBtn:
                 {
                     System.out.println("Red alliance used force.");
-                    Record redForce = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.RED_USED_FORCE.getId());
+                    Record redForce = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.RED_USED_FORCE.getId());
                     allRecords.add(redForce);
-                    System.out.println(redForce);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.redLevitateBtn:
                 {
                     System.out.println("Red alliance used levitate.");
-                    Record redLevitate = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.RED_USED_LEVITATE.getId());
+                    Record redLevitate = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.RED_USED_LEVITATE.getId());
                     allRecords.add(redLevitate);
-                    System.out.println(redLevitate);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueScaleOwnershipBtn:
                 {
                     System.out.println("Blue alliance gained ownership of the scale.");
-                    Record blueScale = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.BLUE_OWNS_SCALE.getId());
+                    Record blueScale = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_OWNS_SCALE.getId());
                     allRecords.add(blueScale);
-                    System.out.println(blueScale);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueSwitchOwnershipBtn:
                 {
                     System.out.println("Blue alliance gained ownership of blue switch.");
-                    Record blueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.BLUE_OWNS_BLUE_SWITCH.getId());
+                    Record blueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_OWNS_BLUE_SWITCH.getId());
                     allRecords.add(blueSwitch);
-                    System.out.println(blueSwitch);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueRedSwitchOwnershipBtn:
                 {
                     System.out.println("Blue alliance gained ownership of red switch.");
-                    Record blueRedSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.BLUE_OWNS_RED_SWITCH.getId());
+                    Record blueRedSwitch = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_OWNS_RED_SWITCH.getId());
                     allRecords.add(blueRedSwitch);
-                    System.out.println(blueRedSwitch);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueBoostBtn:
                 {
                     System.out.println("Blue used boost");
-                    Record blueBoost = new Record(Double.toString((timeInMilliseconds + adjustment)/1000), OverallForm.Items.BLUE_USED_BOOST.getId());
+                    Record blueBoost = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_USED_BOOST.getId());
                     allRecords.add(blueBoost);
-                    System.out.println(blueBoost);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueForceBtn:
                 {
                     System.out.println("Blue used force");
-                    Record blueForce 
+                    Record blueForce = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_USED_FORCE.getId());
+                    allRecords.add(blueForce);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.blueLevitateBtn:
                 {
                     System.out.println("Blue used levitate");
+                    Record blueLevitate = new Record(Double.toString((timeInMilliseconds + adjustment)/1000.0), OverallForm.Items.BLUE_USED_LEVITATE.getId());
+                    allRecords.add(blueLevitate);
+                    System.out.println(blueLevitate);
+                    printRecords();
+                    System.out.println();
                     break;
                 }
                 case R.id.saveFormBtn:
@@ -343,6 +359,14 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    private void printRecords()
+    {
+        System.out.println("allRecords currently: " );
+        for (Record r : allRecords)
+        {
+            System.out.print(r + "|");
+        }
+    }
     private class CheckBoxChangeListener implements CompoundButton.OnCheckedChangeListener{
 
         @Override
@@ -361,6 +385,8 @@ public class FormActivity extends AppCompatActivity {
                         Record redLeftYellow = new Record(redLeft.getText().toString(), yellowCardID);
                         System.out.println(redLeftYellow);
                         allRecords.add(redLeftYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.redCenterYellowChk:
@@ -368,6 +394,8 @@ public class FormActivity extends AppCompatActivity {
                         Record redCenterYellow = new Record(redCenter.getText().toString(), yellowCardID);
                         System.out.println(redCenterYellow);
                         allRecords.add(redCenterYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.redRightYellowChk:
@@ -375,6 +403,8 @@ public class FormActivity extends AppCompatActivity {
                         Record redRightYellow = new Record(redRight.getText().toString(), yellowCardID);
                         System.out.println(redRightYellow);
                         allRecords.add(redRightYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueLeftYellowChk:
@@ -382,6 +412,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueLeftYellow = new Record(blueLeft.getText().toString(), yellowCardID);
                         System.out.println(blueLeftYellow);
                         allRecords.add(blueLeftYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueCenterYellowChk:
@@ -389,6 +421,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueCenterYellow = new Record(blueCenter.getText().toString(), yellowCardID);
                         System.out.println(blueCenterYellow);
                         allRecords.add(blueCenterYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueRightYellowChk:
@@ -396,6 +430,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueRightYellow = new Record(blueRight.getText().toString(), yellowCardID);
                         System.out.println(blueRightYellow);
                         allRecords.add(blueRightYellow);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.redLeftRedChk:
@@ -410,6 +446,8 @@ public class FormActivity extends AppCompatActivity {
                         Record redCenterRed = new Record(redCenter.getText().toString(), redCardID);
                         System.out.println(redCenterRed);
                         allRecords.add(redCenterRed);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.redRightRedChk:
@@ -417,6 +455,8 @@ public class FormActivity extends AppCompatActivity {
                         Record redRightRed = new Record(redRight.getText().toString(), redCardID);
                         System.out.println(redRightRed);
                         allRecords.add(redRightRed);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueLeftRedChk:
@@ -424,6 +464,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueLeftRed = new Record(blueLeft.getText().toString(), redCardID);
                         System.out.println(blueLeftRed);
                         allRecords.add(blueLeftRed);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueCenterRedChk:
@@ -431,6 +473,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueCenterRed = new Record(blueCenter.getText().toString(), redCardID);
                         System.out.println(blueCenterRed);
                         allRecords.add(blueCenterRed);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     case R.id.blueRightRedChk:
@@ -438,6 +482,8 @@ public class FormActivity extends AppCompatActivity {
                         Record blueRightRed = new Record(blueRight.getText().toString(), redCardID);
                         System.out.println(blueRightRed);
                         allRecords.add(blueRightRed);
+                        printRecords();
+                        System.out.println();
                         break;
                     }
                     default: System.out.println("Can't tell which checkbox was clicked.");
@@ -448,6 +494,8 @@ public class FormActivity extends AppCompatActivity {
 
     private void checkRecords()
     {
+        System.out.println("Original Records: ");
+        printRecords();
         ArrayList<Integer> timeStampRecords = new ArrayList<>();
         timeStampRecords.add(R.id.blueBoostBtn);
         timeStampRecords.add(R.id.blueForceBtn);
@@ -461,6 +509,8 @@ public class FormActivity extends AppCompatActivity {
         timeStampRecords.add(R.id.redForceBtn);
         timeStampRecords.add(R.id.redSwitchOwnershipBtn);
         timeStampRecords.add(R.id.redBlueSwitchOwnershipBtn);
+
+        ArrayList<Record> recordsToRemove = new ArrayList<>();
         for (Record r : allRecords)
         {
             int rID = r.getItemID();
@@ -468,10 +518,26 @@ public class FormActivity extends AppCompatActivity {
             if (index > 0)
             {
                 double rValue = Double.parseDouble(r.getValue());
-                if (rValue < 0 || rValue > 2.50) allRecords.remove(r);
+                if (rValue < 0.0 || rValue > 150.0) recordsToRemove.add(r);
             }
 
         }
+        allRecords.removeAll(recordsToRemove);
+        System.out.println();
+        System.out.println("Checked Records: ");
+        printRecords();
+    }
+
+    private void updateRecords(double adjustment)
+    {
+        for (Record r : allRecords)
+        {
+            double rValue = Double.parseDouble(r.getValue());
+            rValue += adjustment;
+            r.setValue(Double.toString(rValue));
+        }
+        checkRecords();
+
     }
 
     private class EditTextWatcher implements TextWatcher {

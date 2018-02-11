@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class FormActivity extends AppCompatActivity {
+public class FormActivity extends AbstractForm {
 
     // Objects for visual elements
     // Basics visual elements - object declarations
@@ -74,6 +74,21 @@ public class FormActivity extends AppCompatActivity {
     long timeSwapBuff = 0;
     long updatedTime = 0;
     long adjustment = 0;
+
+    int yellowCardID = OverallForm.Items.YELLOW_CARD.getId();
+    int redCardID = OverallForm.Items.RED_CARD.getId();
+    Record redLeftYellow;
+    Record redCenterYellow;
+    Record redRightYellow;
+    Record blueLeftYellow;
+    Record blueCenterYellow;
+    Record blueRightYellow;
+    Record redLeftRed;
+    Record redCenterRed;
+    Record redRightRed;
+    Record blueLeftRed;
+    Record blueCenterRed;
+    Record blueRightRed;
 
     private Runnable updateTimerThread = new Runnable() {
         @Override
@@ -343,6 +358,7 @@ public class FormActivity extends AppCompatActivity {
                     startTimerBtn.setText("START TIMER");
                     startTime = 0;
                     timeInMilliseconds = 0;
+                    saveForm();
                     break;
                 }
                 case R.id.transferFormBtn:
@@ -374,121 +390,105 @@ public class FormActivity extends AppCompatActivity {
 
             CheckBox checkbox = (CheckBox) c;
             int currId = checkbox.getId();
-            int yellowCardID = OverallForm.Items.YELLOW_CARD.getId();
-            int redCardID = OverallForm.Items.RED_CARD.getId();
-            if (!checkbox.isChecked())
-            {
-                switch (currId)
+
+            switch (currId)
                 {
                     case R.id.redLeftYellowChk:
                     {
-                        Record redLeftYellow = new Record(redLeft.getText().toString(), yellowCardID);
-                        System.out.println(redLeftYellow);
-                        allRecords.add(redLeftYellow);
+                        if (checkbox.isChecked()) allRecords.remove(redLeftYellow);
+                        else allRecords.add(redLeftYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redCenterYellowChk:
                     {
-                        Record redCenterYellow = new Record(redCenter.getText().toString(), yellowCardID);
-                        System.out.println(redCenterYellow);
-                        allRecords.add(redCenterYellow);
+                        if (checkbox.isChecked()) allRecords.remove(redCenterYellow);
+                        else allRecords.add(redCenterYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redRightYellowChk:
                     {
-                        Record redRightYellow = new Record(redRight.getText().toString(), yellowCardID);
-                        System.out.println(redRightYellow);
-                        allRecords.add(redRightYellow);
+                        if (checkbox.isChecked()) allRecords.remove(redRightYellow);
+                        else allRecords.add(redRightYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueLeftYellowChk:
                     {
-                        Record blueLeftYellow = new Record(blueLeft.getText().toString(), yellowCardID);
-                        System.out.println(blueLeftYellow);
-                        allRecords.add(blueLeftYellow);
+                        if (checkbox.isChecked()) allRecords.remove(blueLeftYellow);
+                        else allRecords.add(blueLeftYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueCenterYellowChk:
                     {
-                        Record blueCenterYellow = new Record(blueCenter.getText().toString(), yellowCardID);
-                        System.out.println(blueCenterYellow);
-                        allRecords.add(blueCenterYellow);
+                        if (checkbox.isChecked()) allRecords.remove(blueCenterYellow);
+                        else allRecords.add(blueCenterYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueRightYellowChk:
                     {
-                        Record blueRightYellow = new Record(blueRight.getText().toString(), yellowCardID);
-                        System.out.println(blueRightYellow);
-                        allRecords.add(blueRightYellow);
+                        if (checkbox.isChecked()) allRecords.remove(blueRightYellow);
+                        else allRecords.add(blueRightYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redLeftRedChk:
                     {
-                        Record redLeftRed = new Record(redLeft.getText().toString(), redCardID);
-                        System.out.println(redLeftRed);
-                        allRecords.add(redLeftRed);
+                        if (checkbox.isChecked()) allRecords.remove(redLeftRed);
+                        else allRecords.add(redLeftRed);
                         break;
                     }
                     case R.id.redCenterRedChk:
                     {
-                        Record redCenterRed = new Record(redCenter.getText().toString(), redCardID);
-                        System.out.println(redCenterRed);
-                        allRecords.add(redCenterRed);
+                        if (checkbox.isChecked()) allRecords.remove(redCenterRed);
+                        else allRecords.add(redCenterRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redRightRedChk:
                     {
-                        Record redRightRed = new Record(redRight.getText().toString(), redCardID);
-                        System.out.println(redRightRed);
-                        allRecords.add(redRightRed);
+                        if (checkbox.isChecked()) allRecords.remove(redRightRed);
+                        else allRecords.add(redRightRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueLeftRedChk:
                     {
-                        Record blueLeftRed = new Record(blueLeft.getText().toString(), redCardID);
-                        System.out.println(blueLeftRed);
-                        allRecords.add(blueLeftRed);
+                        if (checkbox.isChecked()) allRecords.remove(blueLeftRed);
+                        else allRecords.remove(blueLeftRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueCenterRedChk:
                     {
-                        Record blueCenterRed = new Record(blueCenter.getText().toString(), redCardID);
-                        System.out.println(blueCenterRed);
-                        allRecords.add(blueCenterRed);
+                        if (checkbox.isChecked()) allRecords.remove(blueCenterRed);
+                        else allRecords.remove(blueCenterRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueRightRedChk:
                     {
-                        Record blueRightRed = new Record(blueRight.getText().toString(), redCardID);
-                        System.out.println(blueRightRed);
-                        allRecords.add(blueRightRed);
+                        if (checkbox.isChecked()) allRecords.remove(blueRightRed);
+                        else allRecords.remove(blueCenterRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     default: System.out.println("Can't tell which checkbox was clicked.");
                 }
-            }
         }
     }
 
@@ -569,6 +569,8 @@ public class FormActivity extends AppCompatActivity {
                         }
                         redLeftYellowLbl.setText(teamNum);
                         redLeftRedLbl.setText(teamNum);
+                        redLeftYellow = new Record(redLeft.getText().toString(), yellowCardID);
+                        redLeftRed = new Record(redLeft.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -583,6 +585,8 @@ public class FormActivity extends AppCompatActivity {
                         }
                         redCenterYellowLbl.setText(teamNum);
                         redCenterRedLbl.setText(teamNum);
+                        redCenterYellow = new Record(redCenter.getText().toString(), yellowCardID);
+                        redCenterRed = new Record(redCenter.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -597,6 +601,8 @@ public class FormActivity extends AppCompatActivity {
                         }
                         redRightYellowLbl.setText(teamNum);
                         redRightRedLbl.setText(teamNum);
+                        redRightYellow = new Record(redRight.getText().toString(), yellowCardID);
+                        redRightRed = new Record(redRight.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -611,6 +617,8 @@ public class FormActivity extends AppCompatActivity {
                         }
                         blueLeftYellowLbl.setText(teamNum);
                         blueLeftRedLbl.setText(teamNum);
+                        blueLeftYellow = new Record(blueLeft.getText().toString(), yellowCardID);
+                        blueLeftRed = new Record(blueLeft.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -625,6 +633,8 @@ public class FormActivity extends AppCompatActivity {
                         }
                         blueCenterYellowLbl.setText(teamNum);
                         blueCenterRedLbl.setText(teamNum);
+                        blueCenterYellow = new Record(blueCenter.getText().toString(), yellowCardID);
+                        blueCenterRed = new Record(blueCenter.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -639,12 +649,83 @@ public class FormActivity extends AppCompatActivity {
                         }
                         blueRightYellowLbl.setText(teamNum);
                         blueRightRedLbl.setText(teamNum);
+                        blueRightYellow = new Record(blueRight.getText().toString(), yellowCardID);
+                        blueRightRed = new Record(blueRight.getText().toString(), redCardID);
                         break;
                     }
                 }
                 default: System.out.println("ERROR.");
             }
         }
+    }
+
+    @Override
+    void initConfigs() {
+
+    }
+
+    @Override
+    void initRecords() {
+
+    }
+
+    @Override
+    void initLayout() {
+
+    }
+
+    @Override
+    void initSaveState() {
+
+    }
+
+    @Override
+    void executeRequest() {
+
+    }
+
+    @Override
+    void saveState() {
+
+    }
+
+    @Override
+    void resetForm() {
+
+    }
+
+    @Override
+    void resetRadioGroups() {
+
+    }
+
+    @Override
+    void resetCheckboxes() {
+
+    }
+
+    public Form makeForm()
+    {
+        // TODO: Change the -1 tablet number to the actual tablet number from the config file.
+        int[] teamNums = new int[6];
+        teamNums[0] = Integer.parseInt(redLeft.getText().toString());
+        teamNums[1] = Integer.parseInt(redCenter.getText().toString());
+        teamNums[2] = Integer.parseInt(redRight.getText().toString());
+        teamNums[3] = Integer.parseInt(blueLeft.getText().toString());
+        teamNums[4] = Integer.parseInt(blueCenter.getText().toString());
+        teamNums[5] = Integer.parseInt(blueRight.getText().toString());
+        OverallForm form = new OverallForm(-1, teamNums, Integer.parseInt(matchNum.getText().toString()), scoutName.getText().toString());
+        return form;
+    }
+
+    @Override
+    void readyToSave() {
+
+    }
+
+    @Override
+    void setState(String[] records, int startingIndex) {
+
     }
 
 }

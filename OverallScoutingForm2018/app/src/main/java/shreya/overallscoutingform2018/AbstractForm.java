@@ -1,5 +1,6 @@
 package shreya.overallscoutingform2018;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,7 +47,7 @@ abstract public class AbstractForm extends Activity {
     private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static BluetoothDevice device = null;
 
-    private static String pcCompanion ="LUCASPC";
+    static String pcCompanion ="LUCASPC";
 
     static String MESSAGE = "";
     static String POSITIVE_BUTTON = "";
@@ -75,7 +76,7 @@ abstract public class AbstractForm extends Activity {
     abstract void resetRadioGroups();
     abstract void resetCheckboxes();
     abstract Form makeForm();
-    abstract void readyToSave();
+    abstract boolean readyToSave();
     abstract void setState(String[] records, int startingIndex);
 
 
@@ -287,6 +288,7 @@ abstract public class AbstractForm extends Activity {
         dialog.show(getFragmentManager(), "alertDialog");
     } // End showAlertDialog
 
+    @SuppressLint("ValidFragment")
     class AlertDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {

@@ -721,5 +721,14 @@
         android:layout_toEndOf="@+id/startTimerBtn"
         android:text="-" />
 
+    <TextView
+        android:id="@+id/formsPendingLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewTimelineBtn"
+        android:layout_alignStart="@+id/blueScoreLbl"
+        android:text="Forms Pending"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
 
 </RelativeLayout>

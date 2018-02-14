@@ -34,8 +34,7 @@ public class Form {
 		public static final int SCOUT_NAME = 2;
 		public static final int TEAM_NUM = 3;
 		public static final int ALLIANCE = 4;
-		public static final int FORM_ID = 5;
-		public static final int MATCH_NUM = 6;
+		public static final int MATCH_NUM = 5;
 		
 		public static final int highestIndex() {
 			return MATCH_NUM;
@@ -223,9 +222,10 @@ public class Form {
 			int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
 			if (type == FormType.MATCH_FORM.ordinal())
 			{
-				form = new MatchForm(-1, Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]),
-						Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME],
-                        Integer.parseInt(items[FormOrder.ALLIANCE]), Integer.parseInt(items[FormOrder.FORM_ID]));
+				// TO-DO: Dan deal with this later
+//				form = new MatchForm(-1, Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]),
+//						Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME],
+//                        Integer.parseInt(items[FormOrder.ALLIANCE]), Integer.parseInt(items[FormOrder.FORM_ID]));
 			}
 			else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
 			else if (type == FormType.OVERALL_FORM.ordinal())
@@ -239,7 +239,6 @@ public class Form {
 				}
 
 				form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
-				form.setFormID(Integer.parseInt(items[FormOrder.FORM_ID]));
 			}
 			String rawRecords = "";
 			for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {

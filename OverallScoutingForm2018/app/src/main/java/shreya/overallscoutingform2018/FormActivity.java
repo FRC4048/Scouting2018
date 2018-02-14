@@ -7,13 +7,21 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -66,6 +74,7 @@ public class FormActivity extends AbstractForm {
     Button startTimerBtn;
     Button addTimerBtn;
     Button subtractTimerBtn;
+    TextView formsPendingLbl;
     final int teamNumLabelLength = 11;
 
     private long startTime = 0;
@@ -89,6 +98,10 @@ public class FormActivity extends AbstractForm {
     Record blueLeftRed;
     Record blueCenterRed;
     Record blueRightRed;
+    Record redAllianceScore;
+    Record blueAllianceScore;
+    Record redFoulPts;
+    Record blueFoulPts;
 
     private Runnable updateTimerThread = new Runnable() {
         @Override
@@ -114,99 +127,24 @@ public class FormActivity extends AbstractForm {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_form);
 
-        // Linking objects to visual elements
-        // Basics section
-        scoutName = (EditText) findViewById(R.id.scoutNameEditTxt);
-        matchNum = (EditText) findViewById(R.id.matchNumEditTxt);
-        redLeft = (EditText) findViewById(R.id.redLeftEditTxt);
-        redCenter = (EditText) findViewById(R.id.redCenterEditTxt);
-        redRight = (EditText) findViewById(R.id.redRightEditTxt);
-        blueLeft = (EditText) findViewById(R.id.blueLeftEditTxt);
-        blueCenter = (EditText) findViewById(R.id.blueCenterEditTxt);
-        blueRight = (EditText) findViewById(R.id.blueRightEditTxt);
-        // Game play section
-        redScaleOwnershipBtn = (Button) findViewById(R.id.redOwnershipScaleBtn);
-        redSwitchOwnershipBtn = (Button) findViewById(R.id.redSwitchOwnershipBtn);
-        redBlueSwitchOwnershipBtn = (Button) findViewById(R.id.redBlueSwitchOwnershipBtn);
-        redLevitateBtn = (Button) findViewById(R.id.redLevitateBtn);
-        redForceBtn = (Button) findViewById(R.id.redForceBtn);
-        redBoostBtn = (Button) findViewById(R.id.redBoostBtn);
-        blueScaleOwnershipBtn = (Button) findViewById(R.id.blueScaleOwnershipBtn);
-        blueSwitchOwnershipBtn = (Button) findViewById(R.id.blueSwitchOwnershipBtn);
-        blueRedSwitchOwnershipBtn = (Button) findViewById(R.id.blueRedSwitchOwnershipBtn);
-        blueLevitateBtn = (Button) findViewById(R.id.blueLevitateBtn);
-        blueForceBtn = (Button) findViewById(R.id.blueForceBtn);
-        blueBoostBtn = (Button) findViewById(R.id.blueBoostBtn);
-        // Penalties
-        redLeftYellowLbl = (CheckBox) findViewById(R.id.redLeftYellowChk);
-        redCenterYellowLbl = (CheckBox) findViewById(R.id.redCenterYellowChk);
-        redRightYellowLbl = (CheckBox) findViewById(R.id.redRightYellowChk);
-        blueLeftYellowLbl = (CheckBox) findViewById(R.id.blueLeftYellowChk);
-        blueCenterYellowLbl = (CheckBox) findViewById(R.id.blueCenterYellowChk);
-        blueRightYellowLbl = (CheckBox) findViewById(R.id.blueRightYellowChk);
-        redLeftRedLbl = (CheckBox) findViewById(R.id.redLeftRedChk);
-        redCenterRedLbl = (CheckBox) findViewById(R.id.redCenterRedChk);
-        redRightRedLbl = (CheckBox) findViewById(R.id.redRightRedChk);
-        blueLeftRedLbl = (CheckBox) findViewById(R.id.blueLeftRedChk);
-        blueCenterRedLbl = (CheckBox) findViewById(R.id.blueCenterRedChk);
-        blueRightRedLbl = (CheckBox) findViewById(R.id.blueRightRedChk);
-        // Points
-        redFoulPoints = (EditText) findViewById(R.id.redFoulEditTxt);
-        blueFoulPoints = (EditText) findViewById(R.id.blueFoulEditTxt);
-        redScore = (EditText) findViewById(R.id.redScoreEditTxt);
-        blueScore = (EditText) findViewById(R.id.blueScoreEditTxt);
-        saveBtn = (Button) findViewById(R.id.saveFormBtn);
-        transferBtn = (Button) findViewById(R.id.transferFormBtn);
-        viewTimelineBtn = (Button) findViewById(R.id.viewTimelineBtn);
-        // Timer
-        startTimerBtn = (Button) findViewById(R.id.startTimerBtn);
-        addTimerBtn = (Button) findViewById(R.id.addTimerBtn);
-        subtractTimerBtn = (Button) findViewById(R.id.subtractTimerBtn); 
-
-        EditTextWatcher textWatcher = new EditTextWatcher();
-
-        redLeft.addTextChangedListener(textWatcher);
-        redCenter.addTextChangedListener(textWatcher);
-        redRight.addTextChangedListener(textWatcher);
-        blueLeft.addTextChangedListener(textWatcher);
-        blueCenter.addTextChangedListener(textWatcher);
-        blueRight.addTextChangedListener(textWatcher);
-
-        CheckBoxChangeListener checkBoxHandler = new CheckBoxChangeListener();
-        redLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        redCenterYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        redRightYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueCenterYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueRightYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
-        redLeftRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-        redCenterRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-        redRightRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueLeftRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueCenterRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-        blueRightRedLbl.setOnCheckedChangeListener(checkBoxHandler);
-
-        ButtonListener buttonListener = new ButtonListener();
-        startTimerBtn.setOnClickListener(buttonListener);
-        addTimerBtn.setOnClickListener(buttonListener);
-        subtractTimerBtn.setOnClickListener(buttonListener);
-        redScaleOwnershipBtn.setOnClickListener(buttonListener);
-        redSwitchOwnershipBtn.setOnClickListener(buttonListener);
-        redBlueSwitchOwnershipBtn.setOnClickListener(buttonListener);
-        redBoostBtn.setOnClickListener(buttonListener);
-        redForceBtn.setOnClickListener(buttonListener);
-        redLevitateBtn.setOnClickListener(buttonListener);
-        blueScaleOwnershipBtn.setOnClickListener(buttonListener);
-        blueSwitchOwnershipBtn.setOnClickListener(buttonListener);
-        blueRedSwitchOwnershipBtn.setOnClickListener(buttonListener);
-        blueForceBtn.setOnClickListener(buttonListener);
-        blueLevitateBtn.setOnClickListener(buttonListener);
-        blueBoostBtn.setOnClickListener(buttonListener);
-        saveBtn.setOnClickListener(buttonListener);
-        transferBtn.setOnClickListener(buttonListener);
-        viewTimelineBtn.setOnClickListener(buttonListener);
+        if (checkConfigFile()) {
+            initConfigs();
+            initLayout();
+            initSaveState();
+            initArchiveSystem();
+        } else {
+            initLayout();
+            initSaveState();
+            initArchiveSystem();
+            actionRequested = Action.RECEIVE_CONFIG;
+            showAlertDialog("A configuration file from the master computer is required to continue."
+                    + "\nPlease transfer the file to this machine.", "I've transferred the file");
+        }
 
     }
 
@@ -355,15 +293,23 @@ public class FormActivity extends AbstractForm {
                 case R.id.saveFormBtn:
                 {
                     System.out.println("Attempting to save form");
-                    startTimerBtn.setText("START TIMER");
-                    startTime = 0;
-                    timeInMilliseconds = 0;
-                    saveForm();
+                    if (readyToSave())
+                    {
+                        showAlertDialog("Are you sure you want to save this form?", "Yes");
+                    }
+                    else
+                    {
+                        String message = "Cannot save the form because";
+                        // test why -- a bunch of cases (ifs)
+                        showAlertDialog(message, "OK");
+                    }
                     break;
                 }
                 case R.id.transferFormBtn:
                 {
                     System.out.println("Attempting to transfer form");
+                    prepareToTransfer(TEMP_FILE);
+                    archiveCurrentFile();
                     break;
                 }
                 case R.id.viewTimelineBtn:
@@ -377,7 +323,6 @@ public class FormActivity extends AbstractForm {
 
     private void printRecords()
     {
-        System.out.println("allRecords currently: " );
         for (Record r : allRecords)
         {
             System.out.print(r + "|");
@@ -395,77 +340,77 @@ public class FormActivity extends AbstractForm {
                 {
                     case R.id.redLeftYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redLeftYellow);
-                        else allRecords.add(redLeftYellow);
+                        if (checkbox.isChecked()) allRecords.add(redLeftYellow);
+                        else allRecords.remove(redLeftYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redCenterYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redCenterYellow);
-                        else allRecords.add(redCenterYellow);
+                        if (checkbox.isChecked()) allRecords.add(redCenterYellow);
+                        else allRecords.remove(redCenterYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redRightYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redRightYellow);
-                        else allRecords.add(redRightYellow);
+                        if (checkbox.isChecked()) allRecords.add(redRightYellow);
+                        else allRecords.remove(redRightYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueLeftYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueLeftYellow);
-                        else allRecords.add(blueLeftYellow);
+                        if (checkbox.isChecked()) allRecords.add(blueLeftYellow);
+                        else allRecords.remove(blueLeftYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueCenterYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueCenterYellow);
-                        else allRecords.add(blueCenterYellow);
+                        if (checkbox.isChecked()) allRecords.add(blueCenterYellow);
+                        else allRecords.remove(blueCenterYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueRightYellowChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueRightYellow);
-                        else allRecords.add(blueRightYellow);
+                        if (checkbox.isChecked()) allRecords.add(blueRightYellow);
+                        else allRecords.remove(blueRightYellow);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redLeftRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redLeftRed);
-                        else allRecords.add(redLeftRed);
+                        if (checkbox.isChecked()) allRecords.add(redLeftRed);
+                        else allRecords.remove(redLeftRed);
                         break;
                     }
                     case R.id.redCenterRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redCenterRed);
-                        else allRecords.add(redCenterRed);
+                        if (checkbox.isChecked()) allRecords.add(redCenterRed);
+                        else allRecords.remove(redCenterRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.redRightRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(redRightRed);
-                        else allRecords.add(redRightRed);
+                        if (checkbox.isChecked()) allRecords.add(redRightRed);
+                        else allRecords.remove(redRightRed);
                         printRecords();
                         System.out.println();
                         break;
                     }
                     case R.id.blueLeftRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueLeftRed);
+                        if (checkbox.isChecked()) allRecords.add(blueLeftRed);
                         else allRecords.remove(blueLeftRed);
                         printRecords();
                         System.out.println();
@@ -473,7 +418,7 @@ public class FormActivity extends AbstractForm {
                     }
                     case R.id.blueCenterRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueCenterRed);
+                        if (checkbox.isChecked()) allRecords.add(blueCenterRed);
                         else allRecords.remove(blueCenterRed);
                         printRecords();
                         System.out.println();
@@ -481,7 +426,7 @@ public class FormActivity extends AbstractForm {
                     }
                     case R.id.blueRightRedChk:
                     {
-                        if (checkbox.isChecked()) allRecords.remove(blueRightRed);
+                        if (checkbox.isChecked()) allRecords.add(blueRightRed);
                         else allRecords.remove(blueCenterRed);
                         printRecords();
                         System.out.println();
@@ -654,43 +599,299 @@ public class FormActivity extends AbstractForm {
                         break;
                     }
                 }
+                case R.id.redScoreEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String redScore = currEditText.getText().toString();
+                        redAllianceScore = new Record(redScore, OverallForm.Items.RED_SCORE.getId());
+                    }
+                    break;
+                }
+                case R.id.blueScoreEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String blueScore = currEditText.getText().toString();
+                        blueAllianceScore = new Record(blueScore, OverallForm.Items.BLUE_SCORE.getId());
+                    }
+                    break;
+                }
+                case R.id.redFoulEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String redFoul = currEditText.getText().toString();
+                        redFoulPts = new Record(redFoul, OverallForm.Items.RED_FOUL_POINTS.getId());
+                    }
+                    break;
+                }
+                case R.id.blueFoulEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        String blueFoul = currEditText.getText().toString();
+                        blueFoulPts = new Record(blueFoul, OverallForm.Items.BLUE_FOUL_POINTS.getId());
+                    }
+                }
                 default: System.out.println("ERROR.");
             }
         }
     }
 
     @Override
+    /**
+     * Initialize the configurations for the app from the configuration file.
+     * Configurations include:
+     *  List of scout names
+     *  List of team numbers
+     *  Tablet number
+     *  PC companion
+     */
     void initConfigs() {
+
+        String message = "There has been an I/O issue!\nCONFIG FAILED";
+        try {
+            File file = new File(getFilesDir().getAbsolutePath(), CONFIG_FILE);
+            if (!file.exists()) {
+                message = "There has been an I/O issue!\n" +
+                        "CONFIG FILE DOES NOT EXIST (PAST FILE CHECK)";
+                throw new IOException();
+            } else {
+                ArrayList<String> contents = new ArrayList<>();
+                String str;
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                while (!((str = reader.readLine()) == null)) contents.add(str);
+                reader.close();
+
+                tabletNum = Integer.parseInt(contents.get(0));
+                pcCompanion = contents.get(1);
+                if (pcCompanion.contains(Form.ID_DELIMITER)) throw new InputMismatchException();
+                names = contents.get(2).split(Form.ID_DELIMITER);
+                teams = contents.get(3).split(Form.ID_DELIMITER);
+            }
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        } catch (IndexOutOfBoundsException | InputMismatchException e) {
+            message = "CONFIG FILE FORMATTED INCORRECTLY.\n"
+                    + "PLEASE FORMAT THE CONFIG FILE CORRECTLY";
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        }
 
     }
 
     @Override
+    /**
+     * Initializes the record objects.
+     */
     void initRecords() {
 
     }
 
+    /**
+     * Initializes the layout.
+     * Initializes objects for the visual components.
+     */
     @Override
     void initLayout() {
 
+        // Linking objects to visual elements
+        // Basics section
+        scoutName = (EditText) findViewById(R.id.scoutNameEditTxt);
+        matchNum = (EditText) findViewById(R.id.matchNumEditTxt);
+        redLeft = (EditText) findViewById(R.id.redLeftEditTxt);
+        redCenter = (EditText) findViewById(R.id.redCenterEditTxt);
+        redRight = (EditText) findViewById(R.id.redRightEditTxt);
+        blueLeft = (EditText) findViewById(R.id.blueLeftEditTxt);
+        blueCenter = (EditText) findViewById(R.id.blueCenterEditTxt);
+        blueRight = (EditText) findViewById(R.id.blueRightEditTxt);
+        formsPendingLbl = (TextView) findViewById(R.id.formsPendingLbl);
+        // Game play section
+        redScaleOwnershipBtn = (Button) findViewById(R.id.redOwnershipScaleBtn);
+        redSwitchOwnershipBtn = (Button) findViewById(R.id.redSwitchOwnershipBtn);
+        redBlueSwitchOwnershipBtn = (Button) findViewById(R.id.redBlueSwitchOwnershipBtn);
+        redLevitateBtn = (Button) findViewById(R.id.redLevitateBtn);
+        redForceBtn = (Button) findViewById(R.id.redForceBtn);
+        redBoostBtn = (Button) findViewById(R.id.redBoostBtn);
+        blueScaleOwnershipBtn = (Button) findViewById(R.id.blueScaleOwnershipBtn);
+        blueSwitchOwnershipBtn = (Button) findViewById(R.id.blueSwitchOwnershipBtn);
+        blueRedSwitchOwnershipBtn = (Button) findViewById(R.id.blueRedSwitchOwnershipBtn);
+        blueLevitateBtn = (Button) findViewById(R.id.blueLevitateBtn);
+        blueForceBtn = (Button) findViewById(R.id.blueForceBtn);
+        blueBoostBtn = (Button) findViewById(R.id.blueBoostBtn);
+        // Penalties
+        redLeftYellowLbl = (CheckBox) findViewById(R.id.redLeftYellowChk);
+        redCenterYellowLbl = (CheckBox) findViewById(R.id.redCenterYellowChk);
+        redRightYellowLbl = (CheckBox) findViewById(R.id.redRightYellowChk);
+        blueLeftYellowLbl = (CheckBox) findViewById(R.id.blueLeftYellowChk);
+        blueCenterYellowLbl = (CheckBox) findViewById(R.id.blueCenterYellowChk);
+        blueRightYellowLbl = (CheckBox) findViewById(R.id.blueRightYellowChk);
+        redLeftRedLbl = (CheckBox) findViewById(R.id.redLeftRedChk);
+        redCenterRedLbl = (CheckBox) findViewById(R.id.redCenterRedChk);
+        redRightRedLbl = (CheckBox) findViewById(R.id.redRightRedChk);
+        blueLeftRedLbl = (CheckBox) findViewById(R.id.blueLeftRedChk);
+        blueCenterRedLbl = (CheckBox) findViewById(R.id.blueCenterRedChk);
+        blueRightRedLbl = (CheckBox) findViewById(R.id.blueRightRedChk);
+        // Points
+        redFoulPoints = (EditText) findViewById(R.id.redFoulEditTxt);
+        blueFoulPoints = (EditText) findViewById(R.id.blueFoulEditTxt);
+        redScore = (EditText) findViewById(R.id.redScoreEditTxt);
+        blueScore = (EditText) findViewById(R.id.blueScoreEditTxt);
+        saveBtn = (Button) findViewById(R.id.saveFormBtn);
+        transferBtn = (Button) findViewById(R.id.transferFormBtn);
+        viewTimelineBtn = (Button) findViewById(R.id.viewTimelineBtn);
+        // Timer
+        startTimerBtn = (Button) findViewById(R.id.startTimerBtn);
+        addTimerBtn = (Button) findViewById(R.id.addTimerBtn);
+        subtractTimerBtn = (Button) findViewById(R.id.subtractTimerBtn);
+
+        EditTextWatcher textWatcher = new EditTextWatcher();
+
+        redLeft.addTextChangedListener(textWatcher);
+        redCenter.addTextChangedListener(textWatcher);
+        redRight.addTextChangedListener(textWatcher);
+        blueLeft.addTextChangedListener(textWatcher);
+        blueCenter.addTextChangedListener(textWatcher);
+        blueRight.addTextChangedListener(textWatcher);
+
+        CheckBoxChangeListener checkBoxHandler = new CheckBoxChangeListener();
+        redLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        redCenterYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        redRightYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueCenterYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueRightYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
+        redLeftRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+        redCenterRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+        redRightRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueLeftRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueCenterRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+        blueRightRedLbl.setOnCheckedChangeListener(checkBoxHandler);
+
+        ButtonListener buttonListener = new ButtonListener();
+        startTimerBtn.setOnClickListener(buttonListener);
+        addTimerBtn.setOnClickListener(buttonListener);
+        subtractTimerBtn.setOnClickListener(buttonListener);
+        redScaleOwnershipBtn.setOnClickListener(buttonListener);
+        redSwitchOwnershipBtn.setOnClickListener(buttonListener);
+        redBlueSwitchOwnershipBtn.setOnClickListener(buttonListener);
+        redBoostBtn.setOnClickListener(buttonListener);
+        redForceBtn.setOnClickListener(buttonListener);
+        redLevitateBtn.setOnClickListener(buttonListener);
+        blueScaleOwnershipBtn.setOnClickListener(buttonListener);
+        blueSwitchOwnershipBtn.setOnClickListener(buttonListener);
+        blueRedSwitchOwnershipBtn.setOnClickListener(buttonListener);
+        blueForceBtn.setOnClickListener(buttonListener);
+        blueLevitateBtn.setOnClickListener(buttonListener);
+        blueBoostBtn.setOnClickListener(buttonListener);
+        saveBtn.setOnClickListener(buttonListener);
+        transferBtn.setOnClickListener(buttonListener);
+        viewTimelineBtn.setOnClickListener(buttonListener);
+
     }
 
+    /**
+     * Fail-safe in case the user accidentally closes the form. Initializes the save state. Restores fields for the Report.
+     */
     @Override
     void initSaveState() {
+        /**
+         * 1. Make sure STATE_SAVE_FILE exists.
+         * 2. Read from STATE_SAVE_FILE.
+         * 3. Restore the team numbers.
+         * 4. Restore the match number.
+         * 5. Restore the scout name.
+         */
 
     }
 
+    /**
+     * Handles consequences of a "YES" selection in a dialog box.
+     */
     @Override
     void executeRequest() {
+        /**
+         * Consider switch(actionRequested):
+         * 1) SAVE_FORM --> call saveForm(), create toast, increment forms pending... (copied from 2017)
+         * if (readyToSave())
+         */
+
+        switch (actionRequested) {
+            case SAVE_FORM:
+                if (saveForm()) {
+                    Toast.makeText(getApplicationContext(), "FORM SAVED",
+                            Toast.LENGTH_SHORT).show();
+                    formsPending++;
+                    resetForm();
+                    formsPendingLbl.setText(formsPending + " Form(s) Pending");
+                } else showAlertDialog("FORM NOT SAVED: " +
+                        "I/O problem encountered. Try again - if the problem persists, " +
+                        "TALK TO LUCAS!", "Ok", null);
+                break;
+            case TRANSFER_FORMS:
+                if (formsPending > 0) {
+                    prepareFormTransfer(TEMP_FILE);
+                    prepareToTransfer(TEMP_FILE);
+                    actionRequested = Action.CHECK_TRANSFER;
+                    formsPending = 0;
+                    formsPendingLbl.setText(formsPending + " Form(s) Pending");
+                    firstForm = true;
+                    archiveCurrentFile();
+                } else showAlertDialog("No pending forms!", "Ok");
+                break;
+            case TRANSFER_LAST_FORMS:
+                if (archivedFiles > 0) {
+                    String fileName = ARCHIVE_FILE.split("\\.")[0] + (archivedFiles - 1)
+                            + ARCHIVE_FILE.split("\\.")[1];
+                    prepareFormTransfer(fileName);
+                    prepareToTransfer(fileName);
+                } else showAlertDialog("There has not been a transfer yet.", "Ok");
+                break;
+            case TRANSFER_ALL_ARCHIVES:
+                break;
+            case RECEIVE_CONFIG:
+                retrieveComputerFile(CONFIG_FILE);
+                initLayout();
+                break;
+            case WARNING_TEAMNUM:
+                // Determine which team number is invalid.
+                break;
+        }
 
     }
 
+    /**
+     * Creates the saved state.
+     */
     @Override
     void saveState() {
 
+        /**
+         * 1. Create STATE_SAVE_FILE (make sure it exists).
+         * 2. Write to the STATE_SAVE_FILE w/ the following:
+         * - Store the # of pending forms.
+         * - Store all team numbers.
+         * - Store the match number.
+         * - Store the scout name.
+         * - Store records for this form.
+         */
+
     }
 
+    /**
+     * Reset the form after the save button is pressed.
+     */
     @Override
     void resetForm() {
+
+        /**
+         * 1. Clear the edit texts (all of them).
+         * 2. Reset the checkboxes.
+         * 3. Clear the allRecords arrayList.
+         * 4. Reset the timer to 0.
+         * 5. Set the text of the timer to Start Timer.
+         * 6. Increment the matchNum.
+         */
 
     }
 
@@ -715,17 +916,37 @@ public class FormActivity extends AbstractForm {
         teamNums[4] = Integer.parseInt(blueCenter.getText().toString());
         teamNums[5] = Integer.parseInt(blueRight.getText().toString());
         OverallForm form = new OverallForm(-1, teamNums, Integer.parseInt(matchNum.getText().toString()), scoutName.getText().toString());
+        form.addRecords(allRecords);
         return form;
     }
 
     @Override
-    void readyToSave() {
-
+    /**
+     * Confirm if a form is ready to be saved.
+     */
+    boolean readyToSave() {
+        /**
+         * 1. Check that there are 6 team numbers, and that the teams are in the list of teams. --> set global variable for the invalid team number (or team number(s)) if it is invalid?
+         * 2. Check that there is a scout name, and that it is on the list of scout names.
+         * 3. Check that there is a match number (MN > 0).
+         * 4. Check if the timer is done (2:30). [maybe]
+         */
+        // TODO: Create 6 global teamNum variables.
+        // TODO: Initialize global scoutName variable.
+        // TODO: Create/initialize global matchNum variable.
+        return true;
     }
 
     @Override
     void setState(String[] records, int startingIndex) {
-
+        /**
+         * 1. Read through array of records (passed as param) & set the other fields (other than the report fields) to their appropriate state.
+         * [preparing the String array that is passed]
+         * 1. Get length of allRecords arraylist.
+         * 2. Create String array of the right size.
+         * 3. Set each element in the String array to the toString of the corresponding record in the allRecords.
+         * Called in initSavedState.
+         */
     }
 
 }

@@ -54,7 +54,7 @@ abstract public class AbstractForm extends Activity {
     static String NEGATIVE_BUTTON = "";
     static String NEUTRAL_BUTTON = "";
 
-    final private static String BLUETOOTH_FOLDER_PATH = "/storage/emulated/0/Download/";
+    final private static String BLUETOOTH_FOLDER_PATH = "/data/local/";
 
     // The name of the current scout.
     String scoutName;

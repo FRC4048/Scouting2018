@@ -2,13 +2,14 @@ package shreya.overallscoutingform2018;
 
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -22,21 +23,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FormActivity extends AbstractForm {
 
     // Objects for visual elements
     // Basics visual elements - object declarations
-    EditText scoutName;
-    EditText matchNum;
-    EditText redLeft;
-    EditText redCenter;
-    EditText redRight;
-    EditText blueLeft;
-    EditText blueCenter;
-    EditText blueRight;
+    AutoCompleteTextView scoutNameEditText;
+    AutoCompleteTextView matchNumEditText;
+    EditText redLeftEditText;
+    EditText redCenterEditText;
+    EditText redRightEditText;
+    EditText blueLeftEditText;
+    EditText blueCenterEditText;
+    EditText blueRightEditText;
     // Game play section - visual elements object declarations
     Button redScaleOwnershipBtn;
     Button redSwitchOwnershipBtn;
@@ -66,8 +65,8 @@ public class FormActivity extends AbstractForm {
     // Points section - visual elements object declarations
     EditText redFoulPoints;
     EditText blueFoulPoints;
-    EditText redScore;
-    EditText blueScore;
+    EditText redScoreEditText;
+    EditText blueScoreEditText;
     Button saveBtn;
     Button transferBtn;
     Button viewTimelineBtn;
@@ -102,6 +101,10 @@ public class FormActivity extends AbstractForm {
     Record blueAllianceScore;
     Record redFoulPts;
     Record blueFoulPts;
+
+    int[] teamsPlaying = new int[6];
+    int matchNum = 0;
+    int[] invalidTeamNums = new int[6];
 
     private Runnable updateTimerThread = new Runnable() {
         @Override
@@ -300,7 +303,19 @@ public class FormActivity extends AbstractForm {
                     else
                     {
                         String message = "Cannot save the form because";
-                        // test why -- a bunch of cases (ifs)
+                        if (!checkInvalidTeams()) message += "- There are invalid team numbers." + "\n";
+                        if (!checkInvalidScoutName())
+                        {
+                            message += "- The scout name is invalid." + "\n";
+                            resetInvalidEditTexts(6);
+                        }
+                        if (matchNum <= 0)
+                        {
+                            message += "- The match number is invalid." + "\n";
+                            resetInvalidEditTexts(7);
+                        }
+                        if (timeInMilliseconds != 150000) message += "- The timer is not yet done." + "\n";
+                        actionRequested = Action.SAVE_FORM;
                         showAlertDialog(message, "OK");
                     }
                     break;
@@ -514,8 +529,9 @@ public class FormActivity extends AbstractForm {
                         }
                         redLeftYellowLbl.setText(teamNum);
                         redLeftRedLbl.setText(teamNum);
-                        redLeftYellow = new Record(redLeft.getText().toString(), yellowCardID);
-                        redLeftRed = new Record(redLeft.getText().toString(), redCardID);
+                        teamsPlaying[0] = Integer.parseInt(teamNum);
+                        redLeftYellow = new Record(redLeftEditText.getText().toString(), yellowCardID);
+                        redLeftRed = new Record(redLeftEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -530,8 +546,9 @@ public class FormActivity extends AbstractForm {
                         }
                         redCenterYellowLbl.setText(teamNum);
                         redCenterRedLbl.setText(teamNum);
-                        redCenterYellow = new Record(redCenter.getText().toString(), yellowCardID);
-                        redCenterRed = new Record(redCenter.getText().toString(), redCardID);
+                        teamsPlaying[1] = Integer.parseInt(teamNum);
+                        redCenterYellow = new Record(redCenterEditText.getText().toString(), yellowCardID);
+                        redCenterRed = new Record(redCenterEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -546,8 +563,9 @@ public class FormActivity extends AbstractForm {
                         }
                         redRightYellowLbl.setText(teamNum);
                         redRightRedLbl.setText(teamNum);
-                        redRightYellow = new Record(redRight.getText().toString(), yellowCardID);
-                        redRightRed = new Record(redRight.getText().toString(), redCardID);
+                        teamsPlaying[2] = Integer.parseInt(teamNum);
+                        redRightYellow = new Record(redRightEditText.getText().toString(), yellowCardID);
+                        redRightRed = new Record(redRightEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -562,8 +580,9 @@ public class FormActivity extends AbstractForm {
                         }
                         blueLeftYellowLbl.setText(teamNum);
                         blueLeftRedLbl.setText(teamNum);
-                        blueLeftYellow = new Record(blueLeft.getText().toString(), yellowCardID);
-                        blueLeftRed = new Record(blueLeft.getText().toString(), redCardID);
+                        teamsPlaying[3] = Integer.parseInt(teamNum);
+                        blueLeftYellow = new Record(blueLeftEditText.getText().toString(), yellowCardID);
+                        blueLeftRed = new Record(blueLeftEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -578,8 +597,9 @@ public class FormActivity extends AbstractForm {
                         }
                         blueCenterYellowLbl.setText(teamNum);
                         blueCenterRedLbl.setText(teamNum);
-                        blueCenterYellow = new Record(blueCenter.getText().toString(), yellowCardID);
-                        blueCenterRed = new Record(blueCenter.getText().toString(), redCardID);
+                        teamsPlaying[4] = Integer.parseInt(teamNum);
+                        blueCenterYellow = new Record(blueCenterEditText.getText().toString(), yellowCardID);
+                        blueCenterRed = new Record(blueCenterEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -594,8 +614,9 @@ public class FormActivity extends AbstractForm {
                         }
                         blueRightYellowLbl.setText(teamNum);
                         blueRightRedLbl.setText(teamNum);
-                        blueRightYellow = new Record(blueRight.getText().toString(), yellowCardID);
-                        blueRightRed = new Record(blueRight.getText().toString(), redCardID);
+                        teamsPlaying[5] = Integer.parseInt(teamNum);
+                        blueRightYellow = new Record(blueRightEditText.getText().toString(), yellowCardID);
+                        blueRightRed = new Record(blueRightEditText.getText().toString(), redCardID);
                         break;
                     }
                 }
@@ -634,6 +655,18 @@ public class FormActivity extends AbstractForm {
                         blueFoulPts = new Record(blueFoul, OverallForm.Items.BLUE_FOUL_POINTS.getId());
                     }
                 }
+                case R.id.scoutNameEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        scoutName = currEditText.getText().toString();
+                    }
+                }
+                case R.id.matchNumEditTxt:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                        matchNum = Integer.parseInt(currEditText.getText().toString());
+                }
                 default: System.out.println("ERROR.");
             }
         }
@@ -668,13 +701,18 @@ public class FormActivity extends AbstractForm {
                 pcCompanion = contents.get(1);
                 if (pcCompanion.contains(Form.ID_DELIMITER)) throw new InputMismatchException();
                 names = contents.get(2).split(Form.ID_DELIMITER);
+                ArrayAdapter<String> namesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, names);
+                scoutNameEditText.setAdapter(namesAdapter);
                 teams = contents.get(3).split(Form.ID_DELIMITER);
+                ArrayAdapter<String> teamsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, teams);
+                matchNumEditText.setAdapter(teamsAdapter);
             }
         } catch (IOException e) {
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         } catch (IndexOutOfBoundsException | InputMismatchException e) {
             message = "CONFIG FILE FORMATTED INCORRECTLY.\n"
                     + "PLEASE FORMAT THE CONFIG FILE CORRECTLY";
+            if (e instanceof IndexOutOfBoundsException) message += "\nINDEX OUT OF BOUNDS EXCEPTION.";
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         }
 
@@ -697,14 +735,14 @@ public class FormActivity extends AbstractForm {
 
         // Linking objects to visual elements
         // Basics section
-        scoutName = (EditText) findViewById(R.id.scoutNameEditTxt);
-        matchNum = (EditText) findViewById(R.id.matchNumEditTxt);
-        redLeft = (EditText) findViewById(R.id.redLeftEditTxt);
-        redCenter = (EditText) findViewById(R.id.redCenterEditTxt);
-        redRight = (EditText) findViewById(R.id.redRightEditTxt);
-        blueLeft = (EditText) findViewById(R.id.blueLeftEditTxt);
-        blueCenter = (EditText) findViewById(R.id.blueCenterEditTxt);
-        blueRight = (EditText) findViewById(R.id.blueRightEditTxt);
+        scoutNameEditText = (AutoCompleteTextView) findViewById(R.id.scoutNameEditTxt);
+        matchNumEditText = (AutoCompleteTextView) findViewById(R.id.matchNumEditTxt);
+        redLeftEditText = (EditText) findViewById(R.id.redLeftEditTxt);
+        redCenterEditText = (EditText) findViewById(R.id.redCenterEditTxt);
+        redRightEditText = (EditText) findViewById(R.id.redRightEditTxt);
+        blueLeftEditText = (EditText) findViewById(R.id.blueLeftEditTxt);
+        blueCenterEditText = (EditText) findViewById(R.id.blueCenterEditTxt);
+        blueRightEditText = (EditText) findViewById(R.id.blueRightEditTxt);
         formsPendingLbl = (TextView) findViewById(R.id.formsPendingLbl);
         // Game play section
         redScaleOwnershipBtn = (Button) findViewById(R.id.redOwnershipScaleBtn);
@@ -735,8 +773,8 @@ public class FormActivity extends AbstractForm {
         // Points
         redFoulPoints = (EditText) findViewById(R.id.redFoulEditTxt);
         blueFoulPoints = (EditText) findViewById(R.id.blueFoulEditTxt);
-        redScore = (EditText) findViewById(R.id.redScoreEditTxt);
-        blueScore = (EditText) findViewById(R.id.blueScoreEditTxt);
+        redScoreEditText = (EditText) findViewById(R.id.redScoreEditTxt);
+        blueScoreEditText = (EditText) findViewById(R.id.blueScoreEditTxt);
         saveBtn = (Button) findViewById(R.id.saveFormBtn);
         transferBtn = (Button) findViewById(R.id.transferFormBtn);
         viewTimelineBtn = (Button) findViewById(R.id.viewTimelineBtn);
@@ -747,12 +785,12 @@ public class FormActivity extends AbstractForm {
 
         EditTextWatcher textWatcher = new EditTextWatcher();
 
-        redLeft.addTextChangedListener(textWatcher);
-        redCenter.addTextChangedListener(textWatcher);
-        redRight.addTextChangedListener(textWatcher);
-        blueLeft.addTextChangedListener(textWatcher);
-        blueCenter.addTextChangedListener(textWatcher);
-        blueRight.addTextChangedListener(textWatcher);
+        redLeftEditText.addTextChangedListener(textWatcher);
+        redCenterEditText.addTextChangedListener(textWatcher);
+        redRightEditText.addTextChangedListener(textWatcher);
+        blueLeftEditText.addTextChangedListener(textWatcher);
+        blueCenterEditText.addTextChangedListener(textWatcher);
+        blueRightEditText.addTextChangedListener(textWatcher);
 
         CheckBoxChangeListener checkBoxHandler = new CheckBoxChangeListener();
         redLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
@@ -787,6 +825,11 @@ public class FormActivity extends AbstractForm {
         saveBtn.setOnClickListener(buttonListener);
         transferBtn.setOnClickListener(buttonListener);
         viewTimelineBtn.setOnClickListener(buttonListener);
+
+        for (int i = 0; i < invalidTeamNums.length; i++)
+        {
+            invalidTeamNums[i] = -1;
+        }
 
     }
 
@@ -854,10 +897,80 @@ public class FormActivity extends AbstractForm {
                 initLayout();
                 break;
             case WARNING_TEAMNUM:
-                // Determine which team number is invalid.
+                checkInvalidTeams();
+                String message = "The following team numbers are invalid: ";
+                for (int i = 0; i < invalidTeamNums.length; i++)
+                {
+                    if (invalidTeamNums[i] != -1)
+                    {
+                        message += invalidTeamNums+"\n";
+                        resetInvalidEditTexts(i);
+                    }
+                }
+
                 break;
         }
+        actionRequested = Action.NONE;
 
+    }
+
+    private boolean checkInvalidTeams()
+    {
+        boolean foundInvalidTeam = false;
+        for (int i = 0; i < teamsPlaying.length; i++)
+        {
+            int index = getTeamIndex(teamsPlaying[i]);
+            if (index == -1)
+            {
+                invalidTeamNums[i] = teamsPlaying[i];
+                foundInvalidTeam = true;
+            }
+        }
+        return foundInvalidTeam;
+    }
+    private void resetInvalidEditTexts(int index)
+    {
+        final String INVALID_MESSAGE = "INVALID";
+        switch (index)
+        {
+            case 0:
+                redLeftEditText.setText(INVALID_MESSAGE);
+                break;
+            case 1:
+                redCenterEditText.setText(INVALID_MESSAGE);
+                break;
+            case 2:
+                redRightEditText.setText(INVALID_MESSAGE);
+                break;
+            case 3:
+                blueLeftEditText.setText(INVALID_MESSAGE);
+                break;
+            case 4:
+                blueCenterEditText.setText(INVALID_MESSAGE);
+                break;
+            case 5:
+                blueRightEditText.setText(INVALID_MESSAGE);
+                break;
+            case 6:
+                scoutNameEditText.setText(INVALID_MESSAGE);
+                break;
+            case 7:
+                matchNumEditText.setText(INVALID_MESSAGE);
+        }
+    }
+
+    private int getTeamIndex(int teamNumber)
+    {
+        String teamNum = Integer.toString(teamNumber);
+        int index = 0;
+        boolean found = false;
+        while (!found && index < teams.length)
+        {
+            found = teams[index].equals(teamNum);
+            if (found) return index;
+            else index++;
+        }
+        return -1;
     }
 
     /**
@@ -880,19 +993,27 @@ public class FormActivity extends AbstractForm {
 
     /**
      * Reset the form after the save button is pressed.
+     * 1. Clear the edit texts (all of them).
+     * 2. Reset the checkboxes.
+     * 3. Clear the allRecords arrayList.
+     * 4. Reset the timer to 0.
+     * 5. Set the text of the timer to Start Timer.
+     * 6. Increment the matchNumEditText.
      */
     @Override
     void resetForm() {
+        resetCheckboxes();
+        resetEditTexts();
+        allRecords = new ArrayList<Record>();
+        resetTimer();
+        matchNum++;
+        matchNumEditText.setText(matchNum);
+    }
 
-        /**
-         * 1. Clear the edit texts (all of them).
-         * 2. Reset the checkboxes.
-         * 3. Clear the allRecords arrayList.
-         * 4. Reset the timer to 0.
-         * 5. Set the text of the timer to Start Timer.
-         * 6. Increment the matchNum.
-         */
-
+    private void resetTimer() {
+        timeInMilliseconds = 0;
+        startTimerBtn.setText("Start Timer");
+        adjustment = 0;
     }
 
     @Override
@@ -902,20 +1023,40 @@ public class FormActivity extends AbstractForm {
 
     @Override
     void resetCheckboxes() {
+        redLeftYellowLbl.setChecked(false);
+        redLeftRedLbl.setChecked(false);
+        redCenterYellowLbl.setChecked(false);
+        redCenterRedLbl.setChecked(false);
+        redRightYellowLbl.setChecked(false);
+        redRightRedLbl.setChecked(false);
+        blueLeftYellowLbl.setChecked(false);
+        blueLeftRedLbl.setChecked(false);
+        blueCenterYellowLbl.setChecked(false);
+        blueCenterRedLbl.setChecked(false);
+        blueRightYellowLbl.setChecked(false);
+        blueLeftRedLbl.setChecked(false);
+    }
+
+    void resetEditTexts()
+    {
+        redLeftEditText.setText("");
+        redCenterEditText.setText("");
+        redRightEditText.setText("");
+        blueLeftEditText.setText("");
+        blueCenterEditText.setText("");
+        blueRightEditText.setText("");
+        scoutNameEditText.setText("");
+        matchNumEditText.setText("");
+        redScoreEditText.setText("");
+        blueScoreEditText.setText("");
+        redFoulPoints.setText("");
+        blueFoulPoints.setText("");
 
     }
 
     public Form makeForm()
     {
-        // TODO: Change the -1 tablet number to the actual tablet number from the config file.
-        int[] teamNums = new int[6];
-        teamNums[0] = Integer.parseInt(redLeft.getText().toString());
-        teamNums[1] = Integer.parseInt(redCenter.getText().toString());
-        teamNums[2] = Integer.parseInt(redRight.getText().toString());
-        teamNums[3] = Integer.parseInt(blueLeft.getText().toString());
-        teamNums[4] = Integer.parseInt(blueCenter.getText().toString());
-        teamNums[5] = Integer.parseInt(blueRight.getText().toString());
-        OverallForm form = new OverallForm(-1, teamNums, Integer.parseInt(matchNum.getText().toString()), scoutName.getText().toString());
+        OverallForm form = new OverallForm(tabletNum, teamsPlaying, Integer.parseInt(matchNumEditText.getText().toString()), scoutNameEditText.getText().toString());
         form.addRecords(allRecords);
         return form;
     }
@@ -923,18 +1064,34 @@ public class FormActivity extends AbstractForm {
     @Override
     /**
      * Confirm if a form is ready to be saved.
+     * 1. Check that there are 6 team numbers, and that the teams are in the list of teams. --> set global variable for the invalid team number (or team number(s)) if it is invalid?
+     * 2. Check that there is a scout name, and that it is on the list of scout names.
+     * 3. Check that there is a match number (MN > 0).
+     * 4. Check if the timer is done (2:30). [maybe]
      */
     boolean readyToSave() {
-        /**
-         * 1. Check that there are 6 team numbers, and that the teams are in the list of teams. --> set global variable for the invalid team number (or team number(s)) if it is invalid?
-         * 2. Check that there is a scout name, and that it is on the list of scout names.
-         * 3. Check that there is a match number (MN > 0).
-         * 4. Check if the timer is done (2:30). [maybe]
-         */
-        // TODO: Create 6 global teamNum variables.
-        // TODO: Initialize global scoutName variable.
-        // TODO: Create/initialize global matchNum variable.
+        if (!checkInvalidTeams() || !checkInvalidScoutName() || matchNum < 0 || timeInMilliseconds != 150000) return false;
         return true;
+    }
+
+    private int findScoutNameIndex()
+    {
+        int index = 0;
+        boolean found = false;
+        while (!found && index < names.length)
+        {
+            found = names[index].equals(scoutName);
+            if (found) return index;
+            else index++;
+        }
+        return -1;
+    }
+
+    private boolean checkInvalidScoutName()
+    {
+        boolean foundInvalidScout = false;
+        foundInvalidScout = (findScoutNameIndex() == -1);
+        return foundInvalidScout;
     }
 
     @Override

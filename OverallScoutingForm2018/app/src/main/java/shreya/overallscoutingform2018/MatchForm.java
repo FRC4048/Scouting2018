@@ -40,8 +40,8 @@ public class MatchForm extends Form {
 
 
 
-//    public MatchForm(int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {
-//        super(FormType.MATCH_FORM, tabletNum, teamNum, scoutName, alliance, formID, matchNum);
+//    public MatchForm(int tabletNum, int teamNum, int matchNumEditText, String scoutNameEditText, int alliance, int formID) {
+//        super(FormType.MATCH_FORM, tabletNum, teamNum, scoutNameEditText, alliance, formID, matchNumEditText);
 //    } // End constructor
 //
     public MatchForm(int reportID, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {

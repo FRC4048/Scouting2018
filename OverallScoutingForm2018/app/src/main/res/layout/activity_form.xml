@@ -64,27 +64,30 @@
 
     <AutoCompleteTextView
         android:id="@+id/scoutNameEditTxt"
+        style="@android:style/Widget.AutoCompleteTextView"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/scoutNameLbl"
         android:layout_alignBottom="@+id/scoutNameLbl"
+        android:layout_alignLeft="@+id/scoutNameLbl"
         android:layout_below="@+id/basicLbl"
         android:layout_marginLeft="105dp"
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/scoutNameLbl"
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/matchNumEditTxt"
+        style="@android:style/Widget.AutoCompleteTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/scoutNameEditTxt"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="30dp"
         android:layout_alignStart="@+id/matchNumLbl"
+        android:layout_marginEnd="30dp"
         android:layout_marginStart="125dp"
         android:ems="10"
         android:inputType="number"
+        android:singleLine="true"
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <TextView

@@ -19,10 +19,14 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +43,7 @@ abstract public class AbstractForm extends Activity {
     static final String ARCHIVE_FILE = "archiveFile.txt";
     static final String CONFIG_FILE = "configFile.txt";
     static int archivedFiles = 0;
+    static final String TABLET_NUM_FILE = "tabletNumFile.txt";
 
     boolean firstForm = true;
     int formsPending = 0;
@@ -99,7 +104,24 @@ abstract public class AbstractForm extends Activity {
         } // End while
     } // End initArchiveSystem
 
-
+    public int readTabletNumber()
+    {
+        try {
+            BufferedReader fileReader = new BufferedReader(new FileReader(new File(getFilesDir().getAbsolutePath(), TABLET_NUM_FILE)));
+            String fileContents = fileReader.readLine();
+            if (fileContents == null)
+            {
+                return -1;
+            }
+            else
+                return Integer.parseInt(fileContents);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
     public void btTransfer(String fileName){
         File file = getFileStreamPath(fileName);

@@ -385,10 +385,24 @@ abstract public class AbstractForm extends Activity {
     } // End onPause
 
     @Override
+    public void onDestroy() {
+        saveState();
+        super.onDestroy();
+    } // End onPause
+
+    @Override
+    public void onStop()
+    {
+        saveState();
+        super.onStop();
+    }
+
+    @Override
     public void onBackPressed() {
         saveState();
         super.onBackPressed();
     } // End onBackPressed
+
 
     boolean saveForm() {
         String message = "There has been an I/O issue! FORM NOT SAVED.";

@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class OverallForm extends Form {
-    // [FORM TYPE]|[TABLET_NUMBER]|[SCOUT_NAME]|[RED_LEFT], [RED_CENTER], [RED_RIGHT], [BLUE_LEFT], [BLUE_CENTER], [BLUE_RIGHT]|[FORM_ID]|[MATCH_NUM]|records....
+    // [FORM TYPE]|[TABLET_NUMBER]|[SCOUT_NAME]|[RED_LEFT],[RED_CENTER],[RED_RIGHT],[BLUE_LEFT],[BLUE_CENTER],[BLUE_RIGHT]|[FORM_ID]|[MATCH_NUM]|records....
     private ArrayList<Form> teamForms;
     private int[] teamNums;
 
@@ -42,22 +42,12 @@ public class OverallForm extends Form {
     {
         /** Create an encapsulating form that contains the forms for the 5 other teams.
         This form should have all of the records for the overall form. **/
-        super(FormType.OVERALL_FORM, teamNums[0], tabletNum, matchNum, scoutName, RED_ALLIANCE_NUMBER);
+        super(FormType.OVERALL_FORM, teamNums[0], tabletNum, matchNum, scoutName, -1);
 
         this.teamNums = new int[teamNums.length];
         for (int i = 0; i < this.teamNums.length; i++)
         {
             this.teamNums[i] = teamNums[i];
-        }
-
-        for (int i = 1; i < teamNums.length; i++)
-        {
-            Form teamForm;
-            if (i < 2)
-                teamForm = new Form(FormType.OVERALL_FORM, tabletNum, teamNums[i], matchNum, scoutName, RED_ALLIANCE_NUMBER);
-            else
-                teamForm = new Form(FormType.OVERALL_FORM, tabletNum, teamNums[i], matchNum, scoutName, BLUE_ALLIANCE_NUMBER);
-            teamForms.add(teamForm);
         }
     }
 

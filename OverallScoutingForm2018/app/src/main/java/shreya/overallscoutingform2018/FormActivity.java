@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.os.Bundle;
 import android.text.Editable;
@@ -31,6 +32,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FormActivity extends AbstractForm {
     Context mContext = this;
@@ -86,7 +89,8 @@ public class FormActivity extends AbstractForm {
     final int teamNumLabelLength = 11;
 
     private long startTime = 0;
-    private Handler timerHandler = new Handler();
+    private Timer timer;
+    private Handler timerHandler;
     volatile long timeInMilliseconds = 0;
     long timeSwapBuff = 0;
     long updatedTime = 0;
@@ -116,24 +120,51 @@ public class FormActivity extends AbstractForm {
     int[] teamsPlaying = new int[6];
     int matchNum = 0;
     int[] invalidTeamNums = new int[6];
+    private long globalStartTime = SystemClock.uptimeMillis();
+    private long globalCurrentTime = globalStartTime;
+    private long globalEndTime = globalStartTime + 150*1000;
+    private ArrayList<Record> rawTimestampRecords = new ArrayList<>();
 
     private Runnable updateTimerThread = new Runnable() {
         @Override
         public void run() {
-            timeInMilliseconds = SystemClock.uptimeMillis() - startTime + adjustment;
-            updatedTime = timeSwapBuff + timeInMilliseconds;
+            globalCurrentTime = SystemClock.uptimeMillis();
+            System.out.println("GLOBAL CURRENT TIME: " + globalCurrentTime);
+            timeInMilliseconds = globalEndTime - globalCurrentTime;
+            System.out.println("CURRENT TIME IN MS: " + timeInMilliseconds);
             updateTimerText();
-            if (timeInMilliseconds < 150000) timerHandler.postDelayed(this, 1000);
+            new Thread(runTimerThread).run();
+        }
+    };
+
+    private class UpdateTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            globalCurrentTime = SystemClock.uptimeMillis();
+            System.out.println("GLOBAL CURRENT TIME: " + globalCurrentTime);
+            timeInMilliseconds = globalEndTime - globalCurrentTime;
+            System.out.println("CURRENT TIME IN MS: " + timeInMilliseconds);
+            if (globalCurrentTime < globalEndTime) timerHandler.obtainMessage(1).sendToTarget();
+        }
+    }
+
+    private Runnable runTimerThread = new Runnable() {
+        @Override
+        public void run() {
+            if (globalCurrentTime < globalEndTime) timerHandler.postDelayed(new Thread(updateTimerThread), 1000);
         }
     };
 
     private void updateTimerText() {
-        int secs = (int) (updatedTime / 1000);
-        int mins = secs / 60;
-        secs = secs % 60;
-        startTimerBtn.setText("" + mins + ":" +
-                String.format("%02d", secs));
+        int secs = (int) (timeInMilliseconds / 1000);
+        startTimerBtn.setText(Integer.toString(secs));
+//        int mins = secs / 60;
+//        secs = secs % 60;
+//        startTimerBtn.setText("" + mins + ":" +
+//                String.format("%02d", secs));
     }
+
 
     ArrayList<Record> allRecords = new ArrayList<>();
 
@@ -144,6 +175,14 @@ public class FormActivity extends AbstractForm {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_form);
+        timerHandler = new Handler()
+        {
+            public void handleMessage(Message msg)
+            {
+                updateTimerText();
+            }
+        };
+        timer = new Timer();
         tabletNumFile = new File(getFilesDir().getAbsolutePath(), TABLET_NUM_FILE);
         if (!tabletNumFile.exists()) {
             try {
@@ -185,123 +224,109 @@ public class FormActivity extends AbstractForm {
             switch (currId) {
                 case R.id.startTimerBtn: {
                     System.out.println("Start timer button pressed.");
-                    startTime = SystemClock.uptimeMillis();
-                    adjustment = 0;
-                    timerHandler.postDelayed(updateTimerThread, 0);
+                    globalStartTime = SystemClock.uptimeMillis();
+                    System.out.println("GLOBAL START TIME: " + globalStartTime);
+                    globalCurrentTime = SystemClock.uptimeMillis();
+                    globalEndTime = globalStartTime + 150*1000;
+                    System.out.println("GLOBAL END TIME: " + globalEndTime);
+                    timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000);
                     break;
                 }
                 case R.id.addTimerBtn: {
                     System.out.println("Increased timer.");
-                    adjustment += 1000;
-                    updateRecords(1.0);
-                    updateTimerText();
+                    globalStartTime += 1000 - (globalStartTime % 1000);
+                    globalEndTime = globalStartTime + (150*1000);
+                    System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
+                    System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
+                    System.out.println("NEW GLOBAL CURRENT TIME: " + globalCurrentTime);
+                    timerHandler.obtainMessage(1).sendToTarget();
                     break;
                 }
                 case R.id.subtractTimerBtn: {
                     System.out.println("Decreased timer.");
-                    adjustment -= 2000;
-                    updateRecords(-1.0);
+                    globalStartTime -= globalStartTime % 1000;
+                    globalEndTime = globalStartTime + (150*1000);
+                    System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
+                    System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
+                    System.out.println("NEW GLOBAL CURRENT TIME: " + globalCurrentTime);
                     updateTimerText();
                     break;
                 }
                 case R.id.redOwnershipScaleBtn: {
-                    System.out.println("Red alliance gained ownership of the scale.");
-                    Record redScale = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_OWNS_SCALE.getId());
-                    allRecords.add(redScale);
-                    printRecords();
-                    System.out.println();
+                    System.out.println("Red alliance gained ownership of the scale at " + globalCurrentTime + ".");
+                    Record redScale = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_OWNS_SCALE.getId());
+                    rawTimestampRecords.add(redScale);
                     break;
                 }
                 case R.id.redSwitchOwnershipBtn: {
                     System.out.println("Red alliance gained ownership of red switch.");
-                    Record redSwitch = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_OWNS_RED_SWITCH.getId());
-                    allRecords.add(redSwitch);
-                    printRecords();
-                    System.out.println();
+                    Record redSwitch = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_OWNS_RED_SWITCH.getId());
+                    rawTimestampRecords.add(redSwitch);
                     break;
                 }
                 case R.id.redBlueSwitchOwnershipBtn: {
                     System.out.println("Red alliance gained ownership of the blue switch.");
-                    Record redBlueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_OWNS_BLUE_SWITCH.getId());
-                    allRecords.add(redBlueSwitch);
-                    printRecords();
-                    System.out.println();
+                    Record redBlueSwitch = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_OWNS_BLUE_SWITCH.getId());
+                    rawTimestampRecords.add(redBlueSwitch);
                     break;
                 }
                 case R.id.redBoostBtn: {
                     System.out.println("Red alliance used boost.");
-                    Record redBoost = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_USED_BOOST.getId());
-                    allRecords.add(redBoost);
-                    printRecords();
-                    System.out.println();
+                    Record redBoost = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_USED_BOOST.getId());
+                    rawTimestampRecords.add(redBoost);
                     break;
                 }
                 case R.id.redForceBtn: {
                     System.out.println("Red alliance used force.");
-                    Record redForce = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_USED_FORCE.getId());
-                    allRecords.add(redForce);
-                    printRecords();
-                    System.out.println();
+                    Record redForce = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_USED_FORCE.getId());
+                    rawTimestampRecords.add(redForce);
                     break;
                 }
                 case R.id.redLevitateBtn: {
                     System.out.println("Red alliance used levitate.");
-                    Record redLevitate = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.RED_USED_LEVITATE.getId());
-                    allRecords.add(redLevitate);
-                    printRecords();
-                    System.out.println();
+                    Record redLevitate = new Record(Long.toString(globalCurrentTime), OverallForm.Items.RED_USED_LEVITATE.getId());
+                    rawTimestampRecords.add(redLevitate);
                     break;
                 }
                 case R.id.blueScaleOwnershipBtn: {
                     System.out.println("Blue alliance gained ownership of the scale.");
-                    Record blueScale = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_OWNS_SCALE.getId());
-                    allRecords.add(blueScale);
-                    printRecords();
-                    System.out.println();
+                    Record blueScale = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_OWNS_SCALE.getId());
+                    rawTimestampRecords.add(blueScale);
                     break;
                 }
                 case R.id.blueSwitchOwnershipBtn: {
                     System.out.println("Blue alliance gained ownership of blue switch.");
-                    Record blueSwitch = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_OWNS_BLUE_SWITCH.getId());
-                    allRecords.add(blueSwitch);
-                    printRecords();
-                    System.out.println();
+                    Record blueSwitch = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_OWNS_BLUE_SWITCH.getId());
+                    rawTimestampRecords.add(blueSwitch);
                     break;
                 }
                 case R.id.blueRedSwitchOwnershipBtn: {
                     System.out.println("Blue alliance gained ownership of red switch.");
-                    Record blueRedSwitch = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_OWNS_RED_SWITCH.getId());
-                    allRecords.add(blueRedSwitch);
-                    printRecords();
-                    System.out.println();
+                    Record blueRedSwitch = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_OWNS_RED_SWITCH.getId());
+                    rawTimestampRecords.add(blueRedSwitch);
                     break;
                 }
                 case R.id.blueBoostBtn: {
                     System.out.println("Blue used boost");
-                    Record blueBoost = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_USED_BOOST.getId());
-                    allRecords.add(blueBoost);
-                    printRecords();
-                    System.out.println();
+                    Record blueBoost = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_USED_BOOST.getId());
+                    rawTimestampRecords.add(blueBoost);
                     break;
                 }
                 case R.id.blueForceBtn: {
                     System.out.println("Blue used force");
-                    Record blueForce = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_USED_FORCE.getId());
-                    allRecords.add(blueForce);
-                    printRecords();
-                    System.out.println();
+                    Record blueForce = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_USED_FORCE.getId());
+                    rawTimestampRecords.add(blueForce);
                     break;
                 }
                 case R.id.blueLevitateBtn: {
                     System.out.println("Blue used levitate");
-                    Record blueLevitate = new Record(Double.toString((timeInMilliseconds + adjustment) / 1000.0), OverallForm.Items.BLUE_USED_LEVITATE.getId());
-                    allRecords.add(blueLevitate);
-                    System.out.println(blueLevitate);
-                    printRecords();
-                    System.out.println();
+                    Record blueLevitate = new Record(Long.toString(globalCurrentTime), OverallForm.Items.BLUE_USED_LEVITATE.getId());
+                    rawTimestampRecords.add(blueLevitate);
                     break;
                 }
                 case R.id.saveFormBtn: {
+                    processRawTimeStampRecords();
+                    printRecords();
                     System.out.println("Attempting to save form");
                     if (readyToSave()) {
                         showAlertDialog("Are you sure you want to save this form?", "Yes");
@@ -317,7 +342,9 @@ public class FormActivity extends AbstractForm {
                             message += "- The match number is invalid." + "\n";
                             resetInvalidEditTexts(7);
                         }
-                        if (timeInMilliseconds != 150000)
+                        System.out.println("GCT: " + globalCurrentTime);
+                        System.out.println("GET: " + globalEndTime);
+                        if (globalCurrentTime <= globalEndTime)
                             message += "- The timer is not yet done." + "\n";
                         actionRequested = Action.SAVE_FORM;
                         showAlertDialog(message, "OK");
@@ -341,6 +368,17 @@ public class FormActivity extends AbstractForm {
     private void printRecords() {
         for (Record r : allRecords) {
             System.out.print(r + "|");
+        }
+    }
+
+    private void processRawTimeStampRecords()
+    {
+        for (Record r : rawTimestampRecords)
+        {
+            long recordedTime = Long.parseLong(r.getValue());
+            long elapsedTime = globalEndTime - recordedTime;
+            Record processedTimeRec = new Record(Long.toString(elapsedTime), r.getItemID());
+            allRecords.add(processedTimeRec);
         }
     }
 
@@ -499,6 +537,7 @@ public class FormActivity extends AbstractForm {
         @Override
         public void afterTextChanged(Editable editable) {
             EditText currEditText = (EditText) getCurrentFocus();
+            if (currEditText == null) return;
             int currId = currEditText.getId();
             switch (currId) {
                 case R.id.redLeftEditTxt: {
@@ -509,7 +548,7 @@ public class FormActivity extends AbstractForm {
                         }
                         redLeftYellowLbl.setText(teamNum);
                         redLeftRedLbl.setText(teamNum);
-                        teamsPlaying[0] = Integer.parseInt(teamNum);
+                        teamsPlaying[0] = Integer.parseInt(teamNum.trim());
                         redLeftYellow = new Record(redLeftEditText.getText().toString(), yellowCardID);
                         redLeftRed = new Record(redLeftEditText.getText().toString(), redCardID);
                         break;
@@ -523,7 +562,7 @@ public class FormActivity extends AbstractForm {
                         }
                         redCenterYellowLbl.setText(teamNum);
                         redCenterRedLbl.setText(teamNum);
-                        teamsPlaying[1] = Integer.parseInt(teamNum);
+                        teamsPlaying[1] = Integer.parseInt(teamNum.trim());
                         redCenterYellow = new Record(redCenterEditText.getText().toString(), yellowCardID);
                         redCenterRed = new Record(redCenterEditText.getText().toString(), redCardID);
                         break;
@@ -537,7 +576,7 @@ public class FormActivity extends AbstractForm {
                         }
                         redRightYellowLbl.setText(teamNum);
                         redRightRedLbl.setText(teamNum);
-                        teamsPlaying[2] = Integer.parseInt(teamNum);
+                        teamsPlaying[2] = Integer.parseInt(teamNum.trim());
                         redRightYellow = new Record(redRightEditText.getText().toString(), yellowCardID);
                         redRightRed = new Record(redRightEditText.getText().toString(), redCardID);
                         break;
@@ -551,7 +590,7 @@ public class FormActivity extends AbstractForm {
                         }
                         blueLeftYellowLbl.setText(teamNum);
                         blueLeftRedLbl.setText(teamNum);
-                        teamsPlaying[3] = Integer.parseInt(teamNum);
+                        teamsPlaying[3] = Integer.parseInt(teamNum.trim());
                         blueLeftYellow = new Record(blueLeftEditText.getText().toString(), yellowCardID);
                         blueLeftRed = new Record(blueLeftEditText.getText().toString(), redCardID);
                         break;
@@ -565,7 +604,7 @@ public class FormActivity extends AbstractForm {
                         }
                         blueCenterYellowLbl.setText(teamNum);
                         blueCenterRedLbl.setText(teamNum);
-                        teamsPlaying[4] = Integer.parseInt(teamNum);
+                        teamsPlaying[4] = Integer.parseInt(teamNum.trim());
                         blueCenterYellow = new Record(blueCenterEditText.getText().toString(), yellowCardID);
                         blueCenterRed = new Record(blueCenterEditText.getText().toString(), redCardID);
                         break;
@@ -579,7 +618,7 @@ public class FormActivity extends AbstractForm {
                         }
                         blueRightYellowLbl.setText(teamNum);
                         blueRightRedLbl.setText(teamNum);
-                        teamsPlaying[5] = Integer.parseInt(teamNum);
+                        teamsPlaying[5] = Integer.parseInt(teamNum.trim());
                         blueRightYellow = new Record(blueRightEditText.getText().toString(), yellowCardID);
                         blueRightRed = new Record(blueRightEditText.getText().toString(), redCardID);
                         break;
@@ -589,6 +628,7 @@ public class FormActivity extends AbstractForm {
                     if (currEditText.getText().toString().length() > 0) {
                         String redScore = currEditText.getText().toString();
                         redAllianceScore = new Record(redScore, OverallForm.Items.RED_SCORE.getId());
+                        allRecords.add(redAllianceScore);
                     }
                     break;
                 }
@@ -596,6 +636,7 @@ public class FormActivity extends AbstractForm {
                     if (currEditText.getText().toString().length() > 0) {
                         String blueScore = currEditText.getText().toString();
                         blueAllianceScore = new Record(blueScore, OverallForm.Items.BLUE_SCORE.getId());
+                        allRecords.add(blueAllianceScore);
                     }
                     break;
                 }
@@ -603,6 +644,7 @@ public class FormActivity extends AbstractForm {
                     if (currEditText.getText().toString().length() > 0) {
                         String redFoul = currEditText.getText().toString();
                         redFoulPts = new Record(redFoul, OverallForm.Items.RED_FOUL_POINTS.getId());
+                        allRecords.add(redFoulPts);
                     }
                     break;
                 }
@@ -610,16 +652,21 @@ public class FormActivity extends AbstractForm {
                     if (currEditText.getText().toString().length() > 0) {
                         String blueFoul = currEditText.getText().toString();
                         blueFoulPts = new Record(blueFoul, OverallForm.Items.BLUE_FOUL_POINTS.getId());
+                        allRecords.add(blueFoulPts);
                     }
+                    break;
                 }
                 case R.id.scoutNameEditTxt: {
                     if (currEditText.getText().toString().length() > 0) {
                         scoutName = currEditText.getText().toString();
+                        System.out.println("Set Scout Name: " + scoutName);
                     }
+                    break;
                 }
                 case R.id.matchNumEditTxt: {
                     if (currEditText.getText().toString().length() > 0)
                         matchNum = Integer.parseInt(currEditText.getText().toString());
+                    break;
                 }
                 default:
                     System.out.println("ERROR.");
@@ -640,20 +687,10 @@ public class FormActivity extends AbstractForm {
         if (tabletNumFile.exists()) System.out.println("tabletNumFile exists now");
         else System.out.println("tabletNumFile still does not exist"); 
         names = getResources().getStringArray(R.array.scout_names);
-        System.out.println("Scout Names: ");
-        for (String name : names) {
-            System.out.print(name + "|");
-        }
-        System.out.println(); 
         teams = getResources().getStringArray(R.array.team_numbers);
-        System.out.println("Team Numbers: ");
-        for (String teamNum : teams) {
-            System.out.print(teamNum + "|");
-        }
         pcCompanion = getResources().getString(R.string.pc_companion);
         tabletNum = readTabletNumber();
         if (tabletNum == -1) showTabletNumDialog();
-        System.out.println("Tablet Num: " + tabletNum); 
     }
 
 //        String message = "There has been an I/O issue!\nCONFIG FAILED";
@@ -796,6 +833,12 @@ public class FormActivity extends AbstractForm {
         blueLeftEditText.addTextChangedListener(textWatcher);
         blueCenterEditText.addTextChangedListener(textWatcher);
         blueRightEditText.addTextChangedListener(textWatcher);
+        matchNumEditText.addTextChangedListener(textWatcher);
+        scoutNameEditText.addTextChangedListener(textWatcher);
+        redScoreEditText.addTextChangedListener(textWatcher);
+        blueScoreEditText.addTextChangedListener(textWatcher);
+        redFoulPoints.addTextChangedListener(textWatcher);
+        blueFoulPoints.addTextChangedListener(textWatcher);
 
         CheckBoxChangeListener checkBoxHandler = new CheckBoxChangeListener();
         redLeftYellowLbl.setOnCheckedChangeListener(checkBoxHandler);
@@ -840,17 +883,80 @@ public class FormActivity extends AbstractForm {
 
     /**
      * Fail-safe in case the user accidentally closes the form. Initializes the save state. Restores fields for the Report.
+     * 1. Make sure STATE_SAVE_FILE exists.
+     * 2. Read from STATE_SAVE_FILE.
+     * 3. Restore the team numbers.
+     * 4. Restore the match number.
+     * 5. Restore the scout name.
      */
     @Override
     void initSaveState() {
-        /**
-         * 1. Make sure STATE_SAVE_FILE exists.
-         * 2. Read from STATE_SAVE_FILE.
-         * 3. Restore the team numbers.
-         * 4. Restore the match number.
-         * 5. Restore the scout name.
-         */
-
+        File saveStateFile = new File(getFilesDir().getAbsolutePath(), STATE_SAVE_FILE);
+        if (saveStateFile.exists())
+        {
+            System.out.println("READING FROM STATE SAVE FILE");
+            try {
+                BufferedReader saveStateReader = new BufferedReader(new FileReader(saveStateFile));
+                String formsPendingNum = saveStateReader.readLine();
+                System.out.println("formsPendingNum: " + formsPendingNum);
+                String teamNumbers = saveStateReader.readLine();
+                System.out.println("teamNumbers: " + teamNumbers);
+                String storedMatchNum = saveStateReader.readLine();
+                System.out.println("storedMatchNum: " + storedMatchNum);
+                String storedScoutName = saveStateReader.readLine();
+                System.out.println("storedScoutName: " + storedScoutName);
+                String storedRecords = saveStateReader.readLine();
+                System.out.println("storedRecords: " + storedRecords);
+                String savedStartTime = saveStateReader.readLine();
+                String savedEndTime = saveStateReader.readLine();
+                String savedCurrTime = saveStateReader.readLine();
+                formsPending = Integer.parseInt(formsPendingNum);
+                formsPendingLbl.setText(formsPendingNum + " Forms Pending");
+                String[] teamsArr = teamNumbers.split("\\|");
+                for (int i = 0; i < teamsArr.length; i++)
+                {
+                    teamsPlaying[i] = Integer.parseInt(teamsArr[i]);
+                }
+                System.out.print("TEAMS: ");
+                for (int team : teamsPlaying)
+                {
+                    System.out.print(team + "|");
+                }
+                redLeftEditText.requestFocus();
+                redLeftEditText.setText(Integer.toString(teamsPlaying[0]));
+                redCenterEditText.requestFocus();
+                redCenterEditText.setText(Integer.toString(teamsPlaying[1]));
+                redRightEditText.requestFocus();
+                redRightEditText.setText(Integer.toString(teamsPlaying[2]));
+                blueLeftEditText.requestFocus();
+                blueLeftEditText.setText(Integer.toString(teamsPlaying[3]));
+                blueCenterEditText.requestFocus();
+                blueCenterEditText.setText(Integer.toString(teamsPlaying[4]));
+                blueRightEditText.requestFocus();
+                blueRightEditText.setText(Integer.toString(teamsPlaying[5]));
+                matchNum = Integer.parseInt(storedMatchNum);
+                matchNumEditText.requestFocus();
+                matchNumEditText.setText(Integer.toString(matchNum));
+                scoutName = storedScoutName;
+                scoutNameEditText.setText(scoutName);
+                String[] records = storedRecords.split("\\|");
+                System.out.println("STORED RECORDS: ");
+                for (String record : records)
+                {
+                    System.out.println(record);
+                }
+                setState(records, 0);
+                globalStartTime = Long.parseLong(savedStartTime);
+                globalEndTime = Long.parseLong(savedEndTime);
+                globalCurrentTime = Long.parseLong(savedCurrTime);
+                updateTimerText();
+              //  timerHandler.postDelayed(updateTimerThread, 0);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -925,11 +1031,19 @@ public class FormActivity extends AbstractForm {
         for (int i = 0; i < teamsPlaying.length; i++)
         {
             int index = getTeamIndex(teamsPlaying[i]);
+            System.out.println("Found team #" + teamsPlaying[i] + " at index = " + index+".");
             if (index == -1)
             {
                 invalidTeamNums[i] = teamsPlaying[i];
                 foundInvalidTeam = true;
             }
+
+            System.out.print("invalidTeamNums at this point: ");
+            for (int j = 0; j < invalidTeamNums.length - 1; j++)
+            {
+                System.out.print(invalidTeamNums[j] + ",");
+            }
+            System.out.println(invalidTeamNums[invalidTeamNums.length -1]);
         }
         return foundInvalidTeam;
     }
@@ -994,6 +1108,53 @@ public class FormActivity extends AbstractForm {
          * - Store records for this form.
          */
 
+        File saveStateFile = new File(getFilesDir().getAbsolutePath(), STATE_SAVE_FILE);
+        if (!saveStateFile.exists())
+        {
+            System.out.println("saveStateFile does not exist.");
+            try {
+                saveStateFile.createNewFile();
+                saveStateFile.setWritable(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (saveStateFile.exists())
+        {
+            System.out.println("saveStateFile exists.");
+            String saveStateStr = "";
+            saveStateStr += Integer.toString(formsPending) + "\n";
+            for (int i = 0; i < teamsPlaying.length - 1; i++)
+            {
+                saveStateStr += teamsPlaying[i] + "|";
+            }
+            saveStateStr += teamsPlaying[teamsPlaying.length-1] + "\n";
+            saveStateStr += Integer.toString(matchNum) + "\n";
+            saveStateStr += scoutName + "\n";
+            processRawTimeStampRecords();
+            if (allRecords.size() > 0)
+            {
+                for (int i = 0; i < allRecords.size()-1; i++)
+                {
+                    saveStateStr += allRecords.get(i) + "|";
+                }
+                saveStateStr += allRecords.get(allRecords.size()-1);
+            }
+            printRecords();
+            saveStateStr+="\n" + Long.toString(globalStartTime) + "\n";
+            saveStateStr += Long.toString(globalEndTime) + "\n";
+            saveStateStr += Long.toString(globalCurrentTime) + "\n";
+            System.out.println("saveStateStr: " + "\n"+ saveStateStr.toString());
+            BufferedWriter saveStateWriter = null;
+            try {
+                saveStateWriter = new BufferedWriter(new FileWriter(saveStateFile));
+                saveStateWriter.write(saveStateStr);
+                saveStateWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**
@@ -1010,15 +1171,17 @@ public class FormActivity extends AbstractForm {
         resetCheckboxes();
         resetEditTexts();
         allRecords = new ArrayList<Record>();
+        rawTimestampRecords = new ArrayList<>();
         resetTimer();
         matchNum++;
-        matchNumEditText.setText(matchNum);
+        matchNumEditText.setText(Integer.toString(matchNum));
     }
 
     private void resetTimer() {
-        timeInMilliseconds = 0;
+        globalStartTime = SystemClock.uptimeMillis();
+        globalEndTime = globalStartTime + 150*1000;
+        globalCurrentTime = SystemClock.uptimeMillis();
         startTimerBtn.setText("Start Timer");
-        adjustment = 0;
     }
 
     @Override
@@ -1050,8 +1213,6 @@ public class FormActivity extends AbstractForm {
         blueLeftEditText.setText("");
         blueCenterEditText.setText("");
         blueRightEditText.setText("");
-        scoutNameEditText.setText("");
-        matchNumEditText.setText("");
         redScoreEditText.setText("");
         blueScoreEditText.setText("");
         redFoulPoints.setText("");
@@ -1081,12 +1242,23 @@ public class FormActivity extends AbstractForm {
 
     private int findScoutNameIndex()
     {
+        System.out.print("Scout Names: ");
+        for (int i = 0; i < names.length - 1; i++)
+        {
+            System.out.print(names[i] + ", ");
+        }
+        System.out.println(names[names.length-1]);
+
         int index = 0;
         boolean found = false;
         while (!found && index < names.length)
         {
             found = names[index].equals(scoutName);
-            if (found) return index;
+            if (found)
+            {
+                System.out.println("Found " + scoutName + "at index = " + index);
+                return index;
+            }
             else index++;
         }
         return -1;
@@ -1095,21 +1267,135 @@ public class FormActivity extends AbstractForm {
     private boolean checkInvalidScoutName()
     {
         boolean foundInvalidScout = false;
-        foundInvalidScout = (findScoutNameIndex() == -1);
+        foundInvalidScout = !(findScoutNameIndex() == -1);
+        System.out.println("foundInvalidScout: " + foundInvalidScout);
         return foundInvalidScout;
     }
 
     @Override
     void setState(String[] records, int startingIndex) {
-        /**
-         * 1. Read through array of records (passed as param) & set the other fields (other than the report fields) to their appropriate state.
-         * [preparing the String array that is passed]
-         * 1. Get length of allRecords arraylist.
-         * 2. Create String array of the right size.
-         * 3. Set each element in the String array to the toString of the corresponding record in the allRecords.
-         * Called in initSavedState.
-         */
-    }
 
+        for (String record : records)
+        {
+            String[] recordAndVal = record.split("\\,");
+            if (recordAndVal.length == 2)
+            {
+                Record currRec = new Record(recordAndVal[1], Integer.parseInt(recordAndVal[0]));
+                allRecords.add(currRec);
+
+                int itemID = currRec.getItemID();
+                String val = currRec.getValue();
+                final int YELLOW_CARD_ID = OverallForm.Items.YELLOW_CARD.getId();
+                final int RED_CARD_ID = OverallForm.Items.RED_CARD.getId();
+                if (itemID == OverallForm.Items.YELLOW_CARD.getId())
+                {
+                    if (Integer.parseInt(val) == teamsPlaying[0]) redLeftYellowLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[1]) redCenterYellowLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[2]) redRightYellowLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[3]) blueLeftYellowLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[4]) blueCenterYellowLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[5]) blueRightYellowLbl.setChecked(true);
+                    else System.out.println("ERROR: CANNOT DETERMINE TEAM.");
+                }
+                else if (itemID == OverallForm.Items.RED_CARD.getId())
+                {
+                    if (Integer.parseInt(val) == teamsPlaying[0]) redLeftRedLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[1]) redCenterRedLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[2]) redRightRedLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[3]) blueLeftRedLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[4]) blueCenterRedLbl.setChecked(true);
+                    else if (Integer.parseInt(val) == teamsPlaying[5]) blueRightRedLbl.setChecked(true);
+                    else System.out.println("ERROR: CANNOT DETERMINE TEAM.");
+                }
+                else if (itemID == OverallForm.Items.RED_SCORE.getId())
+                {
+                    redScoreEditText.setText(val);
+                }
+                else if (itemID == OverallForm.Items.BLUE_SCORE.getId())
+                {
+                    blueScoreEditText.setText(val);
+                }
+                else if (itemID == OverallForm.Items.RED_FOUL_POINTS.getId())
+                {
+                    redFoulPoints.setText(val);
+                }
+                else if (itemID == OverallForm.Items.BLUE_FOUL_POINTS.getId())
+                {
+                    blueFoulPoints.setText(val);
+                }
+                else System.out.println("ERROR: CANNOT DETERMINE THE ID OF THE RECORD.");
+            }
+        }
+
+
+//            switch (itemID)
+//            {
+//                case YELLOW_CARD_ID: {
+//                    switch (val) {
+//                        case teamsPlaying[0]:
+//                            redLeftYellowLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[1]:
+//                            redCenterYellowLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[2]:
+//                            redRightYellowLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[3]:
+//                            blueLeftYellowLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[4]:
+//                            blueCenterYellowLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[5]:
+//                            blueCenterRedLbl.setChecked(true);
+//                    }
+//                }
+//                case RED_CARD_ID:
+//                {
+//                    switch(val)
+//                    {
+//                        case teamsPlaying[0]:
+//                            redLeftRedLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[1]:
+//                            redCenterRedLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[2]:
+//                            redRightRedLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[3]:
+//                            blueLeftRedLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[4]:
+//                            blueCenterRedLbl.setChecked(true);
+//                            break;
+//                        case teamsPlaying[5]:
+//                            blueRightRedLbl.setChecked(true);
+//                    }
+//                }
+//                case OverallForm.Items.RED_SCORE.getId():
+//                {
+//                    redScoreEditText.setText(Integer.toString(val));
+//                    break;
+//                }
+//                case OverallForm.Items.BLUE_SCORE.getId():
+//                {
+//                    blueScoreEditText.setText(Integer.toString(val));
+//                    break;
+//                }
+//                case OverallForm.Items.RED_FOUL_POINTS.getId():
+//                {
+//                    redFoulPoints.setText(Integer.toString(val));
+//                    break;
+//                }
+//                case OverallForm.Items.BLUE_FOUL_POINTS.getId():
+//                {
+//                    blueFoulPoints.setText(Integer.toString(val));
+//                    break;
+//                }
+//                default: System.out.println("ERROR: CANNOT DETERMINE RECORD ID.");
+//            }
+    }
 }
 

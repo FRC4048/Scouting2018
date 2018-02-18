@@ -327,26 +327,39 @@ public class FormActivity extends AbstractForm {
                 case R.id.saveFormBtn: {
                     processRawTimeStampRecords();
                     printRecords();
+                    boolean readyToSave = true;
                     System.out.println("Attempting to save form");
-                    if (readyToSave()) {
-                        showAlertDialog("Are you sure you want to save this form?", "Yes");
-                    } else {
-                        String message = "Cannot save the form because";
-                        if (!checkInvalidTeams())
-                            message += "- There are invalid team numbers." + "\n";
-                        if (!checkInvalidScoutName()) {
-                            message += "- The scout name is invalid." + "\n";
-                            resetInvalidEditTexts(6);
-                        }
-                        if (matchNum <= 0) {
-                            message += "- The match number is invalid." + "\n";
-                            resetInvalidEditTexts(7);
-                        }
-                        System.out.println("GCT: " + globalCurrentTime);
-                        System.out.println("GET: " + globalEndTime);
-                        if (globalCurrentTime <= globalEndTime)
-                            message += "- The timer is not yet done." + "\n";
+                    String message = "Cannot save the form because";
+                    if (checkInvalidTeams())
+                    {
+                        message += "\n" + "- There are invalid team numbers." + "\n";
+                        readyToSave = false;
+                    }
+                    if (checkInvalidScoutName()) {
+                        message += "\n" + "- The scout name is invalid." + "\n";
+                        resetInvalidEditTexts(6);
+                        readyToSave = false;
+                    }
+                    if (matchNum <= 0) {
+                        message += "\n" + "- The match number is invalid." + "\n";
+                        resetInvalidEditTexts(7);
+                        readyToSave = false;
+                    }
+                    System.out.println("GCT: " + globalCurrentTime);
+                    System.out.println("GET: " + globalEndTime);
+                    if (globalCurrentTime > globalEndTime)
+                    {
+                        message += "- The timer is not yet done." + "\n";
+                        readyToSave = false;
+                    }
+                    if (readyToSave)
+                    {
                         actionRequested = Action.SAVE_FORM;
+                        showAlertDialog("Are you sure you want to save this form?", "Yes");
+                    }
+                    else
+                    {
+                        actionRequested = Action.NONE;
                         showAlertDialog(message, "OK");
                     }
                     break;
@@ -879,6 +892,7 @@ public class FormActivity extends AbstractForm {
             invalidTeamNums[i] = -1;
         }
 
+        startTimerBtn.setText("Start Timer");
     }
 
     /**
@@ -1081,13 +1095,8 @@ public class FormActivity extends AbstractForm {
     private int getTeamIndex(int teamNumber)
     {
         String teamNum = Integer.toString(teamNumber);
-        int index = 0;
-        boolean found = false;
-        while (!found && index < teams.length)
-        {
-            found = teams[index].equals(teamNum);
-            if (found) return index;
-            else index++;
+        for (int i = 0; i < teams.length; i++) {
+            if (teams[i].equals(teamNum)) return i;
         }
         return -1;
     }
@@ -1192,17 +1201,29 @@ public class FormActivity extends AbstractForm {
     @Override
     void resetCheckboxes() {
         redLeftYellowLbl.setChecked(false);
+        redLeftYellowLbl.setText("Red Left   ");
         redLeftRedLbl.setChecked(false);
+        redLeftRedLbl.setText("Red Left   ");
         redCenterYellowLbl.setChecked(false);
+        redCenterYellowLbl.setText("Red Center ");
         redCenterRedLbl.setChecked(false);
+        redCenterRedLbl.setText("Red Center ");
         redRightYellowLbl.setChecked(false);
+        redRightYellowLbl.setText("Red Right  ");
+        redRightRedLbl.setText("Red Right  ");
         redRightRedLbl.setChecked(false);
         blueLeftYellowLbl.setChecked(false);
+        blueLeftYellowLbl.setText("Blue Left  ");
         blueLeftRedLbl.setChecked(false);
+        blueLeftRedLbl.setText("Blue Left  ");
         blueCenterYellowLbl.setChecked(false);
+        blueCenterYellowLbl.setText("Blue Center");
+        blueCenterRedLbl.setText("Blue Center");
         blueCenterRedLbl.setChecked(false);
         blueRightYellowLbl.setChecked(false);
-        blueLeftRedLbl.setChecked(false);
+        blueRightYellowLbl.setText("Blue Right ");
+        blueRightRedLbl.setChecked(false);
+        blueRightRedLbl.setText("Blue Right ");
     }
 
     void resetEditTexts()
@@ -1236,7 +1257,7 @@ public class FormActivity extends AbstractForm {
      * 4. Check if the timer is done (2:30). [maybe]
      */
     boolean readyToSave() {
-        if (!checkInvalidTeams() || !checkInvalidScoutName() || matchNum < 0 || timeInMilliseconds != 150000) return false;
+        if (checkInvalidTeams() || checkInvalidScoutName() || matchNum < 0 || globalCurrentTime > globalEndTime) return false;
         return true;
     }
 
@@ -1267,7 +1288,7 @@ public class FormActivity extends AbstractForm {
     private boolean checkInvalidScoutName()
     {
         boolean foundInvalidScout = false;
-        foundInvalidScout = !(findScoutNameIndex() == -1);
+        foundInvalidScout = (findScoutNameIndex() == -1);
         System.out.println("foundInvalidScout: " + foundInvalidScout);
         return foundInvalidScout;
     }

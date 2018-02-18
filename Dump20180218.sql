@@ -250,6 +250,47 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `procInsertOverallReport` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `procInsertOverallReport`(
+	IN formType BOOL,
+    IN tabletNum INT(11),
+    IN scoutName VARCHAR(250),
+    IN redLeft INT(11),
+    IN redCenter INT(11), 
+    IN redRight INT(11), 
+    IN blueLeft INT(11), 
+    IN blueCenter INT(11), 
+    IN blueRight INT(11),
+	IN matchNum INT(11),
+    OUT formId INT(11) 
+)
+BEGIN
+	SELECT (@id := LAST_INSERT_ID()) FROM scouting.report;
+    SET @id = @id +1;
+    INSERT INTO scouting.report (FormID, FormType, TabletNum, ScoutName, TeamNum, MatchNum, Alliance)
+	VALUES (@id, formType, tabletNum, scoutName, redLeft, matchNum, 0),
+    (@id, formType, tabletNum, scoutName, redCenter, matchNum, 0),
+    (@id, formType, tabletNum, scoutName, redRight, matchNum, 0),
+    (@id, formType, tabletNum, scoutName, redLeft, matchNum, 0),
+    (@id, formType, tabletNum, scoutName, blueLeft, matchNum, 1),
+    (@id, formType, tabletNum, scoutName, blueCenter, matchNum, 1),
+    (@id, formType, tabletNum, scoutName, blueRight, matchNum, 1);
+    SELECT @id INTO formId;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `procInsertRecord` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -281,7 +322,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `procInsertReport`(
 	IN formType BOOL,
@@ -289,11 +330,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `procInsertReport`(
     IN scoutName VARCHAR(250),
     IN teamNum INT(11),
 	IN matchNum INT(11),
+    IN alliance TINYINT(1),
     OUT id INT(11) 
 )
 BEGIN
-INSERT INTO scouting.report (FormType, TabletNum, ScoutName, TeamNum, MatchNum)
-VALUES (formType, tabletNum, scoutName, teamNum, matchNum);
+SELECT (@formId := LAST_INSERT_ID()) FROM scouting.report;
+SET @formId = @formId +1;
+INSERT INTO scouting.report (FormID, FormType, TabletNum, ScoutName, TeamNum, MatchNum, Alliance)
+VALUES (@formId, formType, tabletNum, scoutName, teamNum, matchNum, alliance);
 SELECT LAST_INSERT_ID() INTO id;
 END ;;
 DELIMITER ;
@@ -338,4 +382,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-10 16:07:02
+-- Dump completed on 2018-02-18 17:27:50

@@ -20,10 +20,10 @@ public class MatchForm extends Form {
 		public static final Item CUBE_IN_ALLY_SWITCH = new Item(128, "Cube in Ally Switch", Item.Datatype.INTEGER);
 		public static final Item CUBE_IN_SCALE = new Item(129, "Cube in Scale", Item.Datatype.INTEGER);
 		public static final Item CUBE_IN_OPPONENT_SWITCH = new Item(130, "Cube in Opponent Switch", Item.Datatype.INTEGER);
-		public static final Item CUBE_DROPPER = new Item(131, "Cube Dropper", Item.Datatype.INTEGER);
 		public static final Item HELP_OTHERS_CLIMB = new Item(132, "Help Others Climb?", Item.Datatype.BOOLEAN);
 		public static final Item PLAY_DEFENSE = new Item(133, "Play Defense?", Item.Datatype.BOOLEAN);
 		public static final Item RATE_DEFENSE = new Item(134, "Rate Defense", Item.Datatype.INTEGER);
+		public static final Item CUBE_DROPPED = new Item(135, "cube dropped", Item.Datatype.INTEGER);
 	} // End Items
 
 	public static final Item[] matchItems = {
@@ -32,7 +32,7 @@ public class MatchForm extends Form {
 			Items.AUTO_CUBE_IN_OPPONENT_SWITCH, Items.CUBE_IN_VAULT,
 			Items.CUBE_IN_ALLY_SWITCH, Items.CUBE_IN_SCALE,
 			Items.CAN_CLIMB, Items.CLIMB_SUCCESS, Items.CUBE_IN_OPPONENT_SWITCH,
-			Items.COMMENTS, Items.DID_THEY_BREAK_DOWN, Items.CUBE_DROPPER,
+			Items.COMMENTS, Items.DID_THEY_BREAK_DOWN,
 			Items.PLAY_DEFENSE, Items.HELP_OTHERS_CLIMB,
 			Items.RATE_DEFENSE,
 			Items.PRESENT, Items.RATE_DRIVING, Items.STAYS_PUT_WHEN_POWER_CUT

@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#7ec0ee"
+    tools:context="com.example.dan.matchscoutingmain2018.MainActivity">
+
+
+    <TextView
+        android:id="@+id/lblTeleopCounter5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTeleopCubeDrop"
+        android:layout_alignBottom="@+id/btnTeleopCubeDropper"
+        android:layout_alignStart="@+id/lblTeleopCounter4"
+        android:text="Count:"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnstartTimer"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/black" />
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/chkAutoCubeOpponentSwitch"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/lblBasics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:text="Basics"
+        android:textColor="@android:color/black"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/lblScoutName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblBasics"
+        android:layout_below="@+id/lblBasics"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Scout Name:"
+        android:textColor="@android:color/black"
+        android:textSize="14dp" />
+
+    <Spinner
+        android:id="@+id/chooseName"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/lblScoutName"
+        android:layout_below="@+id/lblScoutName"
+        android:background="#ffffff" />
+
+    <TextView
+        android:id="@+id/lblMatchNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/chooseName"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/chooseName"
+        android:text="Match Number"
+        android:textColor="@android:color/black"
+        android:textSize="14dp" />
+
+    <EditText
+        android:id="@+id/txtMatchNumber"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/lblMatchNumber"
+        android:layout_below="@+id/lblMatchNumber"
+        android:width="150dp"
+        android:height="20dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/lblteamNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtMatchNumber"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/txtMatchNumber"
+        android:text="Team Number"
+        android:textColor="@android:color/black"
+        android:textSize="14dp" />
+
+    <EditText
+        android:id="@+id/txtTeamNumber"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/lblteamNumber"
+        android:layout_below="@+id/lblteamNumber"
+        android:width="120dp"
+        android:height="20dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <CheckBox
+        android:id="@+id/chkShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lblteamNumber"
+        android:layout_marginStart="25dp"
+        android:layout_toEndOf="@+id/txtTeamNumber"
+        android:text="Were they absent?" />
+
+    <Button
+        android:id="@+id/btnstartTimer"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chkShow"
+        android:layout_toEndOf="@+id/btnPlus"
+        android:text="Start Timer" />
+
+    <TextView
+        android:id="@+id/lblAuto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblBasics"
+        android:layout_alignTop="@+id/view2"
+        android:layout_marginTop="10dp"
+        android:text="Auto"
+        android:textColor="#000000"
+        android:textSize="24dp" />
+
+    <CheckBox
+        android:id="@+id/chkAutoBaseline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblAuto"
+        android:layout_below="@+id/lblAuto"
+        android:layout_marginStart="20dp"
+        android:text="Did they cross the baseline?" />
+
+    <CheckBox
+        android:id="@+id/chkAutoCubeVault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkAutoBaseline"
+        android:layout_below="@+id/chkAutoBaseline"
+        android:text="Did they place a cube in the vault?" />
+
+    <CheckBox
+        android:id="@+id/chkAutoCubeAllySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/chkAutoCubeVault"
+        android:layout_alignStart="@+id/txtTeamNumber"
+        android:text="Did they place a cube in the ally team switch?" />
+
+    <CheckBox
+        android:id="@+id/chkAutoCubeScale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkAutoCubeAllySwitch"
+        android:layout_below="@+id/chkAutoCubeAllySwitch"
+        android:text="Did they place a cube in the scale?" />
+
+    <CheckBox
+        android:id="@+id/chkAutoCubeOpponentSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkAutoCubeScale"
+        android:layout_below="@+id/chkAutoCubeScale"
+        android:text="Did they place a cube in the opponent team switch?" />
+
+    <TextView
+        android:id="@+id/lblTeleop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblAuto"
+        android:layout_below="@+id/view3"
+        android:layout_marginTop="10dp"
+        android:text="Teleop"
+        android:textColor="#000000"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/lblCubes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblTeleop"
+        android:layout_below="@+id/lblTeleop"
+        android:layout_marginStart="20dp"
+        android:text="Cubes"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <Button
+        android:id="@+id/btnTeleopCubeVault"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/lblCubes"
+        android:layout_below="@+id/lblCubes"
+        android:layout_marginStart="20dp"
+        android:text="Team placed a cube in the vault." />
+
+    <TextView
+        android:id="@+id/lblTeleopCounter1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTeleopCubeVault"
+        android:layout_alignBottom="@+id/btnTeleopCubeVault"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/btnTeleopCubeOpponentSwitch"
+        android:text="Count:"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <EditText
+        android:id="@+id/txtTeleopCount1"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/lblTeleopCounter1"
+        android:layout_alignBottom="@+id/lblTeleopCounter1"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lblTeleopCounter1"
+        android:width="100dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/txtTeleopCount2"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/lblTeleopCounter2"
+        android:layout_alignBottom="@+id/lblTeleopCounter2"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lblTeleopCounter2"
+        android:width="100dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/txtTeleopCount3"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/lblTeleopCounter3"
+        android:layout_alignBottom="@+id/lblTeleopCounter3"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lblTeleopCounter3"
+        android:width="100dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/txtTeleopCount4"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/lblTeleopCounter4"
+        android:layout_alignBottom="@+id/lblTeleopCounter4"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lblTeleopCounter4"
+        android:width="100dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/txtTeleopCount5"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/lblTeleopCounter5"
+        android:layout_alignBottom="@+id/lblTeleopCounter5"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lblTeleopCounter5"
+        android:width="100dp"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/btnTeleopCubeAllySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/btnTeleopCubeVault"
+        android:layout_below="@+id/btnTeleopCubeVault"
+        android:text="Team placed a cube in the Ally switch" />
+
+    <Button
+        android:id="@+id/btnTeleopCubeScale"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/btnTeleopCubeAllySwitch"
+        android:layout_below="@+id/btnTeleopCubeAllySwitch"
+        android:text="Team placed a cube in the scale" />
+
+    <Button
+        android:id="@+id/btnTeleopCubeOpponentSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/btnTeleopCubeScale"
+        android:layout_below="@+id/btnTeleopCubeScale"
+        android:text="Team placed a cube in the opponent switch" />
+
+
+
+    <TextView
+        android:id="@+id/lblTeleopCounter2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTeleopCubeAllySwitch"
+        android:layout_alignBottom="@+id/btnTeleopCubeAllySwitch"
+        android:layout_alignStart="@+id/lblTeleopCounter1"
+        android:text="Count:"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/lblTeleopCounter3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTeleopCubeScale"
+        android:layout_alignBottom="@+id/btnTeleopCubeScale"
+        android:layout_alignStart="@+id/lblTeleopCounter2"
+        android:text="Count:"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/lblTeleopCounter4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTeleopCubeOpponentSwitch"
+        android:layout_alignBottom="@+id/btnTeleopCubeOpponentSwitch"
+        android:layout_alignStart="@+id/lblTeleopCounter3"
+        android:text="Count:"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/lblTeleopClimbing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblCubes"
+        android:layout_below="@+id/btnTeleopCubeDrop"
+        android:text="Climbing"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <CheckBox
+        android:id="@+id/chkClimbAttempt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnTeleopCubeDrop"
+        android:layout_below="@+id/lblTeleopClimbing"
+        android:text="Did they attempt to climb?" />
+
+    <CheckBox
+        android:id="@+id/chkClimbSuccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkClimbAttempt"
+        android:layout_below="@+id/chkClimbAttempt"
+        android:text="Were they successful?" />
+
+    <CheckBox
+        android:id="@+id/chkClimbPower"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/chkClimbAttempt"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/chkClimbAttempt"
+        android:text="Did they stay put after power went out?" />
+
+    <CheckBox
+        android:id="@+id/chkClimbHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkClimbPower"
+        android:layout_below="@+id/chkClimbPower"
+        android:text="Did they help others climb?" />
+
+    <TextView
+        android:id="@+id/lblMiscellaneous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblTeleopClimbing"
+        android:layout_below="@+id/chkClimbSuccess"
+        android:text="Misc."
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <CheckBox
+        android:id="@+id/chkMiscBreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkClimbSuccess"
+        android:layout_below="@+id/lblMiscellaneous"
+        android:text="Did they break down?" />
+
+    <TextView
+        android:id="@+id/lblMiscDriver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkMiscBreak"
+        android:layout_below="@+id/chkMiscBreak"
+        android:layout_marginTop="5dp"
+        android:text="Rate the driver"
+        android:textColor="#000000" />
+
+    <CheckBox
+        android:id="@+id/chkMiscDefense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkClimbHelp"
+        android:layout_alignTop="@+id/chkMiscBreak"
+        android:text="Did they play defense?" />
+
+    <TextView
+        android:id="@+id/lblMiscDefenseRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/chkMiscDefense"
+        android:layout_below="@+id/chkMiscDefense"
+        android:layout_marginTop="5dp"
+        android:text="Rate their defense"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/btnPlus"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/view2"
+        android:layout_alignStart="@+id/chkShow"
+        android:layout_below="@+id/chkShow"
+        android:text="+" />
+
+    <Button
+        android:id="@+id/btnMinus"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/view2"
+        android:layout_below="@+id/chkShow"
+        android:layout_toEndOf="@+id/btnstartTimer"
+        android:text="-" />
+
+    <Spinner
+        android:id="@+id/spnRateDriver"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignEnd="@+id/chkMiscBreak"
+        android:layout_alignStart="@+id/lblMiscDriver"
+        android:layout_below="@+id/lblMiscDefenseRate"
+        android:layout_marginTop="5dp"
+        android:background="#ffffff" />
+
+    <Spinner
+        android:id="@+id/spnRateDefense"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/spnRateDriver"
+        android:layout_alignEnd="@+id/chkMiscDefense"
+        android:layout_alignStart="@+id/lblMiscDefenseRate"
+        android:background="#ffffff" />
+
+    <TextView
+        android:id="@+id/lblComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblMiscellaneous"
+        android:layout_below="@+id/spnRateDriver"
+        android:layout_marginTop="20dp"
+        android:text="Comments"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <EditText
+        android:id="@+id/editComments"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:layout_alignEnd="@+id/chkClimbHelp"
+        android:layout_alignStart="@+id/spnRateDriver"
+        android:layout_below="@+id/lblComments"
+        android:background="#ffffff"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <ToggleButton
+        android:id="@+id/btnToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/txtTeamNumber"
+        android:text="ToggleButton"
+        android:textOff="Blue Alliance"
+        android:textOn="Red Alliance" />
+
+    <Button
+        android:id="@+id/btnTeleopCubeDrop"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/btnTeleopCubeOpponentSwitch"
+        android:layout_below="@+id/btnTeleopCubeOpponentSwitch"
+        android:text="Team dropped a cube" />
+
+</RelativeLayout>

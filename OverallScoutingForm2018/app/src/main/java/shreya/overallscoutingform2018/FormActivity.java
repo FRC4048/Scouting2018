@@ -88,13 +88,9 @@ public class FormActivity extends AbstractForm {
     TextView formsPendingLbl;
     final int teamNumLabelLength = 11;
 
-    private long startTime = 0;
     private Timer timer;
     private Handler timerHandler;
     volatile long timeInMilliseconds = 0;
-    long timeSwapBuff = 0;
-    long updatedTime = 0;
-    long adjustment = 0;
 
     int yellowCardID = OverallForm.Items.YELLOW_CARD.getId();
     int redCardID = OverallForm.Items.RED_CARD.getId();
@@ -159,10 +155,6 @@ public class FormActivity extends AbstractForm {
     private void updateTimerText() {
         int secs = (int) (timeInMilliseconds / 1000);
         startTimerBtn.setText(Integer.toString(secs));
-//        int mins = secs / 60;
-//        secs = secs % 60;
-//        startTimerBtn.setText("" + mins + ":" +
-//                String.format("%02d", secs));
     }
 
 
@@ -249,7 +241,7 @@ public class FormActivity extends AbstractForm {
                     System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
                     System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
                     System.out.println("NEW GLOBAL CURRENT TIME: " + globalCurrentTime);
-                    updateTimerText();
+                    timerHandler.obtainMessage(1).sendToTarget();
                     break;
                 }
                 case R.id.redOwnershipScaleBtn: {
@@ -705,38 +697,6 @@ public class FormActivity extends AbstractForm {
         tabletNum = readTabletNumber();
         if (tabletNum == -1) showTabletNumDialog();
     }
-
-//        String message = "There has been an I/O issue!\nCONFIG FAILED";
-//        try {
-//            File file = new File(getFilesDir().getAbsolutePath(), CONFIG_FILE);
-//            if (!file.exists()) {
-//                message = "There has been an I/O issue!\n" +
-//                        "CONFIG FILE DOES NOT EXIST (PAST FILE CHECK)";
-//                throw new IOException();
-//            } else {
-//                ArrayList<String> contents = new ArrayList<>();
-//                String str;
-//                BufferedReader reader = new BufferedReader(new FileReader(file));
-//                while (!((str = reader.readLine()) == null)) contents.add(str);
-//                reader.close();
-//
-//                tabletNum = Integer.parseInt(contents.get(0));
-//                pcCompanion = contents.get(1);
-//                if (pcCompanion.contains(Form.ID_DELIMITER)) throw new InputMismatchException();
-//                names = contents.get(2).split(Form.ID_DELIMITER);
-//                ArrayAdapter<String> namesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, names);
-//                scoutNameEditText.setAdapter(namesAdapter);
-//                teams = contents.get(3).split(Form.ID_DELIMITER);
-//                ArrayAdapter<String> teamsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, teams);
-//                matchNumEditText.setAdapter(teamsAdapter);
-//            }
-//        } catch (IOException e) {
-//            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-//        } catch (IndexOutOfBoundsException | InputMismatchException e) {
-//            message = "CONFIG FILE FORMATTED INCORRECTLY.\n"
-//                    + "PLEASE FORMAT THE CONFIG FILE CORRECTLY";
-//            if (e instanceof IndexOutOfBoundsException) message += "\nINDEX OUT OF BOUNDS EXCEPTION.";
-//            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
     private void showTabletNumDialog() {
         if (tabletNumFile.exists()) System.out.println("tabletNumFile exists now");

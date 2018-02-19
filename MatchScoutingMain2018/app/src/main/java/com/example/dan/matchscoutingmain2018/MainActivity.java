@@ -1,22 +1,40 @@
 package com.example.dan.matchscoutingmain2018;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
-import java.lang.reflect.Array;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AbstractForm {
 
@@ -39,12 +57,6 @@ public class MainActivity extends AbstractForm {
 
     private Record[] records = new Record[16];
 
-    private ArrayList<Record> cube_in_vault = new ArrayList<>();
-    private ArrayList<Record> cube_in_ally_switch = new ArrayList<>();
-    private ArrayList<Record> cube_in_scale = new ArrayList<>();
-    private ArrayList<Record> cube_in_opponent_switch = new ArrayList<>();
-
-
     private CheckBox chkAutoBaseline;
     private CheckBox chkAutoCubeVault;
     private CheckBox chkAutoCubeAllySwitch;
@@ -57,15 +69,15 @@ public class MainActivity extends AbstractForm {
     private CheckBox chkMiscBreak;
     private CheckBox chkMiscDefense;
 
-    private AutoCompleteTextView txtTeamNumber;
-    private AutoCompleteTextView txtMatchNumber;
+    private EditText txtTeamNumber;
+    private EditText txtMatchNumber;
     private EditText editComments;
 
     private Spinner chooseName;
     private Spinner spnRateDriver;
     private Spinner spnRateDefense;
 
-    private Button btnToggleButton;                 //check this bad boy out
+    private ToggleButton btnToggleButton;
     private Button btnPlus;
     private Button btnstartTimer;
     private Button btnMinus;
@@ -75,19 +87,42 @@ public class MainActivity extends AbstractForm {
     private Button btnTeleopCubeOpponentSwitch;
     private Button btnTeleopCubeDrop;
 
-    private EditText txtTeleopCount1;
-    private EditText txtTeleopCount2;
-    private EditText txtTeleopCount3;
-    private EditText txtTeleopCount4;
-    private EditText txtTeleopCount5;
+    private EditText txtCubeVaultCount;
+    private EditText txtCubeAllyCount;
+    private EditText txtCubeScaleCount;
+    private EditText txtCubeOpponentCount;
+    private EditText txtCubeDropCount;
 
+    private CheckBox chkPresent;
+
+    private Button btnSaveForm;
+    private Button btnTransferForm;
+    private TextView formsPendingLbl;
+
+    private File tabletNumFile;
 
     private long startTime = 0;
-    private Handler timerHandler = new Handler();
+    private Handler timerHandler;
+    Timer timer;
     volatile long timeInMilliseconds = 0;
     long timeSwapBuff = 0;
     long updatedTime = 0;
     long adjustment = 0;
+
+    private long globalStartTime;
+    private long globalEndTime;
+    private long globalCurrentTime;
+
+    private int alliance;
+    final int RED_ALLIANCE_NUMBER = 0;
+    final int BLUE_ALLIANCE_NUMBER = 1;
+
+    private int matchNum;
+    private int teamNum;
+
+    ArrayList<Record> rawTimestampRecords;
+    ArrayList<Record> allRecords;
+    Context mContext = this;
 
     private Runnable updateTimerThread = new Runnable() {
         @Override
@@ -101,10 +136,8 @@ public class MainActivity extends AbstractForm {
 
     private void updateTimerText()
     {
-        int secs = (int) (updatedTime/1000);
-        int mins = secs/60;
-        secs = secs % 60;
-        btnstartTimer.setText("" + mins + ":" + String.format("%02d", secs));
+        int secs = (int) (timeInMilliseconds / 1000);
+        btnstartTimer.setText(Integer.toString(secs));
     }
 
 
@@ -117,26 +150,84 @@ public class MainActivity extends AbstractForm {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        initRecords();
-        if (checkConfigFile()) {
-            initConfigs();
-        } else {
-            actionRequested = Action.RECEIVE_CONFIG;
-            showAlertDialog("A configuration file from the master computer is required to continue."
-                    + "\nPlease transfer the file to this machine.", "I've transferred the file");
-        } // End if
+        timer = new Timer();
+        timerHandler = new Handler()
+        {
+            public void handleMessage(Message msg)
+            {
+                updateTimerText();
+            }
+        };
+        tabletNumFile = new File(getFilesDir().getAbsolutePath(), TABLET_NUM_FILE);
+        if (!tabletNumFile.exists())
+        {
+            try {
+                tabletNumFile.createNewFile();
+                tabletNumFile.setWritable(true);
+                showTabletNumDialog();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        initConfigs();
         initLayout();
+        initRecords();
         initSaveState();
         initArchiveSystem();
+    }
+
+    private void showTabletNumDialog()
+    {
+        if (tabletNumFile.exists()) System.out.println("tabletNumFile exists now");
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View tabletNumDialogView = inflater.inflate(R.layout.tablet_num, null);
+        final AlertDialog.Builder tabletNumDialogBuilder = new AlertDialog.Builder(mContext);
+        tabletNumDialogBuilder.setTitle("Set Tablet Number Dialog");
+        tabletNumDialogBuilder.setView(tabletNumDialogView);
+        final EditText tabletNumEditTxt = (EditText) tabletNumDialogView.findViewById(R.id.tabletNumEditTxt);
+        tabletNumDialogBuilder.setCancelable(false);
+        tabletNumDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String tabletNumToAdd = tabletNumEditTxt.getText().toString();
+                try {
+                    BufferedWriter fileWriter = new BufferedWriter(new FileWriter(tabletNumFile));
+                    fileWriter.write(tabletNumToAdd);
+                    fileWriter.close();
+                    tabletNum = Integer.parseInt(tabletNumToAdd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        tabletNumDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        AlertDialog tabletNumDialog = tabletNumDialogBuilder.create();
+        tabletNumDialog.show();
     }
 
     @Override
     void initConfigs() {
 
+        if (tabletNumFile.exists()) System.out.println("tabletNumFile exists.");
+        names = getResources().getStringArray(R.array.scout_names);
+        teams = getResources().getStringArray(R.array.team_numbers);
+        pcCompanion = getResources().getString(R.string.pc_companion);
+        tabletNum = readTabletNumber();
+        if (tabletNum == -1) showTabletNumDialog();
+
     }
 
     @Override
     void initRecords() {
+
+        allRecords = new ArrayList<>();
+        rawTimestampRecords = new ArrayList<>();
         //fill in array
         records[0] = present = new Record(null, MatchForm.Items.PRESENT.getId());
         records[1] = can_climb = new Record(null, MatchForm.Items.CAN_CLIMB.getId());
@@ -159,6 +250,28 @@ public class MainActivity extends AbstractForm {
 
     @Override
     void initLayout() {
+
+        chooseName = (Spinner) findViewById(R.id.chooseName);
+        ArrayAdapter scoutNameAdapter = ArrayAdapter.createFromResource(mContext, R.array.scout_names, android.R.layout.simple_spinner_item);
+        scoutNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        chooseName.setAdapter(scoutNameAdapter);
+        SpinnerListener spinnerListener = new SpinnerListener();
+        chooseName.setOnItemSelectedListener(spinnerListener);
+
+        spnRateDriver = (Spinner) findViewById(R.id.spnRateDriver);
+        ArrayAdapter ratingsAdapter = ArrayAdapter.createFromResource(mContext, R.array.rating_values, android.R.layout.simple_spinner_item);
+        ratingsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spnRateDriver.setAdapter(ratingsAdapter);
+        spnRateDefense = (Spinner) findViewById(R.id.spnRateDefense);
+        spnRateDefense.setAdapter(ratingsAdapter);
+
+        EditTextListener editTextListener = new EditTextListener();
+        txtTeamNumber = (EditText) findViewById(R.id.txtTeamNumber);
+        txtTeamNumber.addTextChangedListener(editTextListener);
+        txtMatchNumber = (EditText) findViewById(R.id.txtMatchNumber);
+        txtMatchNumber.addTextChangedListener(editTextListener);
+        editComments = (EditText) findViewById(R.id.editComments);
+
         //create objects for all interactables
         CheckboxListener checkbox_a = new CheckboxListener();
 
@@ -195,7 +308,7 @@ public class MainActivity extends AbstractForm {
         chkMiscDefense = (CheckBox) findViewById(R.id.chkMiscDefense);
         chkMiscDefense.setOnCheckedChangeListener(checkbox_a);
 
-
+        chkPresent = (CheckBox) findViewById(R.id.chkShow);
 
         ButtonListenerTeleop teleop_button_listener = new ButtonListenerTeleop();
 
@@ -214,17 +327,28 @@ public class MainActivity extends AbstractForm {
         btnTeleopCubeDrop = (Button) findViewById(R.id.btnTeleopCubeDrop);
         btnTeleopCubeDrop.setOnClickListener(teleop_button_listener);
 
-        txtTeleopCount1 = (EditText) findViewById(R.id.txtTeleopCount1);
-        txtTeleopCount2 = (EditText) findViewById(R.id.txtTeleopCount2);
-        txtTeleopCount3 = (EditText) findViewById(R.id.txtTeleopCount3);
-        txtTeleopCount4 = (EditText) findViewById(R.id.txtTeleopCount4);
-        txtTeleopCount5 = (EditText) findViewById(R.id.txtTeleopCount5);
+        txtCubeVaultCount = (EditText) findViewById(R.id.txtTeleopCount1);
+        txtCubeAllyCount = (EditText) findViewById(R.id.txtTeleopCount2);
+        txtCubeScaleCount = (EditText) findViewById(R.id.txtTeleopCount3);
+        txtCubeOpponentCount = (EditText) findViewById(R.id.txtTeleopCount4);
+        txtCubeDropCount = (EditText) findViewById(R.id.txtTeleopCount5);
 
+        btnSaveForm = (Button) findViewById(R.id.btnSaveForm);
+        btnTransferForm = (Button) findViewById(R.id.btnTransferForm);
 
-
+        btnToggleButton = (ToggleButton) findViewById(R.id.btnToggleButton);
+        AllianceButtonListener allianceButtonListener = new AllianceButtonListener();
+        btnToggleButton.setOnCheckedChangeListener(allianceButtonListener);
+        if (btnToggleButton.getText().toString().equals("BLUE ALLIANCE"))
+        {
+            btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+        }
+        if (btnToggleButton.getText().toString().equals("RED ALLIANCE"))
+        {
+            btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+        }
 
         //ButtonListener other_button_listener = new ButtonLister();
-
 
         MasterButtonListener start_timer = new MasterButtonListener();
 
@@ -259,21 +383,167 @@ public class MainActivity extends AbstractForm {
         btnTeleopCubeDrop = (Button) findViewById(R.id.btnTeleopCubeDrop);
         btnTeleopCubeDrop.setOnClickListener(main_buttons);
 
+        btnSaveForm.setOnClickListener(main_buttons);
+        btnTransferForm.setOnClickListener(main_buttons);
+
+        formsPendingLbl = (TextView) findViewById(R.id.formsPendingLbl);
+
     }
 
     @Override
     void initSaveState() {
+        File saveStateFile = new File(getFilesDir().getAbsolutePath(), STATE_SAVE_FILE);
+        if (saveStateFile.exists())
+        {
+            try {
+                BufferedReader saveStateReader = new BufferedReader(new FileReader(saveStateFile));
+                String formsPendingNum = saveStateReader.readLine();
+                String storedTeamNum = saveStateReader.readLine();
+                String storedAlliance = saveStateReader.readLine();
+                String storedMatchNum = saveStateReader.readLine();
+                String storedScoutName = saveStateReader.readLine();
+                String records = saveStateReader.readLine();
+                String storedGlobalStartTime = saveStateReader.readLine();
+                String storedGlobalEndTime = saveStateReader.readLine();
+                String storedGlobalCurrentTime = saveStateReader.readLine();
 
+                formsPendingLbl.setText(formsPendingNum + " Forms Pending");
+                formsPending = Integer.parseInt(formsPendingNum);
+                txtTeamNumber.requestFocus();
+                txtTeamNumber.setText(storedTeamNum);
+                teamNum = Integer.parseInt(storedTeamNum);
+                btnToggleButton.setChecked(storedAlliance.equals(RED_ALLIANCE_NUMBER));
+                alliance = Integer.parseInt(storedAlliance);
+                if (alliance == RED_ALLIANCE_NUMBER)
+                {
+                    btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                    btnToggleButton.setText("RED ALLIANCE");
+                }
+                else
+                {
+                    btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                    btnToggleButton.setText("BLUE ALLIANCE");
+                }
+                txtMatchNumber.requestFocus();
+                txtMatchNumber.setText(storedMatchNum);
+                matchNum = Integer.parseInt(storedMatchNum);
+                chooseName.requestFocus();
+                chooseName.setSelection(((ArrayAdapter) chooseName.getAdapter()).getPosition(storedScoutName));
+                scoutName = storedScoutName;
+                globalStartTime = Long.parseLong(storedGlobalStartTime);
+                globalEndTime = Long.parseLong(storedGlobalEndTime);
+                globalCurrentTime = Long.parseLong(storedGlobalCurrentTime);
+                updateTimerText();
+                String[] splitRecords = records.split("\\|");
+                setState(splitRecords, 0);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     void executeRequest() {
-
+        switch (actionRequested) {
+            case SAVE_FORM:
+                if (saveForm()) {
+                    Toast.makeText(getApplicationContext(), "FORM SAVED",
+                            Toast.LENGTH_SHORT).show();
+                    formsPending++;
+                    resetForm();
+                    formsPendingLbl.setText(formsPending + " Form(s) Pending");
+                } else showAlertDialog("FORM NOT SAVED: " +
+                        "I/O problem encountered. Try again - if the problem persists, " +
+                        "TALK TO LUCAS!", "Ok", null);
+                break;
+            case TRANSFER_FORMS:
+                if (formsPending > 0) {
+                    prepareFormTransfer(TEMP_FILE);
+                    prepareToTransfer(TEMP_FILE);
+                    actionRequested = Action.CHECK_TRANSFER;
+                    formsPending = 0;
+                    formsPendingLbl.setText(formsPending + " Form(s) Pending");
+                    firstForm = true;
+                    archiveCurrentFile();
+                } else showAlertDialog("No pending forms!", "Ok");
+                break;
+            case TRANSFER_LAST_FORMS:
+                if (archivedFiles > 0) {
+                    String fileName = ARCHIVE_FILE.split("\\.")[0] + (archivedFiles - 1)
+                            + ARCHIVE_FILE.split("\\.")[1];
+                    prepareFormTransfer(fileName);
+                    prepareToTransfer(fileName);
+                } else showAlertDialog("There has not been a transfer yet.", "Ok");
+                break;
+            case TRANSFER_ALL_ARCHIVES:
+                break;
+            case RECEIVE_CONFIG:
+                retrieveComputerFile(CONFIG_FILE);
+                initLayout();
+                break;
+            case WARNING_TEAMNUM:
+                break;
+        }
+        actionRequested = Action.NONE;
     }
 
     @Override
     void saveState() {
+        File saveStateFile = new File(getFilesDir().getAbsolutePath(), STATE_SAVE_FILE);
+        if (!saveStateFile.exists())
+        {
+            System.out.println("saveStateFile does not exist.");
+            try {
+                saveStateFile.createNewFile();
+                saveStateFile.setWritable(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (saveStateFile.exists()) {
+            System.out.println("saveStateFile exists.");
+            String saveStateStr = "";
+            saveStateStr += Integer.toString(formsPending) + "\n";
+            saveStateStr += teamNum + "\n";
+            saveStateStr += alliance + "\n";
+            saveStateStr += matchNum + "\n";
+            saveStateStr += scoutName + "\n";
+            processRawTimeStampRecords();
+            if (allRecords.size() > 0)
+            {
+                for (int i = 0; i < allRecords.size()-1; i++)
+                {
+                    saveStateStr += allRecords.get(i) + "|";
+                }
+                saveStateStr += allRecords.get(allRecords.size()-1);
+            }
+            saveStateStr+="\n" + Long.toString(globalStartTime) + "\n";
+            saveStateStr += Long.toString(globalEndTime) + "\n";
+            saveStateStr += Long.toString(globalCurrentTime) + "\n";
+            System.out.println("saveStateStr: " + "\n"+ saveStateStr.toString());
+            BufferedWriter saveStateWriter = null;
+            try {
+                saveStateWriter = new BufferedWriter(new FileWriter(saveStateFile));
+                saveStateWriter.write(saveStateStr);
+                saveStateWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    }
+
+    private void processRawTimeStampRecords() {
+        for (Record r : rawTimestampRecords)
+        {
+            long recordedTime = Long.parseLong(r.getValue());
+            long elapsedTime = globalEndTime - recordedTime;
+            Record processedTimeRec = new Record(Long.toString(elapsedTime), r.getItemID());
+            allRecords.add(processedTimeRec);
+        }
     }
 
     @Override
@@ -297,13 +567,128 @@ public class MainActivity extends AbstractForm {
     }
 
     @Override
-    void readyToSave() {
+    boolean readyToSave() {
 
+        return false;
     }
 
     @Override
     void setState(String[] records, int startingIndex) {
+        for (String record : records)
+        {
+            String[] recordVal = record.split("\\,");
+            if (recordVal.length == 2)
+            {
+                Record currRecord = new Record(recordVal[1], Integer.parseInt(recordVal[0]));
+                allRecords.add(currRecord);
 
+                int itemID = currRecord.getItemID();
+                String val = currRecord.getValue();
+                switch(itemID)
+                {
+                    case R.id.chkShow:
+                    {
+                        chkPresent.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkAutoBaseline:
+                    {
+                        chkAutoBaseline.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkAutoCubeVault:
+                    {
+                        chkAutoCubeVault.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkAutoCubeAllySwitch:
+                    {
+                        chkAutoCubeAllySwitch.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkAutoCubeScale:
+                    {
+                        chkAutoCubeScale.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkAutoCubeOpponentSwitch:
+                    {
+                        chkAutoCubeOpponentSwitch.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.txtTeleopCount1:
+                    {
+                        txtCubeVaultCount.setText(val);
+                        break;
+                    }
+                    case R.id.txtTeleopCount2:
+                    {
+                        txtCubeAllyCount.setText(val);
+                        break;
+                    }
+                    case R.id.txtTeleopCount3:
+                    {
+                        txtCubeScaleCount.setText(val);
+                        break;
+                    }
+                    case R.id.txtTeleopCount4:
+                    {
+                        txtCubeOpponentCount.setText(val);
+                        break;
+                    }
+                    case R.id.txtTeleopCount5:
+                    {
+                        txtCubeDropCount.setText(val);
+                        break;
+                    }
+                    case R.id.chkClimbAttempt:
+                    {
+                        chkClimbAttempt.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkClimbSuccess:
+                    {
+                        chkClimbSuccess.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkClimbPower:
+                    {
+                        chkClimbPower.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkClimbHelp:
+                    {
+                        chkClimbHelp.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkMiscBreak:
+                    {
+                        chkMiscBreak.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.chkMiscDefense:
+                    {
+                        chkMiscDefense.setChecked(val.equals(0));
+                        break;
+                    }
+                    case R.id.spnRateDefense:
+                    {
+                        spnRateDefense.setSelection(((ArrayAdapter) spnRateDefense.getAdapter()).getPosition(val));
+                        break;
+                    }
+                    case R.id.spnRateDriver:
+                    {
+                        spnRateDriver.setSelection(((ArrayAdapter) spnRateDriver.getAdapter()).getPosition(val));
+                        break;
+                    }
+                    case R.id.editComments:
+                    {
+                        editComments.setText(val);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private class CheckboxListener implements CheckBox.OnCheckedChangeListener {
@@ -333,24 +718,7 @@ public class MainActivity extends AbstractForm {
         }
         //create listener for all types of shits
     }
-    private class ButtonListener implements View.OnClickListener {
 
-
-        @Override
-        public void onClick(View view) {
-
-
-
-            int change = 0;
-            int a = view.getId();
-
-            switch(a) {
-                case R.id.btnPlus: change++; break;
-                case R.id.btnMinus: change--; break;
-            }
-        }
-
-    }
     private class ButtonListenerTeleop implements View.OnClickListener {
 
         public void onClick(View view) {
@@ -358,11 +726,20 @@ public class MainActivity extends AbstractForm {
 
             int a = view.getId();
             switch(a) {
-                case R.id.btnTeleopCubeVault:           changeValue(txtTeleopCount1); timestamp(MatchForm.Items.CUBE_IN_VAULT.getId(), cube_in_vault); break;
-                case R.id.btnTeleopCubeAllySwitch:      changeValue(txtTeleopCount2); timestamp(MatchForm.Items.CUBE_IN_ALLY_SWITCH.getId(), cube_in_ally_switch); break;
-                case R.id.btnTeleopCubeScale:           changeValue(txtTeleopCount3); timestamp(MatchForm.Items.CUBE_IN_SCALE.getId(), cube_in_scale); break;
-                case R.id.btnTeleopCubeOpponentSwitch:  changeValue(txtTeleopCount4); timestamp(MatchForm.Items.CUBE_IN_OPPONENT_SWITCH.getId(), cube_in_opponent_switch); break;
-                case R.id.btnTeleopCubeDrop:            changeValue(txtTeleopCount5); break;
+                case R.id.btnTeleopCubeVault:           changeValue(txtCubeVaultCount); timestamp(MatchForm.Items.CUBE_IN_VAULT.getId(), rawTimestampRecords); break;
+                case R.id.btnTeleopCubeAllySwitch:      changeValue(txtCubeAllyCount); timestamp(MatchForm.Items.CUBE_IN_ALLY_SWITCH.getId(), rawTimestampRecords); break;
+                case R.id.btnTeleopCubeScale:           changeValue(txtCubeScaleCount); timestamp(MatchForm.Items.CUBE_IN_SCALE.getId(), rawTimestampRecords); break;
+                case R.id.btnTeleopCubeOpponentSwitch:  changeValue(txtCubeOpponentCount); timestamp(MatchForm.Items.CUBE_IN_OPPONENT_SWITCH.getId(), rawTimestampRecords); break;
+                case R.id.btnTeleopCubeDrop:            changeValue(txtCubeDropCount); break;
+                case R.id.btnSaveForm:
+                {
+                    break;
+                }
+                case R.id.btnTransferForm:
+                {
+                    break;
+                }
+
             }
 
 
@@ -382,43 +759,34 @@ public class MainActivity extends AbstractForm {
             }
         }
         private void timestamp(int id, ArrayList<Record> name) {
-            name.add(new Record(String.valueOf(timeInMilliseconds), id));
+            name.add(new Record(String.valueOf(globalCurrentTime), id));
         }
     }
 
     private class MasterButtonListener implements View.OnClickListener {
         public void onClick(View view) {
-            boolean timerstarted = false;
-            if(!timerstarted){  //unfinished check so  that button isnt pressed again causing reset
-                System.out.println("Start timer button pressed.");
-                startTime = SystemClock.uptimeMillis();
-                adjustment = 0;
-                timerHandler.postDelayed(updateTimerThread, 0);
-            }
-
-
+            globalStartTime = SystemClock.uptimeMillis();
+            globalEndTime = globalStartTime + (150*1000);
+            globalCurrentTime = SystemClock.uptimeMillis();
+            timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000);
         }
     }
 
     private class MinusButtonListener implements View.OnClickListener {
 
         public void onClick(View view) {
-            System.out.println("Decreased timer.");
-            adjustment -= 2000;
-            updateTimerText();
-            //checkRecords();                                       <-check this
-            System.out.println("Time: " + timeInMilliseconds);
+            globalStartTime -= globalStartTime % 1000;
+            globalEndTime = globalStartTime + (150*1000);
+            timerHandler.obtainMessage(1).sendToTarget();
         }
     }
 
     private class PlusButtonListener implements View.OnClickListener {
 
         public void onClick(View view) {
-            System.out.println("Increased timer.");
-            adjustment += 1000;
-            updateTimerText();
-            //checkRecords();                                       <-check this
-            System.out.println("Time: " + timeInMilliseconds);
+            globalStartTime += 1000 - (globalStartTime % 1000);
+            globalEndTime = globalStartTime + (150*1000);
+            timerHandler.obtainMessage(1).sendToTarget();
         }
     }
 
@@ -428,15 +796,142 @@ public class MainActivity extends AbstractForm {
         {
             int a = adapterView.getId();
             switch(a) {
-                case R.id.spnRateDriver:    rate_defense.setValue((String)adapterView.getItemAtPosition(position));
-                case R.id.spnRateDefense:   rate_driving.setValue((String)adapterView.getItemAtPosition(position));
-                case R.id.chooseName:       scoutName = (String) adapterView.getItemAtPosition(position);
+                case R.id.spnRateDriver:
+                {
+                    rate_defense.setValue((String)adapterView.getItemAtPosition(position));
+                    break;
+                }
+                case R.id.spnRateDefense:
+                {
+                    rate_driving.setValue((String)adapterView.getItemAtPosition(position));
+                    break;
+                }
+                case R.id.chooseName:
+                {
+                    scoutName = (String) adapterView.getItemAtPosition(position);
+                    break;
+                }
 
             }
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
+        }
+    }
+
+    private class UpdateTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            globalCurrentTime = SystemClock.uptimeMillis();
+            System.out.println("GLOBAL CURRENT TIME: " + globalCurrentTime);
+            timeInMilliseconds = globalEndTime - globalCurrentTime;
+            System.out.println("CURRENT TIME IN MS: " + timeInMilliseconds);
+            if (globalCurrentTime < globalEndTime) timerHandler.obtainMessage(1).sendToTarget();
+        }
+    }
+
+    private class AllianceButtonListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if (isChecked) // Blue switches to red
+            {
+                System.out.println("BLUE SWITCHING TO RED");
+                btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                alliance = RED_ALLIANCE_NUMBER;
+            }
+            else // Red switches to blue
+            {
+                System.out.println("RED SWITCHING TO BLUE");
+                btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                alliance = BLUE_ALLIANCE_NUMBER;
+            }
+            System.out.println("ALLIANCE: " + alliance);
+        }
+    }
+
+    private class EditTextListener implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            EditText currEditText = (EditText) getCurrentFocus();
+            if (currEditText == null) return;
+            int currId = currEditText.getId();
+            switch (currId)
+            {
+                case R.id.txtMatchNumber:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        matchNum = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("Set match number to " + matchNum);
+                        break;
+                    }
+                }
+                case R.id.txtTeamNumber:
+                {
+                    if (currEditText.getText().toString().length() > 0)
+                    {
+                        teamNum = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("Set team number to " + teamNum);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private class PresentCheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            CheckBox checkbox = (CheckBox) compoundButton;
+            int currID = checkbox.getId();
+            switch (currID)
+            {
+                case R.id.chkAutoBaseline:
+                {
+                    if (checkbox.isChecked()) allRecords.add(auto_cross_baseline);
+                    else allRecords.remove(auto_cross_baseline);
+                    break;
+                }
+                case R.id.chkAutoCubeVault:
+                {
+                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_vault);
+                    else allRecords.remove(auto_cube_in_vault);
+                    break;
+                }
+                case R.id.chkAutoCubeAllySwitch:
+                {
+                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_ally_switch);
+                    else allRecords.remove(auto_cube_in_ally_switch);
+                    break;
+                }
+                case R.id.chkAutoCubeOpponentSwitch:
+                {
+                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_opponent_switch);
+                    else allRecords.remove(auto_cube_in_opponent_switch);
+                    break;
+                }
+                case R.id.chkAutoCubeScale:
+                {
+                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_scale);
+                    else allRecords.remove(auto_cube_in_scale);
+                    break;
+                }
+            }
         }
     }
 }

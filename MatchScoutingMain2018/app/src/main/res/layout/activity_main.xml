@@ -521,4 +521,28 @@
         android:layout_below="@+id/btnTeleopCubeOpponentSwitch"
         android:text="Team dropped a cube" />
 
+    <Button
+        android:id="@+id/btnSaveForm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/txtTeleopCount5"
+        android:layout_alignTop="@+id/editComments"
+        android:text="Save Form" />
+
+    <Button
+        android:id="@+id/btnTransferForm"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/btnSaveForm"
+        android:layout_below="@id/btnSaveForm"
+        android:text="Transfer Form" />
+
+    <TextView
+        android:id="@+id/formsPendingLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/editComments"
+        android:layout_below="@id/editComments"
+        android:text="Forms Pending"/>
+
 </RelativeLayout>

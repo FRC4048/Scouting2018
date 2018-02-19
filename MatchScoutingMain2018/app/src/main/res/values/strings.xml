@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">MatchScoutingMain2018</string>
+    <array name="scout_names">
+        <item>"Shreya"</item>
+        <item>"Dan"</item>
+        <item>"Lucas"</item>
+    </array>
+    <array name="team_numbers">
+        <item>"125"</item>
+        <item>"4048"</item>
+        <item>"467"</item>
+        <item>"195"</item>
+        <item>"1519"</item>
+        <item>"4565"</item>
+        <item>"190"</item>
+    </array>
+    <array name="rating_values">
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"3"</item>
+        <item>"4"</item>
+        <item>"5"</item>
+    </array>
+    <string name="pc_companion">SHREYA_PC</string>
 </resources>

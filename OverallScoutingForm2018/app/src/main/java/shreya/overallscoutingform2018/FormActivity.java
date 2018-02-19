@@ -42,12 +42,12 @@ public class FormActivity extends AbstractForm {
     // Basics visual elements - object declarations
     AutoCompleteTextView scoutNameEditText;
     AutoCompleteTextView matchNumEditText;
-    EditText redLeftEditText;
-    EditText redCenterEditText;
-    EditText redRightEditText;
-    EditText blueLeftEditText;
-    EditText blueCenterEditText;
-    EditText blueRightEditText;
+    AutoCompleteTextView redLeftEditText;
+    AutoCompleteTextView redCenterEditText;
+    AutoCompleteTextView redRightEditText;
+    AutoCompleteTextView blueLeftEditText;
+    AutoCompleteTextView blueCenterEditText;
+    AutoCompleteTextView blueRightEditText;
     // Game play section - visual elements object declarations
     Button redScaleOwnershipBtn;
     Button redSwitchOwnershipBtn;
@@ -188,7 +188,7 @@ public class FormActivity extends AbstractForm {
         else System.out.println("tabletNumFile does exist.");
         initConfigs();
         initLayout();
-        initSaveState();
+//        initSaveState();
         initArchiveSystem();
 
 //        if (checkConfigFile()) {
@@ -751,13 +751,22 @@ public class FormActivity extends AbstractForm {
         // Linking objects to visual elements
         // Basics section
         scoutNameEditText = (AutoCompleteTextView) findViewById(R.id.scoutNameEditTxt);
+        ArrayAdapter<String> scoutNameAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line, names);
+        scoutNameEditText.setAdapter(scoutNameAdapter);
         matchNumEditText = (AutoCompleteTextView) findViewById(R.id.matchNumEditTxt);
-        redLeftEditText = (EditText) findViewById(R.id.redLeftEditTxt);
-        redCenterEditText = (EditText) findViewById(R.id.redCenterEditTxt);
-        redRightEditText = (EditText) findViewById(R.id.redRightEditTxt);
-        blueLeftEditText = (EditText) findViewById(R.id.blueLeftEditTxt);
-        blueCenterEditText = (EditText) findViewById(R.id.blueCenterEditTxt);
-        blueRightEditText = (EditText) findViewById(R.id.blueRightEditTxt);
+        ArrayAdapter<String> teamNumAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line, teams);
+        redLeftEditText = (AutoCompleteTextView) findViewById(R.id.redLeftEditTxt);
+        redLeftEditText.setAdapter(teamNumAdapter);
+        redCenterEditText = (AutoCompleteTextView) findViewById(R.id.redCenterEditTxt);
+        redCenterEditText.setAdapter(teamNumAdapter);
+        redRightEditText = (AutoCompleteTextView) findViewById(R.id.redRightEditTxt);
+        redRightEditText.setAdapter(teamNumAdapter);
+        blueLeftEditText = (AutoCompleteTextView) findViewById(R.id.blueLeftEditTxt);
+        blueLeftEditText.setAdapter(teamNumAdapter);
+        blueCenterEditText = (AutoCompleteTextView) findViewById(R.id.blueCenterEditTxt);
+        blueCenterEditText.setAdapter(teamNumAdapter);
+        blueRightEditText = (AutoCompleteTextView) findViewById(R.id.blueRightEditTxt);
+        blueRightEditText.setAdapter(teamNumAdapter);
         formsPendingLbl = (TextView) findViewById(R.id.formsPendingLbl);
         // Game play section
         redScaleOwnershipBtn = (Button) findViewById(R.id.redOwnershipScaleBtn);

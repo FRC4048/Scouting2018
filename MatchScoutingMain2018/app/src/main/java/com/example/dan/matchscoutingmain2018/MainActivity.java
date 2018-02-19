@@ -309,6 +309,7 @@ public class MainActivity extends AbstractForm {
         chkMiscDefense.setOnCheckedChangeListener(checkbox_a);
 
         chkPresent = (CheckBox) findViewById(R.id.chkShow);
+        chkPresent.setOnCheckedChangeListener(checkbox_a);
 
         ButtonListenerTeleop teleop_button_listener = new ButtonListenerTeleop();
 
@@ -893,7 +894,7 @@ public class MainActivity extends AbstractForm {
         }
     }
 
-    private class PresentCheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+    private class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -930,6 +931,11 @@ public class MainActivity extends AbstractForm {
                     if (checkbox.isChecked()) allRecords.add(auto_cube_in_scale);
                     else allRecords.remove(auto_cube_in_scale);
                     break;
+                }
+                case R.id.chkPresent:
+                {
+                    if (!checkbox.isChecked()) allRecords.add(present);
+                    else allRecords.remove(present);
                 }
             }
         }

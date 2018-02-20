@@ -16,16 +16,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.dan.matchscoutingmain2018.Form;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -167,6 +168,7 @@ abstract public class AbstractForm extends Activity {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while (!((str = reader.readLine())== null)) content += str;
             reader.close();
+            System.out.println("contents of form to transfer: " + content);
             if (!file.delete()) throw new IOException();
             FileOutputStream fos = openFileOutput(filename, Context.MODE_WORLD_READABLE);
             fos.write(content.getBytes());
@@ -188,6 +190,7 @@ abstract public class AbstractForm extends Activity {
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
                 if (device.getName().equals(pcCompanion)) {
+                    System.out.println("Paired to the correct device--transferring.");
                     AbstractForm.device = device;
                     btTransfer(fileName);
                 } // End if
@@ -319,7 +322,7 @@ abstract public class AbstractForm extends Activity {
                 public void onClick(DialogInterface dialog, int id) {
                     switch (actionRequested) {
                         case CHOOSE_TRANSFER_ACTION:
-                            actionRequested = AbstractForm.Action.RECEIVE_CONFIG;
+                            actionRequested = Action.TRANSFER_FORMS;
                             executeRequest();
                             break;
                         default:

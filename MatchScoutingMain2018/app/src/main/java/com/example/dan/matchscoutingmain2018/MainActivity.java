@@ -15,7 +15,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -32,13 +31,94 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AbstractForm {
 
-    private Record present;
+    private File tabletNumFile;
+
+    private Spinner scoutNameSpinner;
+    // aleady have scoutName variable from AbstractForm
+
+    private EditText matchNumEditText;
+    private int matchNum;
+
+    private Spinner teamNumberSpinner;
+    private int teamNum;
+
+    private Button startTimerBtn;
+    private long globalStartTime;
+    private long globalEndTime;
+    private long globalCurrentTime;
+    private Handler timerHandler;
+    Timer timer;
+    volatile long timeInMilliseconds = 0;
+    private final int MATCH_DURATION = 20;
+    private Button plusTimerBtn;
+    private Button minusTimerBtn;
+
+    private CheckBox absentCheckbox;
+
+    private CheckBox autoBaselineCheckbox;
+    private CheckBox autoVaultCheckbox;
+    private CheckBox autoAllyCheckbox;
+    private CheckBox autoScaleCheckbox;
+    private CheckBox autoOpponentCheckbox;
+
+    private ToggleButton allianceToggleBtn;
+    private int alliance;
+    final int RED_ALLIANCE_NUMBER = 0;
+    final int BLUE_ALLIANCE_NUMBER = 1;
+
+    private Button teleopVaultBtn;
+    private int teleopVaultCount = 0;
+    private EditText vaultCountEditText;
+
+    private Button teleopeAllyBtn;
+    private int teleopAllyCount = 0;
+    private EditText allyCountEditText;
+
+    private Button teleopScaleBtn;
+    private int teleopScaleCount = 0;
+    private EditText scaleCountEditText;
+
+    private Button teleopOpponentBtn;
+    private int teleopOpponentCount = 0;
+    private EditText opponentCountEditText;
+
+    private Button teleopDropBtn;
+    private int teleopDropCount = 0;
+    private EditText dropCountEditText;
+
+    private CheckBox climbAttemptCheckbox;
+    private CheckBox climbSuccessCheckbox;
+    private CheckBox climbPowerCheckbox;
+    private CheckBox climbHelpCheckbox;
+    private CheckBox breakDownCheckbox;
+    private CheckBox defenseCheckBox;
+
+    private EditText commentsEditText;
+
+    private Spinner rateDriverSpinner;
+    private Spinner rateDefenseSpinner;
+
+    private Button btnSaveForm;
+    private Button btnTransferForm;
+
+    private TextView formsPendingLbl;
+    // Already have a variable for # of formsPending
+
+    final String FALSE = "0";
+    final String TRUE = "1";
+    private Record teleopVault;
+    private Record teleopAlly;
+    private Record teleopScale;
+    private Record teleopOpponent;
+    private Record teleopCubeDrop;
+    private Record absent;
     private Record can_climb;
     private Record comments;
     private Record rate_driving;
@@ -53,94 +133,12 @@ public class MainActivity extends AbstractForm {
     private Record help_others_climb;
     private Record play_defense;
     private Record rate_defense;
-    private Record cube_dropped;
-
-    private Record[] records = new Record[16];
-
-    private CheckBox chkAutoBaseline;
-    private CheckBox chkAutoCubeVault;
-    private CheckBox chkAutoCubeAllySwitch;
-    private CheckBox chkAutoCubeScale;
-    private CheckBox chkAutoCubeOpponentSwitch;
-    private CheckBox chkClimbAttempt;
-    private CheckBox chkClimbSuccess;
-    private CheckBox chkClimbPower;
-    private CheckBox chkClimbHelp;
-    private CheckBox chkMiscBreak;
-    private CheckBox chkMiscDefense;
-
-    private EditText txtTeamNumber;
-    private EditText txtMatchNumber;
-    private EditText editComments;
-
-    private Spinner chooseName;
-    private Spinner spnRateDriver;
-    private Spinner spnRateDefense;
-
-    private ToggleButton btnToggleButton;
-    private Button btnPlus;
-    private Button btnstartTimer;
-    private Button btnMinus;
-    private Button btnTeleopCubeVault;
-    private Button btnTeleopCubeAllySwitch;
-    private Button btnTeleopCubeScale;
-    private Button btnTeleopCubeOpponentSwitch;
-    private Button btnTeleopCubeDrop;
-
-    private EditText txtCubeVaultCount;
-    private EditText txtCubeAllyCount;
-    private EditText txtCubeScaleCount;
-    private EditText txtCubeOpponentCount;
-    private EditText txtCubeDropCount;
-
-    private CheckBox chkPresent;
-
-    private Button btnSaveForm;
-    private Button btnTransferForm;
-    private TextView formsPendingLbl;
-
-    private File tabletNumFile;
-
-    private long startTime = 0;
-    private Handler timerHandler;
-    Timer timer;
-    volatile long timeInMilliseconds = 0;
-    long timeSwapBuff = 0;
-    long updatedTime = 0;
-    long adjustment = 0;
-
-    private long globalStartTime;
-    private long globalEndTime;
-    private long globalCurrentTime;
-
-    private int alliance;
-    final int RED_ALLIANCE_NUMBER = 0;
-    final int BLUE_ALLIANCE_NUMBER = 1;
-
-    private int matchNum;
-    private int teamNum;
 
     ArrayList<Record> rawTimestampRecords;
     ArrayList<Record> allRecords;
+    Record[] staticRecords;
+
     Context mContext = this;
-
-    private Runnable updateTimerThread = new Runnable() {
-        @Override
-        public void run() {
-            timeInMilliseconds = SystemClock.uptimeMillis() - startTime + adjustment;
-            updatedTime = timeSwapBuff + timeInMilliseconds;
-            updateTimerText();
-            if (timeInMilliseconds < 150000) timerHandler.postDelayed(this, 1000);
-        }
-    };
-
-    private void updateTimerText()
-    {
-        int secs = (int) (timeInMilliseconds / 1000);
-        btnstartTimer.setText(Integer.toString(secs));
-    }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +172,107 @@ public class MainActivity extends AbstractForm {
         initRecords();
         initSaveState();
         initArchiveSystem();
+    }
+
+    private class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            CheckBox checkbox = (CheckBox) compoundButton;
+            int currID = checkbox.getId();
+            switch (currID)
+            {
+                case R.id.chkShow:
+                {
+                    if (checkbox.isChecked()) absent.setValue(TRUE);
+                    else absent.setValue(FALSE);
+                    break;
+                }
+                case R.id.btnToggleButton:
+                {
+                    if (checkbox.isChecked()) // Blue switches to red
+                    {
+                        System.out.println("BLUE SWITCHING TO RED");
+                        allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                        alliance = RED_ALLIANCE_NUMBER;
+                    }
+                    else // Red switches to blue
+                    {
+                        System.out.println("RED SWITCHING TO BLUE");
+                        allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                        alliance = BLUE_ALLIANCE_NUMBER;
+                    }
+                    System.out.println("ALLIANCE: " + alliance);
+                    break;
+                }
+                case R.id.chkAutoBaseline:
+                {
+                    if (checkbox.isChecked()) auto_cross_baseline.setValue(TRUE);
+                    else auto_cross_baseline.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkAutoCubeVault:
+                {
+                    if (checkbox.isChecked()) auto_cube_in_vault.setValue(TRUE);
+                    else auto_cube_in_vault.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkAutoCubeAllySwitch:
+                {
+                    if (checkbox.isChecked()) auto_cube_in_ally_switch.setValue(TRUE);
+                    else auto_cube_in_ally_switch.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkAutoCubeOpponentSwitch:
+                {
+                    if (checkbox.isChecked()) auto_cube_in_opponent_switch.setValue(TRUE);
+                    else auto_cube_in_opponent_switch.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkAutoCubeScale:
+                {
+                    if (checkbox.isChecked()) auto_cube_in_scale.setValue(TRUE);
+                    else auto_cube_in_scale.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkClimbAttempt:
+                {
+                    if (checkbox.isChecked()) can_climb.setValue(TRUE);
+                    else can_climb.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkClimbSuccess:
+                {
+                    if (checkbox.isChecked()) climb_success.setValue(TRUE);
+                    else climb_success.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkClimbPower:
+                {
+                    if (checkbox.isChecked()) stays_put_when_power_out.setValue(TRUE);
+                    else stays_put_when_power_out.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkClimbHelp:
+                {
+                    if (checkbox.isChecked()) help_others_climb.setValue(TRUE);
+                    else help_others_climb.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkMiscBreak:
+                {
+                    if (checkbox.isChecked()) did_they_break_down.setValue(TRUE);
+                    else did_they_break_down.setValue(FALSE);
+                    break;
+                }
+                case R.id.chkMiscDefense:
+                {
+                    if (checkbox.isChecked()) play_defense.setValue(TRUE);
+                    else play_defense.setValue(FALSE);
+                    break;
+                }
+            }
+        }
     }
 
     private void showTabletNumDialog()
@@ -223,172 +322,347 @@ public class MainActivity extends AbstractForm {
 
     }
 
+    private void updateTimerText()
+    {
+        int secs = (int) (timeInMilliseconds / 1000);
+        startTimerBtn.setText(Integer.toString(secs));
+    }
+
     @Override
     void initRecords() {
 
         allRecords = new ArrayList<>();
         rawTimestampRecords = new ArrayList<>();
-        //fill in array
-        records[0] = present = new Record(null, MatchForm.Items.PRESENT.getId());
-        records[1] = can_climb = new Record(null, MatchForm.Items.CAN_CLIMB.getId());
-        records[2] = comments = new Record(null, MatchForm.Items.COMMENTS.getId());
-        records[3] = rate_driving = new Record(null, MatchForm.Items.RATE_DRIVING.getId());
-        records[4] = auto_cross_baseline = new Record(null, MatchForm.Items.AUTO_CROSS_BASELINE.getId());
-        records[5] = climb_success = new Record(null, MatchForm.Items.COMMENTS.getId());
-        records[6] = stays_put_when_power_out  = new Record(null, MatchForm.Items.STAYS_PUT_WHEN_POWER_CUT.getId());
-        records[7] = did_they_break_down = new Record(null, MatchForm.Items.DID_THEY_BREAK_DOWN.getId());
-        records[8] = auto_cube_in_vault = new Record(null, MatchForm.Items.AUTO_CUBE_IN_VAULT.getId());
-        records[9] = auto_cube_in_ally_switch = new Record(null, MatchForm.Items.AUTO_CUBE_IN_ALLY_SWITCH.getId());
-        records[10] = auto_cube_in_scale = new Record(null, MatchForm.Items.AUTO_CUBE_IN_SCALE.getId());
-        records[11] = auto_cube_in_opponent_switch = new Record(null, MatchForm.Items.AUTO_CUBE_IN_OPPONENT_SWITCH.getId());
-        records[12] = help_others_climb = new Record(null, MatchForm.Items.HELP_OTHERS_CLIMB.getId());
-        records[13] = play_defense = new Record(null, MatchForm.Items.PLAY_DEFENSE.getId());
-        records[14] = rate_defense = new Record(null, MatchForm.Items.RATE_DEFENSE.getId());
-        records[15] = cube_dropped = new Record(null, MatchForm.Items.RATE_DEFENSE.getId());
+        teleopCubeDrop = new Record("0", MatchForm.Items.CUBE_DROPPED.getId());
+        absent = new Record(FALSE, MatchForm.Items.PRESENT.getId());
+        can_climb = new Record(FALSE, MatchForm.Items.CAN_CLIMB.getId());
+        comments = new Record(null, MatchForm.Items.COMMENTS.getId());
+        rate_driving = new Record(null, MatchForm.Items.RATE_DRIVING.getId());
+        auto_cross_baseline = new Record(FALSE, MatchForm.Items.AUTO_CROSS_BASELINE.getId());
+        climb_success = new Record(FALSE, MatchForm.Items.CLIMB_SUCCESS.getId());
+        stays_put_when_power_out = new Record(FALSE, MatchForm.Items.STAYS_PUT_WHEN_POWER_CUT.getId());
+        did_they_break_down = new Record(FALSE, MatchForm.Items.DID_THEY_BREAK_DOWN.getId());
+        auto_cube_in_vault = new Record(FALSE, MatchForm.Items.AUTO_CUBE_IN_VAULT.getId());
+        auto_cube_in_ally_switch = new Record(FALSE, MatchForm.Items.AUTO_CUBE_IN_ALLY_SWITCH.getId());
+        auto_cube_in_scale = new Record(FALSE, MatchForm.Items.AUTO_CUBE_IN_SCALE.getId());
+        auto_cube_in_opponent_switch = new Record(FALSE, MatchForm.Items.AUTO_CUBE_IN_OPPONENT_SWITCH.getId());
+        help_others_climb = new Record(FALSE, MatchForm.Items.HELP_OTHERS_CLIMB.getId());
+        play_defense = new Record(FALSE, MatchForm.Items.PLAY_DEFENSE.getId());
+        rate_defense = new Record(null, MatchForm.Items.RATE_DEFENSE.getId());
 
+        staticRecords = new Record[16];
+        staticRecords[0] = teleopCubeDrop;
+        staticRecords[1] = absent;
+        staticRecords[2] = can_climb;
+        staticRecords[3] = auto_cross_baseline;
+        staticRecords[4] = climb_success;
+        staticRecords[5] = stays_put_when_power_out;
+        staticRecords[6] = did_they_break_down;
+        staticRecords[7] = auto_cube_in_vault;
+        staticRecords[8] = auto_cube_in_ally_switch;
+        staticRecords[9] = auto_cube_in_scale;
+        staticRecords[10] = auto_cube_in_opponent_switch;
+        staticRecords[11] = help_others_climb;
+        staticRecords[12] = play_defense;
+        staticRecords[13] = comments;
+        staticRecords[14] = rate_defense;
+        staticRecords[15] = rate_driving;
     }
 
     @Override
     void initLayout() {
 
-        chooseName = (Spinner) findViewById(R.id.chooseName);
+        SpinnerListener spinnerListener = new SpinnerListener();
+        ButtonListener buttonListener = new ButtonListener();
+        EditTextWatcher editTextWatcher = new EditTextWatcher();
+        CheckBoxListener checkboxListener = new CheckBoxListener();
+
+        scoutNameSpinner = (Spinner) findViewById(R.id.chooseName);
         ArrayAdapter scoutNameAdapter = ArrayAdapter.createFromResource(mContext, R.array.scout_names, android.R.layout.simple_spinner_item);
         scoutNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        chooseName.setAdapter(scoutNameAdapter);
-        SpinnerListener spinnerListener = new SpinnerListener();
-        chooseName.setOnItemSelectedListener(spinnerListener);
+        scoutNameSpinner.setAdapter(scoutNameAdapter);
+        scoutNameSpinner.setOnItemSelectedListener(spinnerListener);
 
-        spnRateDriver = (Spinner) findViewById(R.id.spnRateDriver);
+        teamNumberSpinner = (Spinner) findViewById(R.id.txtTeamNumber);
+        ArrayAdapter teamNumsAdapter = ArrayAdapter.createFromResource(mContext, R.array.team_numbers, android.R.layout.simple_spinner_item);
+        teamNumsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        teamNumberSpinner.setAdapter(teamNumsAdapter);
+        teamNumberSpinner.setOnItemSelectedListener(spinnerListener);
+
+        matchNumEditText = (EditText) findViewById(R.id.txtMatchNumber);
+        matchNumEditText.addTextChangedListener(editTextWatcher);
+        matchNumEditText.setText("");
+
+        startTimerBtn = (Button) findViewById(R.id.btnstartTimer);
+        startTimerBtn.setOnClickListener(buttonListener);
+        startTimerBtn.setText("START TIMER");
+        minusTimerBtn = (Button) findViewById(R.id.btnMinus);
+        minusTimerBtn.setOnClickListener(buttonListener);
+        plusTimerBtn = (Button) findViewById(R.id.btnPlus);
+        plusTimerBtn.setOnClickListener(buttonListener);
+
+        absentCheckbox = (CheckBox) findViewById(R.id.chkShow);
+        absentCheckbox.setOnCheckedChangeListener(checkboxListener);
+
+        allianceToggleBtn = (ToggleButton) findViewById(R.id.btnToggleButton);
+        allianceToggleBtn.setOnCheckedChangeListener(checkboxListener);
+        if (allianceToggleBtn.getText().toString().equals("BLUE ALLIANCE"))
+        {
+            allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+        }
+        if (allianceToggleBtn.getText().toString().equals("RED ALLIANCE"))
+        {
+            allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+        }
+
+        autoBaselineCheckbox = (CheckBox) findViewById(R.id.chkAutoBaseline);
+        autoBaselineCheckbox.setOnCheckedChangeListener(checkboxListener);
+        autoVaultCheckbox = (CheckBox) findViewById(R.id.chkAutoCubeVault);
+        autoVaultCheckbox.setOnCheckedChangeListener(checkboxListener);
+        autoAllyCheckbox = (CheckBox) findViewById(R.id.chkAutoCubeAllySwitch);
+        autoAllyCheckbox.setOnCheckedChangeListener(checkboxListener);
+        autoScaleCheckbox = (CheckBox) findViewById(R.id.chkAutoCubeScale);
+        autoScaleCheckbox.setOnCheckedChangeListener(checkboxListener);
+        autoOpponentCheckbox = (CheckBox) findViewById(R.id.chkAutoCubeOpponentSwitch);
+        autoOpponentCheckbox.setOnCheckedChangeListener(checkboxListener);
+
+        teleopVaultBtn = (Button) findViewById(R.id.btnTeleopCubeVault);
+        teleopVaultBtn.setOnClickListener(buttonListener);
+        teleopVaultCount = 0;
+        vaultCountEditText = (EditText) findViewById(R.id.txtTeleopCount1);
+        vaultCountEditText.addTextChangedListener(editTextWatcher);
+
+        teleopeAllyBtn = (Button) findViewById(R.id.btnTeleopCubeAllySwitch);
+        teleopeAllyBtn.setOnClickListener(buttonListener);
+        teleopAllyCount = 0;
+        allyCountEditText = (EditText) findViewById(R.id.txtTeleopCount2);
+        allyCountEditText.addTextChangedListener(editTextWatcher);
+
+        teleopScaleBtn = (Button) findViewById(R.id.btnTeleopCubeScale);
+        teleopScaleBtn.setOnClickListener(buttonListener);
+        scaleCountEditText = (EditText) findViewById(R.id.txtTeleopCount3);
+        scaleCountEditText.addTextChangedListener(editTextWatcher);
+        teleopScaleCount = 0;
+
+        teleopOpponentBtn = (Button) findViewById(R.id.btnTeleopCubeOpponentSwitch);
+        teleopOpponentBtn.setOnClickListener(buttonListener);
+        opponentCountEditText = (EditText) findViewById(R.id.txtTeleopCount4);
+        teleopOpponentCount = 0;
+        opponentCountEditText.addTextChangedListener(editTextWatcher);
+
+        teleopDropBtn = (Button) findViewById(R.id.btnTeleopCubeDrop);
+        teleopDropBtn.setOnClickListener(buttonListener);
+        dropCountEditText = (EditText) findViewById(R.id.txtTeleopCount5);
+        teleopDropCount = 0;
+        dropCountEditText.addTextChangedListener(editTextWatcher);
+
+        climbAttemptCheckbox = (CheckBox) findViewById(R.id.chkClimbAttempt);
+        climbAttemptCheckbox.setOnCheckedChangeListener(checkboxListener);
+        climbSuccessCheckbox = (CheckBox) findViewById(R.id.chkClimbSuccess);
+        climbSuccessCheckbox.setOnCheckedChangeListener(checkboxListener);
+        climbPowerCheckbox = (CheckBox) findViewById(R.id.chkClimbPower);
+        climbPowerCheckbox.setOnCheckedChangeListener(checkboxListener);
+        climbHelpCheckbox = (CheckBox) findViewById(R.id.chkClimbHelp);
+        climbHelpCheckbox.setOnCheckedChangeListener(checkboxListener);
+        breakDownCheckbox = (CheckBox) findViewById(R.id.chkMiscBreak);
+        breakDownCheckbox.setOnCheckedChangeListener(checkboxListener);
+        defenseCheckBox = (CheckBox) findViewById(R.id.chkMiscDefense);
+        defenseCheckBox.setOnCheckedChangeListener(checkboxListener);
+
+        commentsEditText = (EditText) findViewById(R.id.editComments);
+
+        rateDriverSpinner = (Spinner) findViewById(R.id.spnRateDriver);
         ArrayAdapter ratingsAdapter = ArrayAdapter.createFromResource(mContext, R.array.rating_values, android.R.layout.simple_spinner_item);
         ratingsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        spnRateDriver.setAdapter(ratingsAdapter);
-        spnRateDefense = (Spinner) findViewById(R.id.spnRateDefense);
-        spnRateDefense.setAdapter(ratingsAdapter);
-
-        EditTextListener editTextListener = new EditTextListener();
-        txtTeamNumber = (EditText) findViewById(R.id.txtTeamNumber);
-        txtTeamNumber.addTextChangedListener(editTextListener);
-        txtMatchNumber = (EditText) findViewById(R.id.txtMatchNumber);
-        txtMatchNumber.addTextChangedListener(editTextListener);
-        editComments = (EditText) findViewById(R.id.editComments);
-
-        //create objects for all interactables
-        CheckboxListener checkbox_a = new CheckboxListener();
-
-        chkAutoBaseline = (CheckBox) findViewById(R.id.chkAutoBaseline);
-        chkAutoBaseline.setOnCheckedChangeListener(checkbox_a);
-
-        chkAutoCubeVault = (CheckBox) findViewById(R.id.chkAutoCubeVault);
-        chkAutoCubeVault.setOnCheckedChangeListener(checkbox_a);
-
-        chkAutoCubeAllySwitch = (CheckBox) findViewById(R.id.chkAutoCubeAllySwitch);
-        chkAutoCubeAllySwitch.setOnCheckedChangeListener(checkbox_a);
-
-        chkAutoCubeScale = (CheckBox) findViewById(R.id.chkAutoCubeScale);
-        chkAutoCubeScale.setOnCheckedChangeListener(checkbox_a);
-
-        chkAutoCubeOpponentSwitch = (CheckBox) findViewById(R.id.chkAutoCubeOpponentSwitch);
-        chkAutoCubeOpponentSwitch.setOnCheckedChangeListener(checkbox_a);
-
-        chkClimbAttempt = (CheckBox) findViewById(R.id.chkClimbAttempt);
-        chkClimbAttempt.setOnCheckedChangeListener(checkbox_a);
-
-        chkClimbSuccess = (CheckBox) findViewById(R.id.chkClimbSuccess);
-        chkClimbSuccess.setOnCheckedChangeListener(checkbox_a);
-
-        chkClimbPower = (CheckBox) findViewById(R.id.chkClimbPower);
-        chkClimbPower.setOnCheckedChangeListener(checkbox_a);
-
-        chkClimbHelp = (CheckBox) findViewById(R.id.chkClimbHelp);
-        chkClimbHelp.setOnCheckedChangeListener(checkbox_a);
-
-        chkMiscBreak = (CheckBox) findViewById(R.id.chkMiscBreak);
-        chkMiscBreak.setOnCheckedChangeListener(checkbox_a);
-
-        chkMiscDefense = (CheckBox) findViewById(R.id.chkMiscDefense);
-        chkMiscDefense.setOnCheckedChangeListener(checkbox_a);
-
-        chkPresent = (CheckBox) findViewById(R.id.chkShow);
-        chkPresent.setOnCheckedChangeListener(checkbox_a);
-
-        ButtonListenerTeleop teleop_button_listener = new ButtonListenerTeleop();
-
-        btnTeleopCubeVault = (Button) findViewById(R.id.btnTeleopCubeVault);
-        btnTeleopCubeVault.setOnClickListener(teleop_button_listener);
-
-        btnTeleopCubeAllySwitch = (Button) findViewById(R.id.btnTeleopCubeAllySwitch);
-        btnTeleopCubeAllySwitch.setOnClickListener(teleop_button_listener);
-
-        btnTeleopCubeScale = (Button) findViewById(R.id.btnTeleopCubeScale);
-        btnTeleopCubeScale.setOnClickListener(teleop_button_listener);
-
-        btnTeleopCubeOpponentSwitch = (Button) findViewById(R.id.btnTeleopCubeOpponentSwitch);
-        btnTeleopCubeOpponentSwitch.setOnClickListener(teleop_button_listener);
-
-        btnTeleopCubeDrop = (Button) findViewById(R.id.btnTeleopCubeDrop);
-        btnTeleopCubeDrop.setOnClickListener(teleop_button_listener);
-
-        txtCubeVaultCount = (EditText) findViewById(R.id.txtTeleopCount1);
-        txtCubeAllyCount = (EditText) findViewById(R.id.txtTeleopCount2);
-        txtCubeScaleCount = (EditText) findViewById(R.id.txtTeleopCount3);
-        txtCubeOpponentCount = (EditText) findViewById(R.id.txtTeleopCount4);
-        txtCubeDropCount = (EditText) findViewById(R.id.txtTeleopCount5);
+        rateDriverSpinner.setAdapter(ratingsAdapter);
+        rateDefenseSpinner = (Spinner) findViewById(R.id.spnRateDefense);
+        rateDefenseSpinner.setAdapter(ratingsAdapter);
 
         btnSaveForm = (Button) findViewById(R.id.btnSaveForm);
         btnTransferForm = (Button) findViewById(R.id.btnTransferForm);
 
-        btnToggleButton = (ToggleButton) findViewById(R.id.btnToggleButton);
-        AllianceButtonListener allianceButtonListener = new AllianceButtonListener();
-        btnToggleButton.setOnCheckedChangeListener(allianceButtonListener);
-        if (btnToggleButton.getText().toString().equals("BLUE ALLIANCE"))
-        {
-            btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
-        }
-        if (btnToggleButton.getText().toString().equals("RED ALLIANCE"))
-        {
-            btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
-        }
-
-        //ButtonListener other_button_listener = new ButtonLister();
-
-        MasterButtonListener start_timer = new MasterButtonListener();
-
-        btnstartTimer = (Button) findViewById(R.id.btnstartTimer);
-        btnstartTimer.setOnClickListener(start_timer);
-
-        MinusButtonListener minus_button = new MinusButtonListener();
-
-        btnMinus = (Button) findViewById(R.id.btnMinus);
-        btnMinus.setOnClickListener(minus_button);
-
-        PlusButtonListener plus_button = new PlusButtonListener();
-
-        btnPlus = (Button) findViewById(R.id.btnPlus);
-        btnPlus.setOnClickListener(plus_button);
-
-
-        ButtonListenerTeleop main_buttons = new ButtonListenerTeleop();
-
-        btnTeleopCubeVault = (Button) findViewById(R.id.btnTeleopCubeVault);
-        btnTeleopCubeVault.setOnClickListener(main_buttons);
-
-        btnTeleopCubeAllySwitch = (Button) findViewById(R.id.btnTeleopCubeAllySwitch);
-        btnTeleopCubeAllySwitch.setOnClickListener(main_buttons);
-
-        btnTeleopCubeScale = (Button) findViewById(R.id.btnTeleopCubeScale);
-        btnTeleopCubeScale.setOnClickListener(main_buttons);
-
-        btnTeleopCubeOpponentSwitch = (Button) findViewById(R.id.btnTeleopCubeOpponentSwitch);
-        btnTeleopCubeOpponentSwitch.setOnClickListener(main_buttons);
-
-        btnTeleopCubeDrop = (Button) findViewById(R.id.btnTeleopCubeDrop);
-        btnTeleopCubeDrop.setOnClickListener(main_buttons);
-
-        btnSaveForm.setOnClickListener(main_buttons);
-        btnTransferForm.setOnClickListener(main_buttons);
+        btnSaveForm.setOnClickListener(buttonListener);
+        btnTransferForm.setOnClickListener(buttonListener);
 
         formsPendingLbl = (TextView) findViewById(R.id.formsPendingLbl);
 
+    }
+
+    private class ButtonListener implements  View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Button button = (Button) view;
+            int id = button.getId();
+
+            switch(id)
+            {
+                case R.id.btnstartTimer:
+                {
+                    globalStartTime = SystemClock.uptimeMillis();
+                    globalEndTime = globalStartTime + (MATCH_DURATION*1000);
+                    globalCurrentTime = SystemClock.uptimeMillis();
+                    timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000);
+                    break;
+                }
+                case R.id.btnPlus:
+                {
+                    globalStartTime += 1000 - (globalStartTime % 1000);
+                    globalEndTime = globalStartTime + (MATCH_DURATION*1000);
+                    timerHandler.obtainMessage(1).sendToTarget();
+                    break;
+                }
+                case R.id.btnMinus:
+                {
+                    globalStartTime -= (globalStartTime % 1000 + 1000);
+                    globalEndTime = globalStartTime + (MATCH_DURATION*1000);
+                    timerHandler.obtainMessage(1).sendToTarget();
+                    break;
+                }
+                case R.id.btnTeleopCubeVault:
+                {
+                    teleopVaultCount++;
+                    vaultCountEditText.setText(Integer.toString(teleopVaultCount));
+                    teleopVault = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_VAULT.getId());
+                    rawTimestampRecords.add(teleopVault);
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.btnTeleopCubeAllySwitch:
+                {
+                    teleopAllyCount++;
+                    allyCountEditText.setText(Integer.toString(teleopAllyCount));
+                    teleopAlly = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_ALLY_SWITCH.getId());
+                    rawTimestampRecords.add(teleopAlly);
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.btnTeleopCubeScale:
+                {
+                    teleopScaleCount++;
+                    scaleCountEditText.setText(Integer.toString(teleopScaleCount));
+                    teleopScale = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_SCALE.getId());
+                    rawTimestampRecords.add(teleopScale);
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.btnTeleopCubeOpponentSwitch:
+                {
+                    teleopOpponentCount++;
+                    opponentCountEditText.setText(Integer.toString(teleopOpponentCount));
+                    teleopOpponent = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_OPPONENT_SWITCH.getId());
+                    rawTimestampRecords.add(teleopOpponent);
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.btnTeleopCubeDrop:
+                {
+                    teleopDropCount++;
+                    dropCountEditText.setText(Integer.toString(teleopDropCount));
+                    teleopCubeDrop.setValue(Integer.toString(teleopDropCount));
+                    printStaticRecords();
+                    break;
+                }
+                case R.id.btnSaveForm:
+                {
+                    processRawTimeStampRecords();
+                    addStaticRecords();
+                    printAllRecords();
+                    boolean readyToSave = true;
+                    System.out.println("Attempting to save form");
+                    String message = "Cannot save the form because";
+                    if (checkInvalidTeam())
+                    {
+                        message += "\n" + "- There are invalid team numbers." + "\n";
+                        readyToSave = false;
+                    }
+                    if (checkInvalidScoutName()) {
+                        message += "\n" + "- The scout name is invalid." + "\n";
+                        readyToSave = false;
+                    }
+                    if (matchNum <= 0) {
+                        message += "\n" + "- The match number is invalid." + "\n";
+                        matchNumEditText.setText("INVALID");
+                        readyToSave = false;
+                    }
+                    System.out.println("GCT: " + globalCurrentTime);
+                    System.out.println("GET: " + globalEndTime);
+                    if (timeInMilliseconds > 0)
+                    {
+                        message += "\n" + "- The timer is not yet done." + "\n";
+                        readyToSave = false;
+                    }
+                    if (readyToSave)
+                    {
+                        actionRequested = Action.SAVE_FORM;
+                        showAlertDialog("Are you sure you want to save this form?", "Yes");
+                    }
+                    else
+                    {
+                        actionRequested = Action.NONE;
+                        showAlertDialog(message, "OK");
+                    }
+                    break;
+                }
+                case R.id.btnTransferForm:
+                {
+                    System.out.println("Attempting to transfer form");
+                    actionRequested = Action.CHOOSE_TRANSFER_ACTION;
+                    showAlertDialog("Choose your transfer action.", "Transfer all forms", "Transfer last form", "Transfer all archives");
+                    break;
+                }
+            }
+        }
+    }
+
+    private void printStaticRecords() {
+        System.out.print("STATIC RECORDS: ");
+        for (int i = 0; i < staticRecords.length-1; i++) {
+            System.out.print(staticRecords[i] + "|");
+        }
+        System.out.println(staticRecords[staticRecords.length -1]);
+    }
+
+    private void printAllRecords()
+    {
+        System.out.print("RECORDS: ");
+        for (int i = 0; i < allRecords.size()-1; i++)
+        {
+            System.out.print(allRecords.get(i) + "|");
+        }
+        System.out.println(allRecords.get(allRecords.size()-1));
+    }
+
+    private boolean checkInvalidScoutName() {
+        int index = -1;
+        for (int i = 0; i < names.length; i++)
+        {
+            if (names[i].equals(scoutName))
+            {
+                index = i;
+            }
+        }
+        return (index == -1);
+    }
+
+    private boolean checkInvalidTeam() {
+        int index = -1;
+        for (int i = 0; i < teams.length; i++)
+        {
+            if (Integer.parseInt(teams[i]) == teamNum)
+            {
+                index = i;
+            }
+        }
+        return (index == -1);
+    }
+
+    private void addStaticRecords() {
+
+        for (Record staticRecord : staticRecords)
+        {
+            allRecords.add(staticRecord);
+        }
     }
 
     @Override
@@ -410,26 +684,26 @@ public class MainActivity extends AbstractForm {
 
                 formsPendingLbl.setText(formsPendingNum + " Forms Pending");
                 formsPending = Integer.parseInt(formsPendingNum);
-                txtTeamNumber.requestFocus();
-                txtTeamNumber.setText(storedTeamNum);
+                teamNumberSpinner.requestFocus();
+                teamNumberSpinner.setSelection(((ArrayAdapter) teamNumberSpinner.getAdapter()).getPosition(storedTeamNum));
                 teamNum = Integer.parseInt(storedTeamNum);
-                btnToggleButton.setChecked(storedAlliance.equals(RED_ALLIANCE_NUMBER));
+                allianceToggleBtn.setChecked(storedAlliance.equals(RED_ALLIANCE_NUMBER));
                 alliance = Integer.parseInt(storedAlliance);
                 if (alliance == RED_ALLIANCE_NUMBER)
                 {
-                    btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
-                    btnToggleButton.setText("RED ALLIANCE");
+                    allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                    allianceToggleBtn.setText("RED ALLIANCE");
                 }
                 else
                 {
-                    btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
-                    btnToggleButton.setText("BLUE ALLIANCE");
+                    allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                    allianceToggleBtn.setText("BLUE ALLIANCE");
                 }
-                txtMatchNumber.requestFocus();
-                txtMatchNumber.setText(storedMatchNum);
+                matchNumEditText.requestFocus();
+                matchNumEditText.setText(storedMatchNum);
                 matchNum = Integer.parseInt(storedMatchNum);
-                chooseName.requestFocus();
-                chooseName.setSelection(((ArrayAdapter) chooseName.getAdapter()).getPosition(storedScoutName));
+                scoutNameSpinner.requestFocus();
+                scoutNameSpinner.setSelection(((ArrayAdapter) scoutNameSpinner.getAdapter()).getPosition(storedScoutName));
                 scoutName = storedScoutName;
                 globalStartTime = Long.parseLong(storedGlobalStartTime);
                 globalEndTime = Long.parseLong(storedGlobalEndTime);
@@ -550,6 +824,19 @@ public class MainActivity extends AbstractForm {
     @Override
     void resetForm() {
 
+        startTimerBtn.setText("START TIMER");
+        resetSpinners();
+        resetCheckboxes();
+        resetEditTexts();
+
+    }
+
+    void resetSpinners()
+    {
+        scoutNameSpinner.setSelection(((ArrayAdapter) scoutNameSpinner.getAdapter()).getPosition(scoutName));
+        teamNumberSpinner.setSelection(((ArrayAdapter) teamNumberSpinner.getAdapter()).getPosition(teamNum));
+        rateDriverSpinner.setSelection(((ArrayAdapter) rateDriverSpinner.getAdapter()).getPosition("1"));
+        rateDefenseSpinner.setSelection(((ArrayAdapter) rateDefenseSpinner.getAdapter()).getPosition("1"));
     }
 
     @Override
@@ -559,13 +846,40 @@ public class MainActivity extends AbstractForm {
 
     @Override
     void resetCheckboxes() {
+        absentCheckbox.setChecked(false);
+        autoBaselineCheckbox.setChecked(false);
+        autoVaultCheckbox.setChecked(false);
+        autoAllyCheckbox.setChecked(false);
+        autoScaleCheckbox.setChecked(false);
+        autoOpponentCheckbox.setChecked(false);
+        climbAttemptCheckbox.setChecked(false);
+        climbSuccessCheckbox.setChecked(false);
+        climbPowerCheckbox.setChecked(false);
+        climbHelpCheckbox.setChecked(false);
+        allianceToggleBtn.setChecked(false);
+    }
 
+    void resetEditTexts()
+    {
+        matchNum++;
+        matchNumEditText.setText(Integer.toString(matchNum));
+
+        teleopVaultCount = 0;
+        vaultCountEditText.setText(Integer.toString(teleopVaultCount));
+        teleopAllyCount = 0;
+        allyCountEditText.setText(Integer.toString(teleopAllyCount));
+        teleopScaleCount = 0;
+        scaleCountEditText.setText(Integer.toString(teleopScaleCount));
+        teleopOpponentCount = 0;
+        opponentCountEditText.setText(Integer.toString(teleopOpponentCount));
+        teleopDropCount = 0;
+        dropCountEditText.setText(Integer.toString(teleopDropCount));
+
+        commentsEditText.setText("");
     }
 
     @Override
-    Form makeForm() {
-        return null;
-    }
+    Form makeForm() { return new MatchForm(tabletNum, teamNum, matchNum, scoutName, alliance); }
 
     @Override
     boolean readyToSave() {
@@ -589,205 +903,106 @@ public class MainActivity extends AbstractForm {
                 {
                     case R.id.chkShow:
                     {
-                        chkPresent.setChecked(val.equals(0));
+                        absentCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.chkAutoBaseline:
                     {
-                        chkAutoBaseline.setChecked(val.equals(0));
+                        autoBaselineCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.chkAutoCubeVault:
                     {
-                        chkAutoCubeVault.setChecked(val.equals(0));
+                        autoVaultCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.chkAutoCubeAllySwitch:
                     {
-                        chkAutoCubeAllySwitch.setChecked(val.equals(0));
+                        autoAllyCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.chkAutoCubeScale:
                     {
-                        chkAutoCubeScale.setChecked(val.equals(0));
+                        autoScaleCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.chkAutoCubeOpponentSwitch:
                     {
-                        chkAutoCubeOpponentSwitch.setChecked(val.equals(0));
+                        autoOpponentCheckbox.setChecked(val.equals(TRUE));
                         break;
                     }
                     case R.id.txtTeleopCount1:
                     {
-                        txtCubeVaultCount.setText(val);
+                        vaultCountEditText.setText(val);
                         break;
                     }
                     case R.id.txtTeleopCount2:
                     {
-                        txtCubeAllyCount.setText(val);
+                        allyCountEditText.setText(val);
                         break;
                     }
                     case R.id.txtTeleopCount3:
                     {
-                        txtCubeScaleCount.setText(val);
+                        scaleCountEditText.setText(val);
                         break;
                     }
                     case R.id.txtTeleopCount4:
                     {
-                        txtCubeOpponentCount.setText(val);
+                        opponentCountEditText.setText(val);
                         break;
                     }
                     case R.id.txtTeleopCount5:
                     {
-                        txtCubeDropCount.setText(val);
+                        dropCountEditText.setText(val);
                         break;
                     }
                     case R.id.chkClimbAttempt:
                     {
-                        chkClimbAttempt.setChecked(val.equals(0));
+                        climbAttemptCheckbox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.chkClimbSuccess:
                     {
-                        chkClimbSuccess.setChecked(val.equals(0));
+                        climbSuccessCheckbox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.chkClimbPower:
                     {
-                        chkClimbPower.setChecked(val.equals(0));
+                        climbPowerCheckbox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.chkClimbHelp:
                     {
-                        chkClimbHelp.setChecked(val.equals(0));
+                        climbHelpCheckbox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.chkMiscBreak:
                     {
-                        chkMiscBreak.setChecked(val.equals(0));
+                        breakDownCheckbox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.chkMiscDefense:
                     {
-                        chkMiscDefense.setChecked(val.equals(0));
+                        defenseCheckBox.setChecked(val.equals(0));
                         break;
                     }
                     case R.id.spnRateDefense:
                     {
-                        spnRateDefense.setSelection(((ArrayAdapter) spnRateDefense.getAdapter()).getPosition(val));
+                        rateDefenseSpinner.setSelection(((ArrayAdapter) rateDefenseSpinner.getAdapter()).getPosition(val));
                         break;
                     }
                     case R.id.spnRateDriver:
                     {
-                        spnRateDriver.setSelection(((ArrayAdapter) spnRateDriver.getAdapter()).getPosition(val));
+                        rateDriverSpinner.setSelection(((ArrayAdapter) rateDriverSpinner.getAdapter()).getPosition(val));
                         break;
                     }
                     case R.id.editComments:
                     {
-                        editComments.setText(val);
+                        commentsEditText.setText(val);
                         break;
                     }
                 }
             }
-        }
-    }
-
-    private class CheckboxListener implements CheckBox.OnCheckedChangeListener {
-
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            String value = "1";
-            if (!isChecked) value = "0";
-            int a = compoundButton.getId();
-            switch(a){
-                case R.id.chkAutoBaseline: auto_cross_baseline.setValue(value); break;
-                case R.id.chkAutoCubeVault: auto_cube_in_vault.setValue(value); break;
-                case R.id.chkAutoCubeAllySwitch: auto_cube_in_ally_switch.setValue(value); break;
-                case R.id.chkAutoCubeScale: auto_cube_in_scale.setValue(value); break;
-                case R.id.chkAutoCubeOpponentSwitch: auto_cube_in_opponent_switch.setValue(value); break;
-                case R.id.chkClimbAttempt: can_climb.setValue(value); break;
-                case R.id.chkClimbSuccess: climb_success.setValue(value); break;
-                case R.id.chkClimbPower: stays_put_when_power_out.setValue(value); break;
-                case R.id.chkClimbHelp: help_others_climb.setValue(value); break;
-                case R.id.chkMiscBreak: did_they_break_down.setValue(value); break;
-                case R.id.chkMiscDefense: play_defense.setValue(value); break;
-                case R.id.chkShow: present.setValue(value); break;
-
-            }
-
-        }
-        //create listener for all types of shits
-    }
-
-    private class ButtonListenerTeleop implements View.OnClickListener {
-
-        public void onClick(View view) {
-
-
-            int a = view.getId();
-            switch(a) {
-                case R.id.btnTeleopCubeVault:           changeValue(txtCubeVaultCount); timestamp(MatchForm.Items.CUBE_IN_VAULT.getId(), rawTimestampRecords); break;
-                case R.id.btnTeleopCubeAllySwitch:      changeValue(txtCubeAllyCount); timestamp(MatchForm.Items.CUBE_IN_ALLY_SWITCH.getId(), rawTimestampRecords); break;
-                case R.id.btnTeleopCubeScale:           changeValue(txtCubeScaleCount); timestamp(MatchForm.Items.CUBE_IN_SCALE.getId(), rawTimestampRecords); break;
-                case R.id.btnTeleopCubeOpponentSwitch:  changeValue(txtCubeOpponentCount); timestamp(MatchForm.Items.CUBE_IN_OPPONENT_SWITCH.getId(), rawTimestampRecords); break;
-                case R.id.btnTeleopCubeDrop:            changeValue(txtCubeDropCount); break;
-                case R.id.btnSaveForm:
-                {
-                    break;
-                }
-                case R.id.btnTransferForm:
-                {
-                    break;
-                }
-
-            }
-
-
-        }
-        private void changeValue(EditText text) {
-            if(text.getText().toString().equals(""))
-                text.setText("1");
-            else if(text.getId() == R.id.txtTeleopCount5){ //for TeleopCubeDrop since it doesnt need timestamp and therefore doesnt need an array of them, just 1 item per form
-                int a = Integer.parseInt(cube_dropped.getValue());
-                cube_dropped.setValue(String.valueOf(a+1));
-            }
-            else {
-                String str = text.getText().toString();
-                int num = 1;
-                if (!str.isEmpty()) num = Integer.parseInt(str) + 1;
-                text.setText(String.valueOf(num));
-            }
-        }
-        private void timestamp(int id, ArrayList<Record> name) {
-            name.add(new Record(String.valueOf(globalCurrentTime), id));
-        }
-    }
-
-    private class MasterButtonListener implements View.OnClickListener {
-        public void onClick(View view) {
-            globalStartTime = SystemClock.uptimeMillis();
-            globalEndTime = globalStartTime + (150*1000);
-            globalCurrentTime = SystemClock.uptimeMillis();
-            timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000);
-        }
-    }
-
-    private class MinusButtonListener implements View.OnClickListener {
-
-        public void onClick(View view) {
-            globalStartTime -= globalStartTime % 1000;
-            globalEndTime = globalStartTime + (150*1000);
-            timerHandler.obtainMessage(1).sendToTarget();
-        }
-    }
-
-    private class PlusButtonListener implements View.OnClickListener {
-
-        public void onClick(View view) {
-            globalStartTime += 1000 - (globalStartTime % 1000);
-            globalEndTime = globalStartTime + (150*1000);
-            timerHandler.obtainMessage(1).sendToTarget();
         }
     }
 
@@ -833,27 +1048,7 @@ public class MainActivity extends AbstractForm {
         }
     }
 
-    private class AllianceButtonListener implements CompoundButton.OnCheckedChangeListener {
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            if (isChecked) // Blue switches to red
-            {
-                System.out.println("BLUE SWITCHING TO RED");
-                btnToggleButton.setBackgroundColor(getResources().getColor(R.color.redAlliance));
-                alliance = RED_ALLIANCE_NUMBER;
-            }
-            else // Red switches to blue
-            {
-                System.out.println("RED SWITCHING TO BLUE");
-                btnToggleButton.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
-                alliance = BLUE_ALLIANCE_NUMBER;
-            }
-            System.out.println("ALLIANCE: " + alliance);
-        }
-    }
-
-    private class EditTextListener implements TextWatcher {
+    private class EditTextWatcher implements TextWatcher {
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -870,23 +1065,53 @@ public class MainActivity extends AbstractForm {
             EditText currEditText = (EditText) getCurrentFocus();
             if (currEditText == null) return;
             int currId = currEditText.getId();
-            switch (currId)
+            if (currEditText.getText().toString().length() > 0)
             {
-                case R.id.txtMatchNumber:
+                switch (currId)
                 {
-                    if (currEditText.getText().toString().length() > 0)
+                    case R.id.txtMatchNumber:
                     {
                         matchNum = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("Set match number to " + matchNum);
                         break;
                     }
-                }
-                case R.id.txtTeamNumber:
-                {
-                    if (currEditText.getText().toString().length() > 0)
+                    case R.id.txtTeleopCount1:
                     {
-                        teamNum = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("Set team number to " + teamNum);
+                        teleopVaultCount = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("New TeleopVaultCount: " + teleopVaultCount);
+                        adjustNumberOccurrences(teleopVaultCount, teleopVault);
+                        break;
+                    }
+                    case R.id.txtTeleopCount2:
+                    {
+                        teleopAllyCount = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("New TeleopAllyCount: " + teleopAllyCount);
+                        adjustNumberOccurrences(teleopAllyCount, teleopAlly);
+                        break;
+                    }
+                    case R.id.txtTeleopCount3:
+                    {
+                        teleopScaleCount = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("New TeleopScaleCount: " + teleopScaleCount);
+                        adjustNumberOccurrences(teleopScaleCount, teleopScale);
+                        break;
+                    }
+                    case R.id.txtTeleopCount4:
+                    {
+                        teleopOpponentCount = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("New TeleopOpponentCount: " + teleopOpponentCount);
+                        adjustNumberOccurrences(teleopOpponentCount, teleopOpponent);
+                        break;
+                    }
+                    case R.id.txtTeleopCount5:
+                    {
+                        teleopDropCount = Integer.parseInt(currEditText.getText().toString());
+                        System.out.println("New TeleopDropCount: " + teleopDropCount);
+                        teleopCubeDrop.setValue(Integer.toString(teleopDropCount));
+                        break;
+                    }
+                    case R.id.editComments:
+                    {
+                        comments.setValue(currEditText.getText().toString());
                         break;
                     }
                 }
@@ -894,50 +1119,62 @@ public class MainActivity extends AbstractForm {
         }
     }
 
-    private class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            CheckBox checkbox = (CheckBox) compoundButton;
-            int currID = checkbox.getId();
-            switch (currID)
+    private void printRawTimestampRecords()
+    {
+        if (rawTimestampRecords.size() > 0)
+        {
+            System.out.print("RAW TIMESTAMPS: ");
+            for (int i = 0; i < rawTimestampRecords.size() - 1; i++)
             {
-                case R.id.chkAutoBaseline:
-                {
-                    if (checkbox.isChecked()) allRecords.add(auto_cross_baseline);
-                    else allRecords.remove(auto_cross_baseline);
-                    break;
-                }
-                case R.id.chkAutoCubeVault:
-                {
-                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_vault);
-                    else allRecords.remove(auto_cube_in_vault);
-                    break;
-                }
-                case R.id.chkAutoCubeAllySwitch:
-                {
-                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_ally_switch);
-                    else allRecords.remove(auto_cube_in_ally_switch);
-                    break;
-                }
-                case R.id.chkAutoCubeOpponentSwitch:
-                {
-                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_opponent_switch);
-                    else allRecords.remove(auto_cube_in_opponent_switch);
-                    break;
-                }
-                case R.id.chkAutoCubeScale:
-                {
-                    if (checkbox.isChecked()) allRecords.add(auto_cube_in_scale);
-                    else allRecords.remove(auto_cube_in_scale);
-                    break;
-                }
-                case R.id.chkShow:
-                {
-                    if (!checkbox.isChecked()) allRecords.add(present);
-                    else allRecords.remove(present);
-                }
+                System.out.print(rawTimestampRecords.get(i) + "|");
+            }
+            System.out.println(rawTimestampRecords.get(rawTimestampRecords.size()-1));
+        }
+        else System.out.println("NO RAWTIMESTAMPS YET.");
+
+    }
+    private void adjustNumberOccurrences(int goalOccurences, Record wantedRecord)
+    {
+        printRawTimestampRecords();
+        int currOccurrences = findNumberOccurences(wantedRecord);
+        System.out.println("Initial current number of occurrences: " + currOccurrences);
+        while (currOccurrences != goalOccurences)
+        {
+            if (goalOccurences > currOccurrences)
+            {
+                rawTimestampRecords.add(new Record("DIDN'T RECORD TIMESTAMP", wantedRecord.getItemID()));
+                System.out.println("Added a raw timestamp record.");
+            }
+            if (goalOccurences < currOccurrences && findLastTimestamp(wantedRecord) != -1) {
+                rawTimestampRecords.remove(findLastTimestamp(wantedRecord));
+                System.out.println("Removed a raw timestamp record.");
+            }
+            currOccurrences = findNumberOccurences(wantedRecord);
+            System.out.println("Current number of occurences (updated): " + currOccurrences);
+        }
+        printRawTimestampRecords();
+    }
+
+    private int findLastTimestamp(Record wantedRecord) {
+        int index = -1;
+        for (int i = rawTimestampRecords.size()-1; i > 0; i--)
+        {
+            if (rawTimestampRecords.get(i).getItemID() == wantedRecord.getItemID())
+            {
+                index = i;
+                return index;
             }
         }
+        return index;
+    }
+
+    private int findNumberOccurences(Record wantedRecord) {
+
+        int counter = 0;
+        for (Record record : rawTimestampRecords)
+        {
+            if (record.getItemID() == wantedRecord.getItemID()) counter++;
+        }
+        return counter;
     }
 }

@@ -237,7 +237,7 @@ public class FormActivity extends AbstractForm {
                 }
                 case R.id.subtractTimerBtn: {
                     System.out.println("Decreased timer.");
-                    globalStartTime -= globalStartTime % 1000;
+                    globalStartTime -= (globalStartTime % 1000 + 1000);
                     globalEndTime = globalStartTime + (MATCH_DURATION*1000);
                     System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
                     System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
@@ -359,8 +359,6 @@ public class FormActivity extends AbstractForm {
                 }
                 case R.id.transferFormBtn: {
                     System.out.println("Attempting to transfer form");
-//                    prepareToTransfer(TEMP_FILE);
-//                    archiveCurrentFile();
                     actionRequested = Action.CHOOSE_TRANSFER_ACTION;
                     showAlertDialog("Choose your transfer action.", "Transfer all forms", "Transfer last form", "Transfer all archives");
                     break;

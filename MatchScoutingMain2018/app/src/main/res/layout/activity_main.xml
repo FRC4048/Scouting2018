@@ -107,7 +107,7 @@
         android:textColor="@android:color/black"
         android:textSize="14dp" />
 
-    <EditText
+    <Spinner
         android:id="@+id/txtTeamNumber"
         android:layout_width="100dp"
         android:layout_height="30dp"

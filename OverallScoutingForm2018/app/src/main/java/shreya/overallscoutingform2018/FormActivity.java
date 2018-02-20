@@ -116,9 +116,10 @@ public class FormActivity extends AbstractForm {
     int[] teamsPlaying = new int[6];
     int matchNum = 0;
     int[] invalidTeamNums = new int[6];
+    private final int MATCH_DURATION = 10;
     private long globalStartTime = SystemClock.uptimeMillis();
     private long globalCurrentTime = globalStartTime;
-    private long globalEndTime = globalStartTime + 150*1000;
+    private long globalEndTime = globalStartTime + (MATCH_DURATION)*1000;
     private ArrayList<Record> rawTimestampRecords = new ArrayList<>();
 
     private Runnable updateTimerThread = new Runnable() {
@@ -188,7 +189,7 @@ public class FormActivity extends AbstractForm {
         else System.out.println("tabletNumFile does exist.");
         initConfigs();
         initLayout();
-//        initSaveState();
+        initSaveState();
         initArchiveSystem();
 
 //        if (checkConfigFile()) {
@@ -219,7 +220,7 @@ public class FormActivity extends AbstractForm {
                     globalStartTime = SystemClock.uptimeMillis();
                     System.out.println("GLOBAL START TIME: " + globalStartTime);
                     globalCurrentTime = SystemClock.uptimeMillis();
-                    globalEndTime = globalStartTime + 150*1000;
+                    globalEndTime = globalStartTime + MATCH_DURATION*1000;
                     System.out.println("GLOBAL END TIME: " + globalEndTime);
                     timer.scheduleAtFixedRate(new UpdateTimerTask(), 0, 1000);
                     break;
@@ -227,7 +228,7 @@ public class FormActivity extends AbstractForm {
                 case R.id.addTimerBtn: {
                     System.out.println("Increased timer.");
                     globalStartTime += 1000 - (globalStartTime % 1000);
-                    globalEndTime = globalStartTime + (150*1000);
+                    globalEndTime = globalStartTime + (MATCH_DURATION*1000);
                     System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
                     System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
                     System.out.println("NEW GLOBAL CURRENT TIME: " + globalCurrentTime);
@@ -237,7 +238,7 @@ public class FormActivity extends AbstractForm {
                 case R.id.subtractTimerBtn: {
                     System.out.println("Decreased timer.");
                     globalStartTime -= globalStartTime % 1000;
-                    globalEndTime = globalStartTime + (150*1000);
+                    globalEndTime = globalStartTime + (MATCH_DURATION*1000);
                     System.out.println("NEW GLOBAL START TIME: " + globalStartTime);
                     System.out.println("NEW GLOBAL END TIME: " + globalEndTime);
                     System.out.println("NEW GLOBAL CURRENT TIME: " + globalCurrentTime);
@@ -339,9 +340,9 @@ public class FormActivity extends AbstractForm {
                     }
                     System.out.println("GCT: " + globalCurrentTime);
                     System.out.println("GET: " + globalEndTime);
-                    if (globalCurrentTime > globalEndTime)
+                    if (timeInMilliseconds > 0)
                     {
-                        message += "- The timer is not yet done." + "\n";
+                        message += "\n" + "- The timer is not yet done." + "\n";
                         readyToSave = false;
                     }
                     if (readyToSave)
@@ -358,8 +359,10 @@ public class FormActivity extends AbstractForm {
                 }
                 case R.id.transferFormBtn: {
                     System.out.println("Attempting to transfer form");
-                    prepareToTransfer(TEMP_FILE);
-                    archiveCurrentFile();
+//                    prepareToTransfer(TEMP_FILE);
+//                    archiveCurrentFile();
+                    actionRequested = Action.CHOOSE_TRANSFER_ACTION;
+                    showAlertDialog("Choose your transfer action.", "Transfer all forms", "Transfer last form", "Transfer all archives");
                     break;
                 }
                 case R.id.viewTimelineBtn: {
@@ -507,7 +510,7 @@ public class FormActivity extends AbstractForm {
             int index = timeStampRecords.indexOf(rID);
             if (index > 0) {
                 double rValue = Double.parseDouble(r.getValue());
-                if (rValue < 0.0 || rValue > 150.0) recordsToRemove.add(r);
+                if (rValue < 0.0 || rValue > MATCH_DURATION) recordsToRemove.add(r);
             }
 
         }
@@ -967,6 +970,7 @@ public class FormActivity extends AbstractForm {
                 break;
             case TRANSFER_FORMS:
                 if (formsPending > 0) {
+                    System.out.println("Transferring all forms.");
                     prepareFormTransfer(TEMP_FILE);
                     prepareToTransfer(TEMP_FILE);
                     actionRequested = Action.CHECK_TRANSFER;
@@ -1157,7 +1161,7 @@ public class FormActivity extends AbstractForm {
 
     private void resetTimer() {
         globalStartTime = SystemClock.uptimeMillis();
-        globalEndTime = globalStartTime + 150*1000;
+        globalEndTime = globalStartTime + MATCH_DURATION*1000;
         globalCurrentTime = SystemClock.uptimeMillis();
         startTimerBtn.setText("Start Timer");
     }

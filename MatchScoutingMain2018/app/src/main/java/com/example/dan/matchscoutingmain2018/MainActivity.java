@@ -932,7 +932,7 @@ public class MainActivity extends AbstractForm {
                     else allRecords.remove(auto_cube_in_scale);
                     break;
                 }
-                case R.id.chkPresent:
+                case R.id.chkShow:
                 {
                     if (!checkbox.isChecked()) allRecords.add(present);
                     else allRecords.remove(present);

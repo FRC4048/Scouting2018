@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Form {
-	
+
 	private String rawForm;
 
 	private FormType formType;
@@ -15,18 +15,18 @@ public class Form {
 	// database report id
 	private int reportID;
 	ArrayList<Record> records;
-	
+
 	public static final String FORM_DELIMITER = "||";
 	public static final String ITEM_DELIMITER = "|";
 	public static final String ID_DELIMITER = ",";
 
 	public static final int RED_ALLIANCE_NUMBER = 0;
 	public static final int BLUE_ALLIANCE_NUMBER = 1;
-	
+
 	public enum FormType {
 		PRESCOUTING_FORM, MATCH_FORM, OVERALL_FORM
 	}
-	
+
 	public static final class FormOrder {
 		public static final int FORM_TYPE = 0;
 		public static final int TABLET_NUM = 1;
@@ -34,7 +34,7 @@ public class Form {
 		public static final int TEAM_NUM = 3;
 		public static final int ALLIANCE = 4;
 		public static final int MATCH_NUM = 5;
-		
+
 		public static final int highestIndex() {
 			return MATCH_NUM;
 		}
@@ -53,7 +53,7 @@ public class Form {
 		this.rawForm = null;
 	}
 
-    // For the scenario of trying to save a form to the database. Do not know the formID yet.
+	// For the scenario of trying to save a form to the database. Do not know the formID yet.
 	public Form(FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
@@ -80,7 +80,7 @@ public class Form {
 		this.rawForm = null;
 	}
 
-    // For the scenario of fetching from the database. Do know the formID.
+	// For the scenario of fetching from the database. Do know the formID.
 	public Form(int reportID, FormType formType, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {
 		this.formType = formType;
 		this.tabletNum = tabletNum;
@@ -117,7 +117,7 @@ public class Form {
 	public int getTabletNum() {
 		return tabletNum;
 	}
-	
+
 	public int getTeamNum() {
 		return teamNum;
 	}
@@ -125,7 +125,7 @@ public class Form {
 	public int getReportID() {
 		return reportID;
 	}
-	
+
 	public int getMatchNum() {
 		return matchNum;
 	}
@@ -157,7 +157,7 @@ public class Form {
 	}
 
 	public void setFormID(int formID) { this.formID = formID; }
-	
+
 	public String getScoutName() {
 		return scoutName;
 	}
@@ -169,51 +169,51 @@ public class Form {
 	public ArrayList<Record> getAllRecords() {
 		return records;
 	}
-	
+
 	public Record getRecord(int index) {
 		return records.get(index);
 	}
-	
+
 	public boolean addRecord(Record record) {
 		return records.add(record);
 	}
-	
+
 	public boolean addRecords(Collection<? extends Record> records) {
 		return this.records.addAll(records);
 	}
-	
+
 	public boolean addRecords(Record[] records) {
 		boolean bool = true;
-		for (int i = 0; i < records.length; i++) 
+		for (int i = 0; i < records.length; i++)
 			if (this.records.add(records[i]) == false) bool = false;
 		return bool;
 	}
-	
+
 	public Record[] addRecords(String rawRecords) {
 		rawForm += "|" + rawRecords;
 		this.addRecords(breakDownRecords(rawRecords, this.formType));
 		return null;
 	}
-	
+
 	public boolean removeRecord(Record record) {
 		return records.remove(record);
 	}
-	
+
 	public Record removeRecord(int index) {
 		return records.remove(index);
 	}
-	
+
 	public boolean removeRecords(Collection<? extends Record> records) {
 		return this.records.removeAll(records);
 	}
-	
+
 	public boolean removeRecords(Record[] records) {
 		boolean bool = true;
-		for (int i = 0; i < records.length; i++) 
+		for (int i = 0; i < records.length; i++)
 			if (this.records.remove(records[i]) == false) bool = false;
 		return bool;
 	}
-	
+
 	protected static void breakDownForm(Form form) {
 		String rawForm = form.getRawForm();
 		if (rawForm != null) {
@@ -221,10 +221,12 @@ public class Form {
 			int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
 			if (type == FormType.MATCH_FORM.ordinal())
 			{
-				// TO-DO: Dan deal with this later
-//				form = new MatchForm(-1, Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]),
-//						Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME],
-//                        Integer.parseInt(items[FormOrder.ALLIANCE]), Integer.parseInt(items[FormOrder.FORM_ID]));
+				form.setFormType(Form.FormType.MATCH_FORM);
+				form.setTabletNum(Integer.parseInt(items[FormOrder.TABLET_NUM]));
+				form.setTeamNum(Integer.parseInt(items[FormOrder.TEAM_NUM]));
+				form.setMatchNum(Integer.parseInt(items[FormOrder.MATCH_NUM])); 
+				form.setAlliance(Integer.parseInt(items[FormOrder.ALLIANCE])); 
+				form.setScoutName(items[FormOrder.SCOUT_NAME]);
 			}
 			else if (type == FormType.PRESCOUTING_FORM.ordinal()) form.setFormType(FormType.PRESCOUTING_FORM);
 			else if (type == FormType.OVERALL_FORM.ordinal())
@@ -236,8 +238,13 @@ public class Form {
 				{
 					teamNums[i] = Integer.parseInt(teamNumsStrings[i]);
 				}
-
-				form = new OverallForm(Integer.parseInt(items[FormOrder.TABLET_NUM]), teamNums, Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME]);
+				
+				form.setFormType(Form.FormType.OVERALL_FORM);
+				form.setTabletNum(Integer.parseInt(items[FormOrder.TABLET_NUM]));
+				((OverallForm) form).setTeamNums(teamNums);
+				form.setMatchNum(Integer.parseInt(items[FormOrder.MATCH_NUM]));
+				form.setScoutName(items[FormOrder.SCOUT_NAME]); 
+				form.setAlliance(-1);
 			}
 			String rawRecords = "";
 			for (int i = 0; i < items.length-(FormOrder.highestIndex()+1); i++) {
@@ -247,7 +254,7 @@ public class Form {
 			if (!rawRecords.isEmpty()) form.addRecords(breakDownRecords(rawRecords, form.getFormType()));
 		}
 	}
-	
+
 	protected static Record[] breakDownRecords(String rawRecords, FormType type) {
 		ArrayList<Record> formRecords = new ArrayList<>();
 		String[] records = rawRecords.split("\\" + ITEM_DELIMITER);
@@ -257,7 +264,7 @@ public class Form {
 		}
 		return formRecords.toArray(new Record[0]);
 	}
-	
+
 	@Override
 	public String toString() {
 		if (rawForm != null) return rawForm;
@@ -267,7 +274,6 @@ public class Form {
 			rawForm += scoutName + ITEM_DELIMITER;
 			rawForm += teamNum + ITEM_DELIMITER;
 			rawForm += alliance + ITEM_DELIMITER;
-			rawForm += formID + ITEM_DELIMITER;
 			rawForm += matchNum;
 			for (int i = 0; i < records.size(); i++)
 				rawForm += ITEM_DELIMITER + records.get(i).toString();

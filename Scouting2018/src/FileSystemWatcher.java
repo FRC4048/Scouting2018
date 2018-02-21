@@ -19,8 +19,10 @@
  * The text file must follow a specific format dictated by the tablet software.
  *************************************************************************************************/
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -102,7 +104,7 @@ public class FileSystemWatcher {
 						File addedFile = findNewFile(); 
 						if (addedFile != null) 
 						{
-							filename = addedFile.getName();
+							filename = addedFile.getName().toString();
 							output("File Name: " + filename);
 							storeInDatabase.run(); 
 						}
@@ -121,6 +123,43 @@ public class FileSystemWatcher {
 		@Override
 		public void run() {
 			output("Storing this in the database.");
+			
+			/** 
+			 * RawForm structure - Form Type|Tablet Num|Scout Name|Team Num|Alliance|Match Num|Records...
+			 * 1) Split using the ITEM_DELIMETER. 
+			 * 2) Check if the form is a MatchForm or an OverallForm. 
+			 */
+			try {
+				File formFile = new File("/Users/main/Desktop/", filename);
+				System.out.println("File name: " + formFile.getName());
+				BufferedReader fileReader = new BufferedReader(new FileReader(formFile)); 
+				String rawForms = fileReader.readLine();
+				String[] rawFormContents = rawForms.split("\\|\\|"); 
+				for (String rawForm : rawFormContents)
+				{
+					System.out.println("Raw Form: " + rawForm);
+					String[] contents = rawForm.split("\\"+Form.ITEM_DELIMITER); 
+					int formType = Integer.parseInt(contents[Form.FormOrder.FORM_TYPE]); 
+					int tabletNum = Integer.parseInt(contents[Form.FormOrder.TABLET_NUM]); 
+					String scoutName = contents[Form.FormOrder.SCOUT_NAME]; 
+					int teamNum = Integer.parseInt(contents[Form.FormOrder.TEAM_NUM]); 
+					int alliance = Integer.parseInt(contents[Form.FormOrder.ALLIANCE]); 
+					int matchNum = Integer.parseInt(contents[Form.FormOrder.MATCH_NUM]); 
+					String records = contents[Form.FormOrder.highestIndex() + 1]; 
+					Form form = new Form(rawForm); 
+					storeInDB(form); 
+					
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 			
 		}
     	
@@ -173,14 +212,6 @@ public class FileSystemWatcher {
      * 3) Database transfer (if the right change is found). 
      */
     
-    /** 
-     * Finds and stores any new forms in the directory folder by: 
-     * 1) checking for a new file of the appropriate type that contains form data 
-     * 2) converting the file's form data into Form objects
-     * 3) transferring the newly read forms into the database
-     * 
-     * If there is a USB mounted, this method also transfers the file containing the form data to this USB. 
-     */
     public static void checkFolderForFile() {
         output("Checking folder for file...");
         
@@ -298,7 +329,7 @@ public class FileSystemWatcher {
             // double pipes delimit forms in the file.
             int index = content.indexOf(Form.FORM_DELIMITER);
             if (index == -1)
-            	// If no further forms are found, stop loooking for more forms. 
+            	// If no further forms are found, stop looking for more forms. 
                 done = true;
             else {
             	// This must remain substring and not split, though that might seem like an easier implementation.
@@ -507,31 +538,64 @@ public class FileSystemWatcher {
         if (!getConnection()) {
             output("DB broken!");
         } else {
-            CallableStatement stmt = null;
-            stmt = conn.prepareCall("{call procInsertReport(?,?,?,?,?,?)}");
-            // The ordinal denotes whether the form is a prescouting or match scouting form 
-            stmt.setInt(1, form.getFormType().ordinal());
-            // The tablet number references the number of the machine from which the form originated 
-            stmt.setInt(2, form.getTabletNum());
-            // The scout name referneces the scout who filled in the form 
-            stmt.setString(3, form.getScoutName());
-            // teamNum references the number of the team that the form corresponds to 
-            stmt.setInt(4, form.getTeamNum());
-            // matchNum references the number of the match that the form corresponds to
-            stmt.setInt(5, form.getMatchNum());
-            stmt.registerOutParameter(6, Types.INTEGER);
-            
-            try {
-                stmt.executeQuery();
-                form.setFormID(stmt.getInt(6));
-            } catch (SQLException e) {
-                e.printStackTrace();
-                output("broken");
-                System.exit(0);
-            } finally {
-                if (stmt != null)
-                    stmt.close();
+        	CallableStatement stmt = null;
+            if (form.getFormType().ordinal() == 1)
+            {
+                stmt = conn.prepareCall("{call procInsertReport(?,?,?,?,?,?,?)}");
+                // The ordinal denotes whether the form is a prescouting or match scouting form 
+                stmt.setInt(1, form.getFormType().ordinal());
+                // The tablet number references the number of the machine from which the form originated 
+                stmt.setInt(2, form.getTabletNum());
+                // The scout name referneces the scout who filled in the form 
+                stmt.setString(3, form.getScoutName());
+                // teamNum references the number of the team that the form corresponds to 
+                stmt.setInt(4, form.getTeamNum());
+                // matchNum references the number of the match that the form corresponds to
+                stmt.setInt(5, form.getMatchNum());
+                stmt.setInt(6,  form.getAlliance());
+                stmt.registerOutParameter(7, Types.INTEGER);
+                try {
+                    stmt.executeQuery();
+                    form.setFormID(stmt.getInt(7));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    output("broken");
+                    System.exit(0);
+                } finally {
+                    if (stmt != null)
+                        stmt.close();
+                }
+                
             }
+            else if (form.getFormType().ordinal() == 2)
+            {
+            	OverallForm realForm = (OverallForm) form; 
+            	int[] teamNums = realForm.getTeamNums(); 
+            	stmt = conn.prepareCall("{call procInsertOverallReport(?,?,?,?,?,?,?,?,?,?,?)}"); 
+            	stmt.setInt(1,  form.getFormType().ordinal()); 
+            	stmt.setInt(2, form.getTabletNum());
+            	stmt.setString(3,  form.getScoutName());
+            	stmt.setInt(4,  teamNums[0]);
+            	stmt.setInt(5,  teamNums[1]);
+            	stmt.setInt(6, teamNums[2]);
+            	stmt.setInt(7,  teamNums[3]);
+            	stmt.setInt(8,  teamNums[4]);
+            	stmt.setInt(9,  teamNums[5]);
+            	stmt.setInt(10, form.getMatchNum());
+            	stmt.registerOutParameter(11, Types.INTEGER);
+            	try {
+                    stmt.executeQuery();
+                    form.setFormID(stmt.getInt(11));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    output("broken");
+                    System.exit(0);
+                } finally {
+                    if (stmt != null)
+                        stmt.close();
+                }
+            }
+            
             for (int i = 0; i < form.getAllRecords().size(); i++) {
                 stmt = conn.prepareCall("{call procInsertRecord(?,?,?)}");
                 stmt.setString(1, form.getAllRecords().get(i).getValue());
@@ -546,6 +610,7 @@ public class FileSystemWatcher {
                     System.exit(0);
                 }
             }
+        	
             if (stmt != null) {
                 stmt.close();
             }
@@ -563,7 +628,7 @@ public class FileSystemWatcher {
         
         try {
         	// Initializes the connection 
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/scouting?useSSL=false", "lucas", "lucas");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/scouting?useSSL=false", "root", "vanshika");
             output("Connected to database");
             connected = true;
         } catch (SQLException e) {

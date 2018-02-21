@@ -269,7 +269,6 @@ public class Form {
 			rawForm += scoutName + ITEM_DELIMITER;
 			rawForm += teamNum + ITEM_DELIMITER;
 			rawForm += alliance + ITEM_DELIMITER;
-			rawForm += formID + ITEM_DELIMITER;
 			rawForm += matchNum;
 			for (int i = 0; i < records.size(); i++)
 				rawForm += ITEM_DELIMITER + records.get(i).toString();

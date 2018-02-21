@@ -38,10 +38,18 @@ public class MatchForm extends Form {
 
 
 
-//    public MatchForm(int tabletNum, int teamNum, int matchNumEditText, String scoutNameEditText, int alliance, int formID) {
-//        super(FormType.MATCH_FORM, tabletNum, teamNum, scoutNameEditText, alliance, formID, matchNumEditText);
-//    } // End constructor
-//
+    public MatchForm(int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {
+        super(FormType.MATCH_FORM, tabletNum, teamNum, scoutName, alliance);
+        setMatchNum(matchNum);
+        setFormID(formID); 
+    } // End constructor
+    
+    public MatchForm(int tabletNum, int teamNum, int matchNum, String scoutName, int alliance) {
+        super(FormType.MATCH_FORM, tabletNum, teamNum, scoutName, alliance);
+        setMatchNum(matchNum);
+    } // End constructor
+   
+
     public MatchForm(int reportID, int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, int formID) {
         super(reportID, FormType.MATCH_FORM, tabletNum, teamNum, matchNum, scoutName, alliance, formID);
     } // End constructor

@@ -75,11 +75,103 @@ public class FileSystemWatcher {
     private static JFrame frame;
     private static JTextArea console;
     
+    static File[] dirContents; 
+    static File[] initialConfig; 
+    
+    static String filename; 
+
+    private static Runnable checkFolderForChange = new Runnable() 
+    {
+
+		@Override
+		public void run() {
+			initialConfig = getInitialConfiguration(); 
+			while (true) 
+			{
+		    	File dir = new File(System.getProperty("user.home"), "Desktop");
+				dirContents = dir.listFiles(); 
+				if (initialConfig.length != dirContents.length) 
+				{
+					output("Detected a change in the directory.");
+					if (dirContents.length < initialConfig.length) 
+					{
+						dirContents = initialConfig; 
+					}
+					else 
+					{
+						File addedFile = findNewFile(); 
+						if (addedFile != null) 
+						{
+							filename = addedFile.getName();
+							output("File Name: " + filename);
+							storeInDatabase.run(); 
+						}
+					}
+				}
+				initialConfig = getInitialConfiguration(); 
+			}
+			
+		}
+    	
+    };
+    
+    private static Runnable storeInDatabase = new Runnable() 
+    {
+
+		@Override
+		public void run() {
+			output("Storing this in the database.");
+			
+		}
+    	
+    }; 
+    
+    private static File findNewFile() 
+    {
+    	int i = 0; 
+    	while (i < dirContents.length) 
+    	{
+    		if (initialConfigIndex(dirContents[i]) == -1)
+    			return dirContents[i]; 
+    		i++; 
+    	}
+    	return null; 
+
+    }
+    
+    private static int initialConfigIndex(File file)
+    {
+    	int i = 0; 
+    	while (i < initialConfig.length)
+    	{
+    		if (initialConfig[i].equals(file)) return i; 
+    		i++; 
+    	}
+    	return -1; 
+    }
+    
+    private static File[] getInitialConfiguration() 
+    {
+    	File dir = new File(System.getProperty("user.home"), "Desktop"); 
+    	File[] allFiles = dir.listFiles();
+    	return allFiles;
+    }
+    
     private static FileSystemWatcher instance;
     
     public static void main(String[] args) throws IOException {
         instance = new FileSystemWatcher();
+        
     } // End main
+    
+    /** 
+     * REPEAT: 
+     * THREAD ONE--
+     * 1) Initialize initial configuration for a folder -- note the files & the directories in the folder (so that you can detect a change). 
+     * 2) Check for the RIGHT change--an insertion of a (text) file.
+     * THREAD TWO--  
+     * 3) Database transfer (if the right change is found). 
+     */
     
     /** 
      * Finds and stores any new forms in the directory folder by: 
@@ -116,6 +208,7 @@ public class FileSystemWatcher {
                 x.printStackTrace();
             }
             
+            // INSERTION INTO DATABASE THREAD 
             output("Reading a file...");
             
             // Analyzing/handling the changes that the WatchService detects 
@@ -277,7 +370,7 @@ public class FileSystemWatcher {
         output("Ready");
         if (response == JOptionPane.YES_OPTION) {
             output("Checking for a new form");
-            checkFolderForFile();
+            checkFolderForChange.run(); 
         } else if (response == JOptionPane.NO_OPTION) {
             output("Reading from a USB");
             checkForUSBs();

@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -73,25 +72,30 @@ public class MainActivity extends AbstractForm {
     final int RED_ALLIANCE_NUMBER = 0;
     final int BLUE_ALLIANCE_NUMBER = 1;
 
-    private Button teleopVaultBtn;
+    private Button plusCubeVaultBtn;
+    private Button minusCubeVaultBtn;
+    private TextView cubesVaultLbl;
     private int teleopVaultCount = 0;
-    private EditText vaultCountEditText;
 
-    private Button teleopeAllyBtn;
+    private Button plusCubeAllyBtn;
+    private Button minusCubeAllyBtn;
+    private TextView cubesAllyLbl;
     private int teleopAllyCount = 0;
-    private EditText allyCountEditText;
 
-    private Button teleopScaleBtn;
+    private Button plusCubeScaleBtn;
+    private Button minusCubeScaleBtn;
+    private TextView cubesScaleLbl;
     private int teleopScaleCount = 0;
-    private EditText scaleCountEditText;
 
-    private Button teleopOpponentBtn;
+    private Button plusCubeOpponentBtn;
+    private Button minusCubeOpponentBtn;
+    private TextView cubesOpponentLbl;
     private int teleopOpponentCount = 0;
-    private EditText opponentCountEditText;
 
-    private Button teleopDropBtn;
+    private Button plusCubeDropBtn;
+    private Button minusCubeDropBtn;
+    private TextView cubesDroppedLbl;
     private int teleopDropCount = 0;
-    private EditText dropCountEditText;
 
     private CheckBox climbAttemptCheckbox;
     private CheckBox climbSuccessCheckbox;
@@ -133,6 +137,12 @@ public class MainActivity extends AbstractForm {
     private Record help_others_climb;
     private Record play_defense;
     private Record rate_defense;
+
+    private  String CUBE_VAULT = teleopVaultCount + " Cubes in Vault";
+    private  String CUBE_ALLY = teleopAllyCount + " Cubes on Ally Switch";
+    private  String CUBE_SCALE = teleopScaleCount + " Cubes on Scale";
+    private  String CUBE_OPPONENT = teleopOpponentCount + " Cubes on Opponent Switch";
+    private  String CUBE_DROP = teleopDropCount + " Cubes Dropped";
 
     ArrayList<Record> rawTimestampRecords;
     ArrayList<Record> allRecords;
@@ -333,6 +343,7 @@ public class MainActivity extends AbstractForm {
 
         allRecords = new ArrayList<>();
         rawTimestampRecords = new ArrayList<>();
+
         teleopCubeDrop = new Record("0", MatchForm.Items.CUBE_DROPPED.getId());
         absent = new Record(FALSE, MatchForm.Items.PRESENT.getId());
         can_climb = new Record(FALSE, MatchForm.Items.CAN_CLIMB.getId());
@@ -426,35 +437,40 @@ public class MainActivity extends AbstractForm {
         autoOpponentCheckbox = (CheckBox) findViewById(R.id.chkAutoCubeOpponentSwitch);
         autoOpponentCheckbox.setOnCheckedChangeListener(checkboxListener);
 
-        teleopVaultBtn = (Button) findViewById(R.id.btnTeleopCubeVault);
-        teleopVaultBtn.setOnClickListener(buttonListener);
+        plusCubeVaultBtn = (Button) findViewById(R.id.plusCubeVaultBtn);
+        plusCubeVaultBtn.setOnClickListener(buttonListener);
+        minusCubeVaultBtn = (Button) findViewById(R.id.minusCubeVaultBtn);
+        minusCubeVaultBtn.setOnClickListener(buttonListener);
+        cubesVaultLbl = (TextView) findViewById(R.id.cubesVaultLbl);
         teleopVaultCount = 0;
-        vaultCountEditText = (EditText) findViewById(R.id.txtTeleopCount1);
-        vaultCountEditText.addTextChangedListener(editTextWatcher);
 
-        teleopeAllyBtn = (Button) findViewById(R.id.btnTeleopCubeAllySwitch);
-        teleopeAllyBtn.setOnClickListener(buttonListener);
+        plusCubeAllyBtn = (Button) findViewById(R.id.plusAllyCubeBtn);
+        plusCubeAllyBtn.setOnClickListener(buttonListener);
+        minusCubeAllyBtn = (Button) findViewById(R.id.minusCubeAllyBtn);
+        minusCubeAllyBtn.setOnClickListener(buttonListener);
+        cubesAllyLbl = (TextView) findViewById(R.id.cubesAllyLbl);
         teleopAllyCount = 0;
-        allyCountEditText = (EditText) findViewById(R.id.txtTeleopCount2);
-        allyCountEditText.addTextChangedListener(editTextWatcher);
 
-        teleopScaleBtn = (Button) findViewById(R.id.btnTeleopCubeScale);
-        teleopScaleBtn.setOnClickListener(buttonListener);
-        scaleCountEditText = (EditText) findViewById(R.id.txtTeleopCount3);
-        scaleCountEditText.addTextChangedListener(editTextWatcher);
+        plusCubeScaleBtn = (Button) findViewById(R.id.plusCubeScaleBtn);
+        plusCubeScaleBtn.setOnClickListener(buttonListener);
+        minusCubeScaleBtn = (Button) findViewById(R.id.minusCubeScaleBtn);
+        minusCubeScaleBtn.setOnClickListener(buttonListener);
+        cubesScaleLbl = (TextView) findViewById(R.id.cubesScaleLbl);
         teleopScaleCount = 0;
 
-        teleopOpponentBtn = (Button) findViewById(R.id.btnTeleopCubeOpponentSwitch);
-        teleopOpponentBtn.setOnClickListener(buttonListener);
-        opponentCountEditText = (EditText) findViewById(R.id.txtTeleopCount4);
+        plusCubeOpponentBtn = (Button) findViewById(R.id.plusCubeOpponentBtn);
+        plusCubeOpponentBtn.setOnClickListener(buttonListener);
+        minusCubeOpponentBtn = (Button) findViewById(R.id.minusCubeOpponentBtn);
+        minusCubeOpponentBtn.setOnClickListener(buttonListener);
+        cubesOpponentLbl = (TextView) findViewById(R.id.cubesOpponentLbl);
         teleopOpponentCount = 0;
-        opponentCountEditText.addTextChangedListener(editTextWatcher);
 
-        teleopDropBtn = (Button) findViewById(R.id.btnTeleopCubeDrop);
-        teleopDropBtn.setOnClickListener(buttonListener);
-        dropCountEditText = (EditText) findViewById(R.id.txtTeleopCount5);
+        plusCubeDropBtn = (Button) findViewById(R.id.plusCubeDropBtn);
+        plusCubeDropBtn.setOnClickListener(buttonListener);
+        minusCubeDropBtn = (Button) findViewById(R.id.minusCubeOpponentBtn);
+        minusCubeDropBtn.setOnClickListener(buttonListener);
+        cubesDroppedLbl = (TextView) findViewById(R.id.cubesDroppedLbl);
         teleopDropCount = 0;
-        dropCountEditText.addTextChangedListener(editTextWatcher);
 
         climbAttemptCheckbox = (CheckBox) findViewById(R.id.chkClimbAttempt);
         climbAttemptCheckbox.setOnCheckedChangeListener(checkboxListener);
@@ -519,48 +535,86 @@ public class MainActivity extends AbstractForm {
                     timerHandler.obtainMessage(1).sendToTarget();
                     break;
                 }
-                case R.id.btnTeleopCubeVault:
+                case R.id.plusCubeVaultBtn:
                 {
                     teleopVaultCount++;
-                    vaultCountEditText.setText(Integer.toString(teleopVaultCount));
+                    cubesVaultLbl.setText(teleopVaultCount + " Cubes in Vault");
                     teleopVault = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_VAULT.getId());
                     rawTimestampRecords.add(teleopVault);
                     printRawTimestampRecords();
                     break;
                 }
-                case R.id.btnTeleopCubeAllySwitch:
+                case R.id.minusCubeVaultBtn:
+                {
+                    teleopVaultCount--;
+                    cubesVaultLbl.setText(teleopVaultCount + " Cubes in Vault");
+                    rawTimestampRecords.remove(findLastTimestamp(teleopVault));
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.plusAllyCubeBtn:
                 {
                     teleopAllyCount++;
-                    allyCountEditText.setText(Integer.toString(teleopAllyCount));
+                    cubesAllyLbl.setText(teleopAllyCount + " Cubes on Ally Switch");
                     teleopAlly = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_ALLY_SWITCH.getId());
                     rawTimestampRecords.add(teleopAlly);
                     printRawTimestampRecords();
                     break;
                 }
-                case R.id.btnTeleopCubeScale:
+                case R.id.minusCubeAllyBtn:
+                {
+                    teleopAllyCount--;
+                    cubesAllyLbl.setText(teleopAllyCount + " Cubes on Ally Switch");
+                    rawTimestampRecords.remove(findLastTimestamp(teleopAlly));
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.plusCubeScaleBtn:
                 {
                     teleopScaleCount++;
-                    scaleCountEditText.setText(Integer.toString(teleopScaleCount));
+                    cubesScaleLbl.setText(teleopScaleCount + " Cubes on Scale");
                     teleopScale = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_SCALE.getId());
                     rawTimestampRecords.add(teleopScale);
                     printRawTimestampRecords();
                     break;
                 }
-                case R.id.btnTeleopCubeOpponentSwitch:
+                case R.id.minusCubeScaleBtn:
+                {
+                    teleopScaleCount--;
+                    cubesScaleLbl.setText(teleopScaleCount + " Cubes on Scale");
+                    rawTimestampRecords.remove(findLastTimestamp(teleopScale));
+                    printRawTimestampRecords();
+                    break;
+                }
+                case R.id.plusCubeOpponentBtn:
                 {
                     teleopOpponentCount++;
-                    opponentCountEditText.setText(Integer.toString(teleopOpponentCount));
+                    cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Switch");
                     teleopOpponent = new Record(Long.toString(globalCurrentTime), MatchForm.Items.CUBE_IN_OPPONENT_SWITCH.getId());
                     rawTimestampRecords.add(teleopOpponent);
                     printRawTimestampRecords();
                     break;
                 }
-                case R.id.btnTeleopCubeDrop:
+                case R.id.minusCubeOpponentBtn:
+                {
+                    teleopOpponentCount--;
+                    cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Count");
+                    rawTimestampRecords.remove(findLastTimestamp(teleopOpponent));
+                    break;
+                }
+                case R.id.plusCubeDropBtn:
                 {
                     teleopDropCount++;
-                    dropCountEditText.setText(Integer.toString(teleopDropCount));
+                    cubesDroppedLbl.setText(teleopDropCount + " Cubes Dropped");
                     teleopCubeDrop.setValue(Integer.toString(teleopDropCount));
                     printStaticRecords();
+                    break;
+                }
+                case R.id.minusCubeDropBtn:
+                {
+                    teleopDropCount--;
+                    cubesDroppedLbl.setText(teleopDropCount + " Cubes Dropped");
+                    rawTimestampRecords.remove(findLastTimestamp(teleopCubeDrop));
                     break;
                 }
                 case R.id.btnSaveForm:
@@ -865,15 +919,15 @@ public class MainActivity extends AbstractForm {
         matchNumEditText.setText(Integer.toString(matchNum));
 
         teleopVaultCount = 0;
-        vaultCountEditText.setText(Integer.toString(teleopVaultCount));
+        cubesVaultLbl.setText(teleopVaultCount + " Cubes in Vault");
         teleopAllyCount = 0;
-        allyCountEditText.setText(Integer.toString(teleopAllyCount));
+        cubesAllyLbl.setText(teleopAllyCount + " Cubes on Ally Switch");
         teleopScaleCount = 0;
-        scaleCountEditText.setText(Integer.toString(teleopScaleCount));
+        cubesScaleLbl.setText(teleopScaleCount + " Cubes on Scale");
         teleopOpponentCount = 0;
-        opponentCountEditText.setText(Integer.toString(teleopOpponentCount));
+        cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Switch");
         teleopDropCount = 0;
-        dropCountEditText.setText(Integer.toString(teleopDropCount));
+        cubesDroppedLbl.setText(teleopDropCount + " Cubes Dropped");
 
         commentsEditText.setText("");
     }
@@ -891,6 +945,7 @@ public class MainActivity extends AbstractForm {
     void setState(String[] records, int startingIndex) {
         for (String record : records)
         {
+
             String[] recordVal = record.split("\\,");
             if (recordVal.length == 2)
             {
@@ -899,109 +954,30 @@ public class MainActivity extends AbstractForm {
 
                 int itemID = currRecord.getItemID();
                 String val = currRecord.getValue();
-                switch(itemID)
+                if (itemID == MatchForm.Items.PRESENT.getId()) absentCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.AUTO_CROSS_BASELINE.getId()) autoBaselineCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.AUTO_CUBE_IN_VAULT.getId()) autoVaultCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.AUTO_CUBE_IN_ALLY_SWITCH.getId()) autoAllyCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.AUTO_CUBE_IN_SCALE.getId()) autoScaleCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.AUTO_CUBE_IN_OPPONENT_SWITCH.getId()) autoOpponentCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.CUBE_DROPPED.getId())
                 {
-                    case R.id.chkShow:
-                    {
-                        absentCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.chkAutoBaseline:
-                    {
-                        autoBaselineCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.chkAutoCubeVault:
-                    {
-                        autoVaultCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.chkAutoCubeAllySwitch:
-                    {
-                        autoAllyCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.chkAutoCubeScale:
-                    {
-                        autoScaleCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.chkAutoCubeOpponentSwitch:
-                    {
-                        autoOpponentCheckbox.setChecked(val.equals(TRUE));
-                        break;
-                    }
-                    case R.id.txtTeleopCount1:
-                    {
-                        vaultCountEditText.setText(val);
-                        break;
-                    }
-                    case R.id.txtTeleopCount2:
-                    {
-                        allyCountEditText.setText(val);
-                        break;
-                    }
-                    case R.id.txtTeleopCount3:
-                    {
-                        scaleCountEditText.setText(val);
-                        break;
-                    }
-                    case R.id.txtTeleopCount4:
-                    {
-                        opponentCountEditText.setText(val);
-                        break;
-                    }
-                    case R.id.txtTeleopCount5:
-                    {
-                        dropCountEditText.setText(val);
-                        break;
-                    }
-                    case R.id.chkClimbAttempt:
-                    {
-                        climbAttemptCheckbox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.chkClimbSuccess:
-                    {
-                        climbSuccessCheckbox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.chkClimbPower:
-                    {
-                        climbPowerCheckbox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.chkClimbHelp:
-                    {
-                        climbHelpCheckbox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.chkMiscBreak:
-                    {
-                        breakDownCheckbox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.chkMiscDefense:
-                    {
-                        defenseCheckBox.setChecked(val.equals(0));
-                        break;
-                    }
-                    case R.id.spnRateDefense:
-                    {
-                        rateDefenseSpinner.setSelection(((ArrayAdapter) rateDefenseSpinner.getAdapter()).getPosition(val));
-                        break;
-                    }
-                    case R.id.spnRateDriver:
-                    {
-                        rateDriverSpinner.setSelection(((ArrayAdapter) rateDriverSpinner.getAdapter()).getPosition(val));
-                        break;
-                    }
-                    case R.id.editComments:
-                    {
-                        commentsEditText.setText(val);
-                        break;
-                    }
+                    teleopDropCount = Integer.parseInt(val);
+                    cubesDroppedLbl.setText(teleopDropCount + " Cubes Dropped");
                 }
+                if (itemID == MatchForm.Items.CUBE_IN_VAULT.getId())
+                {
+
+                }
+                if (itemID == MatchForm.Items.CAN_CLIMB.getId()) climbAttemptCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.CLIMB_SUCCESS.getId()) climbSuccessCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.STAYS_PUT_WHEN_POWER_CUT.getId()) climbPowerCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.HELP_OTHERS_CLIMB.getId()) climbHelpCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.DID_THEY_BREAK_DOWN.getId()) breakDownCheckbox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.PLAY_DEFENSE.getId()) defenseCheckBox.setChecked(val.equals(TRUE));
+                if (itemID == MatchForm.Items.RATE_DEFENSE.getId()) rateDefenseSpinner.setSelection(((ArrayAdapter) rateDefenseSpinner.getAdapter()).getPosition(val));
+                if (itemID == MatchForm.Items.RATE_DRIVING.getId()) rateDriverSpinner.setSelection(((ArrayAdapter) rateDriverSpinner.getAdapter()).getPosition(val));
+                if (itemID == MatchForm.Items.COMMENTS.getId()) commentsEditText.setText(val);
             }
         }
     }
@@ -1074,41 +1050,6 @@ public class MainActivity extends AbstractForm {
                         matchNum = Integer.parseInt(currEditText.getText().toString());
                         break;
                     }
-                    case R.id.txtTeleopCount1:
-                    {
-                        teleopVaultCount = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("New TeleopVaultCount: " + teleopVaultCount);
-                        adjustNumberOccurrences(teleopVaultCount, teleopVault);
-                        break;
-                    }
-                    case R.id.txtTeleopCount2:
-                    {
-                        teleopAllyCount = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("New TeleopAllyCount: " + teleopAllyCount);
-                        adjustNumberOccurrences(teleopAllyCount, teleopAlly);
-                        break;
-                    }
-                    case R.id.txtTeleopCount3:
-                    {
-                        teleopScaleCount = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("New TeleopScaleCount: " + teleopScaleCount);
-                        adjustNumberOccurrences(teleopScaleCount, teleopScale);
-                        break;
-                    }
-                    case R.id.txtTeleopCount4:
-                    {
-                        teleopOpponentCount = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("New TeleopOpponentCount: " + teleopOpponentCount);
-                        adjustNumberOccurrences(teleopOpponentCount, teleopOpponent);
-                        break;
-                    }
-                    case R.id.txtTeleopCount5:
-                    {
-                        teleopDropCount = Integer.parseInt(currEditText.getText().toString());
-                        System.out.println("New TeleopDropCount: " + teleopDropCount);
-                        teleopCubeDrop.setValue(Integer.toString(teleopDropCount));
-                        break;
-                    }
                     case R.id.editComments:
                     {
                         comments.setValue(currEditText.getText().toString());
@@ -1156,16 +1097,20 @@ public class MainActivity extends AbstractForm {
     }
 
     private int findLastTimestamp(Record wantedRecord) {
-        int index = -1;
-        for (int i = rawTimestampRecords.size()-1; i > 0; i--)
+        if (findNumberOccurences(wantedRecord) >= 1)
         {
-            if (rawTimestampRecords.get(i).getItemID() == wantedRecord.getItemID())
+            int index = rawTimestampRecords.size()-1;
+            for (int i = rawTimestampRecords.size()-1; i > 0; i--)
             {
-                index = i;
-                return index;
+                if (rawTimestampRecords.get(i).getItemID() == wantedRecord.getItemID())
+                {
+                    index = i;
+                    return index;
+                }
             }
+            return index;
         }
-        return index;
+        return -1;
     }
 
     private int findNumberOccurences(Record wantedRecord) {
@@ -1175,6 +1120,18 @@ public class MainActivity extends AbstractForm {
         {
             if (record.getItemID() == wantedRecord.getItemID()) counter++;
         }
+        System.out.println("Number of occurrences: " + counter);
+        return counter;
+    }
+
+    private int findNumberOccurrencesAllRecords(Record wantedRecord)
+    {
+        int counter = 0;
+        for (Record record : allRecords)
+        {
+            if (record.getItemID() == wantedRecord.getItemID()) counter++;
+        }
+        System.out.println("Number of occurrences: " + counter);
         return counter;
     }
 }

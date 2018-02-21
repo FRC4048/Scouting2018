@@ -8,16 +8,14 @@
     tools:context="com.example.dan.matchscoutingmain2018.MainActivity">
 
 
-    <TextView
-        android:id="@+id/lblTeleopCounter5"
+    <Button
+        android:id="@+id/minusCubeVaultBtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnTeleopCubeDrop"
-        android:layout_alignBottom="@+id/btnTeleopCubeDropper"
-        android:layout_alignStart="@+id/lblTeleopCounter4"
-        android:text="Count:"
-        android:textColor="#000000"
-        android:textSize="18dp" />
+        android:layout_height="45dp"
+        android:layout_above="@+id/minusCubeAllyBtn"
+        android:layout_alignStart="@+id/minusCubeAllyBtn"
+        android:text="-"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <View
         android:id="@+id/view2"
@@ -211,156 +209,48 @@
         android:textSize="18dp" />
 
     <Button
-        android:id="@+id/btnTeleopCubeVault"
+        android:id="@+id/plusCubeVaultBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_alignStart="@+id/lblCubes"
         android:layout_below="@+id/lblCubes"
-        android:layout_marginStart="20dp"
-        android:text="Team placed a cube in the vault." />
-
-    <TextView
-        android:id="@+id/lblTeleopCounter1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnTeleopCubeVault"
-        android:layout_alignBottom="@+id/btnTeleopCubeVault"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/btnTeleopCubeOpponentSwitch"
-        android:text="Count:"
-        android:textColor="#000000"
-        android:textSize="18dp" />
-
-    <EditText
-        android:id="@+id/txtTeleopCount1"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/lblTeleopCounter1"
-        android:layout_alignBottom="@+id/lblTeleopCounter1"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/lblTeleopCounter1"
-        android:width="100dp"
-        android:background="#ffffff"
-        android:ems="10"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/txtTeleopCount2"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/lblTeleopCounter2"
-        android:layout_alignBottom="@+id/lblTeleopCounter2"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/lblTeleopCounter2"
-        android:width="100dp"
-        android:background="#ffffff"
-        android:ems="10"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/txtTeleopCount3"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/lblTeleopCounter3"
-        android:layout_alignBottom="@+id/lblTeleopCounter3"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/lblTeleopCounter3"
-        android:width="100dp"
-        android:background="#ffffff"
-        android:ems="10"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/txtTeleopCount4"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/lblTeleopCounter4"
-        android:layout_alignBottom="@+id/lblTeleopCounter4"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/lblTeleopCounter4"
-        android:width="100dp"
-        android:background="#ffffff"
-        android:ems="10"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/txtTeleopCount5"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/lblTeleopCounter5"
-        android:layout_alignBottom="@+id/lblTeleopCounter5"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/lblTeleopCounter5"
-        android:width="100dp"
-        android:background="#ffffff"
-        android:ems="10"
-        android:inputType="number" />
+        android:layout_marginStart="40dp"
+        android:text="+"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <Button
-        android:id="@+id/btnTeleopCubeAllySwitch"
+        android:id="@+id/plusAllyCubeBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_alignStart="@+id/btnTeleopCubeVault"
-        android:layout_below="@+id/btnTeleopCubeVault"
-        android:text="Team placed a cube in the Ally switch" />
+        android:layout_alignStart="@+id/plusCubeVaultBtn"
+        android:layout_below="@+id/plusCubeVaultBtn"
+        android:text="+" />
 
     <Button
-        android:id="@+id/btnTeleopCubeScale"
+        android:id="@+id/plusCubeScaleBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_alignStart="@+id/btnTeleopCubeAllySwitch"
-        android:layout_below="@+id/btnTeleopCubeAllySwitch"
-        android:text="Team placed a cube in the scale" />
+        android:layout_alignStart="@+id/plusAllyCubeBtn"
+        android:layout_below="@+id/plusAllyCubeBtn"
+        android:text="+"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <Button
-        android:id="@+id/btnTeleopCubeOpponentSwitch"
+        android:id="@+id/plusCubeOpponentBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_alignStart="@+id/btnTeleopCubeScale"
-        android:layout_below="@+id/btnTeleopCubeScale"
-        android:text="Team placed a cube in the opponent switch" />
+        android:layout_alignStart="@+id/plusCubeScaleBtn"
+        android:layout_below="@+id/plusCubeScaleBtn"
+        android:text="+"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
-
-
-    <TextView
-        android:id="@+id/lblTeleopCounter2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnTeleopCubeAllySwitch"
-        android:layout_alignBottom="@+id/btnTeleopCubeAllySwitch"
-        android:layout_alignStart="@+id/lblTeleopCounter1"
-        android:text="Count:"
-        android:textColor="#000000"
-        android:textSize="18dp" />
-
-    <TextView
-        android:id="@+id/lblTeleopCounter3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnTeleopCubeScale"
-        android:layout_alignBottom="@+id/btnTeleopCubeScale"
-        android:layout_alignStart="@+id/lblTeleopCounter2"
-        android:text="Count:"
-        android:textColor="#000000"
-        android:textSize="18dp" />
-
-    <TextView
-        android:id="@+id/lblTeleopCounter4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnTeleopCubeOpponentSwitch"
-        android:layout_alignBottom="@+id/btnTeleopCubeOpponentSwitch"
-        android:layout_alignStart="@+id/lblTeleopCounter3"
-        android:text="Count:"
-        android:textColor="#000000"
-        android:textSize="18dp" />
 
     <TextView
         android:id="@+id/lblTeleopClimbing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/lblCubes"
-        android:layout_below="@+id/btnTeleopCubeDrop"
+        android:layout_below="@+id/plusCubeDropBtn"
         android:text="Climbing"
         android:textColor="#000000"
         android:textSize="18dp" />
@@ -369,7 +259,7 @@
         android:id="@+id/chkClimbAttempt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btnTeleopCubeDrop"
+        android:layout_alignStart="@+id/plusCubeDropBtn"
         android:layout_below="@+id/lblTeleopClimbing"
         android:text="Did they attempt to climb?" />
 
@@ -514,18 +404,19 @@
         android:textOn="Red Alliance" />
 
     <Button
-        android:id="@+id/btnTeleopCubeDrop"
+        android:id="@+id/plusCubeDropBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_alignStart="@+id/btnTeleopCubeOpponentSwitch"
-        android:layout_below="@+id/btnTeleopCubeOpponentSwitch"
-        android:text="Team dropped a cube" />
+        android:layout_alignStart="@+id/plusCubeOpponentBtn"
+        android:layout_below="@+id/plusCubeOpponentBtn"
+        android:text="+"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
 
     <Button
         android:id="@+id/btnSaveForm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/txtTeleopCount5"
+        android:layout_toEndOf="@+id/editComments"
         android:layout_alignTop="@+id/editComments"
         android:text="Save Form" />
 
@@ -544,5 +435,95 @@
         android:layout_alignStart="@id/editComments"
         android:layout_below="@id/editComments"
         android:text="Forms Pending"/>
+
+    <TextView
+        android:id="@+id/cubesVaultLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/plusAllyCubeBtn"
+        android:layout_toEndOf="@+id/plusCubeVaultBtn"
+        android:padding="10dp"
+        android:text="0 Cubes in Vault"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <TextView
+        android:id="@+id/cubesAllyLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/cubesVaultLbl"
+        android:layout_below="@id/cubesVaultLbl"
+        android:padding="10dp"
+        android:text="0 Cubes on Ally Switch"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <Button
+        android:id="@+id/minusCubeAllyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/cubesAllyLbl"
+        android:layout_alignBottom="@+id/cubesAllyLbl"
+        android:layout_alignStart="@id/minusCubeOpponentBtn"
+        android:layout_alignEnd="@id/minusCubeOpponentBtn"
+        android:text="-"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/cubesScaleLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/plusCubeScaleBtn"
+        android:layout_toEndOf="@id/plusAllyCubeBtn"
+        android:padding="10dp"
+        android:text="0 Cubes On Scale"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <Button
+        android:id="@+id/minusCubeScaleBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/cubesScaleLbl"
+        android:layout_alignStart="@id/minusCubeOpponentBtn"
+        android:layout_alignEnd="@id/minusCubeOpponentBtn"
+        android:text="-"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/cubesOpponentLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/plusCubeOpponentBtn"
+        android:layout_toEndOf="@id/plusCubeOpponentBtn"
+        android:padding="10dp"
+        android:text="0 Cubes on Opponent Switch"
+        android:textAppearance="@android:style/TextAppearance.Material.Large"/>
+
+    <Button
+        android:id="@+id/minusCubeOpponentBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/cubesOpponentLbl"
+        android:layout_alignBottom="@id/cubesOpponentLbl"
+        android:text="-"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
+
+    <TextView
+        android:id="@+id/cubesDroppedLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/plusCubeDropBtn"
+        android:layout_toEndOf="@id/plusCubeDropBtn"
+        android:padding="10dp"
+        android:text="0 Cubes Dropped"
+        android:textAppearance="@android:style/TextAppearance.Material.Large"/>
+
+    <Button
+        android:id="@+id/minusCubeDropBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/cubesDroppedLbl"
+        android:text="-"
+        android:layout_alignStart="@id/minusCubeOpponentBtn"
+        android:layout_alignEnd="@id/minusCubeOpponentBtn"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
 
 </RelativeLayout>

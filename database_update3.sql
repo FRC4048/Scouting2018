@@ -1,0 +1,1 @@
+insert scouting.item (name, datatype_id) values ("scale.neutral ownership", 1);

@@ -61,6 +61,7 @@ public class FormActivity extends AbstractForm {
     Button blueLevitateBtn;
     Button blueBoostBtn;
     Button blueForceBtn;
+    Button btnNeutralScale;
     // Penalties section - visual elements object declarations
     CheckBox redLeftYellowLbl;
     CheckBox redCenterYellowLbl;
@@ -365,6 +366,12 @@ public class FormActivity extends AbstractForm {
                 }
                 case R.id.viewTimelineBtn: {
                     System.out.println("Attempting to view timeline");
+                    break;
+                }
+                case R.id.btnNeutralScale: {
+                    System.out.println("Scale is now neutral.");
+                    Record btnNeutralSwitch = new Record(Long.toString(globalCurrentTime), OverallForm.Items.SCALE_NEUTRAL_OWNERSHIP.getId());
+                    rawTimestampRecords.add(btnNeutralSwitch);
                     break;
                 }
             }
@@ -782,6 +789,7 @@ public class FormActivity extends AbstractForm {
         blueLevitateBtn = (Button) findViewById(R.id.blueLevitateBtn);
         blueForceBtn = (Button) findViewById(R.id.blueForceBtn);
         blueBoostBtn = (Button) findViewById(R.id.blueBoostBtn);
+        btnNeutralScale = (Button) findViewById(R.id.btnNeutralScale);
         // Penalties
         redLeftYellowLbl = (CheckBox) findViewById(R.id.redLeftYellowChk);
         redCenterYellowLbl = (CheckBox) findViewById(R.id.redCenterYellowChk);
@@ -856,6 +864,7 @@ public class FormActivity extends AbstractForm {
         saveBtn.setOnClickListener(buttonListener);
         transferBtn.setOnClickListener(buttonListener);
         viewTimelineBtn.setOnClickListener(buttonListener);
+        btnNeutralScale.setOnClickListener(buttonListener);
 
         for (int i = 0; i < invalidTeamNums.length; i++)
         {

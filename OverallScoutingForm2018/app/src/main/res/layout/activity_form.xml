@@ -240,7 +240,7 @@
 
     <Button
         android:id="@+id/redOwnershipScaleBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/redOwnershipLbl"
         android:layout_below="@+id/redOwnershipLbl"
@@ -250,7 +250,7 @@
 
     <Button
         android:id="@+id/redSwitchOwnershipBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/redOwnershipScaleBtn"
         android:layout_below="@+id/redOwnershipScaleBtn"
@@ -260,17 +260,17 @@
 
     <Button
         android:id="@+id/redBlueSwitchOwnershipBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/redSwitchOwnershipBtn"
         android:layout_below="@+id/redSwitchOwnershipBtn"
         android:backgroundTint="@android:color/holo_red_dark"
         android:text="Blue Switch Ownership"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/blueScaleOwnershipBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/blueOwnershipLbl"
         android:layout_toEndOf="@+id/bluePowerUpLbl"
@@ -280,7 +280,7 @@
 
     <Button
         android:id="@+id/blueSwitchOwnershipBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/blueScaleOwnershipBtn"
         android:layout_below="@+id/blueScaleOwnershipBtn"
@@ -290,7 +290,7 @@
 
     <Button
         android:id="@+id/blueRedSwitchOwnershipBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/blueSwitchOwnershipBtn"
         android:layout_below="@+id/redBoostBtn"
@@ -300,7 +300,7 @@
 
     <TextView
         android:id="@+id/redOwnershipLbl"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/gamePlayLbl"
         android:layout_below="@+id/gamePlayLbl"
@@ -309,7 +309,7 @@
 
     <TextView
         android:id="@+id/blueOwnershipLbl"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/redPowerUpLbl"
         android:layout_alignBottom="@+id/redPowerUpLbl"
@@ -319,17 +319,18 @@
 
     <TextView
         android:id="@+id/redPowerUpLbl"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/redOwnershipLbl"
         android:layout_alignBottom="@+id/redOwnershipLbl"
+        android:layout_marginRight="55dp"
         android:layout_toEndOf="@+id/redOwnershipScaleBtn"
         android:text="Red Alliance Used..."
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <Button
         android:id="@+id/redLevitateBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/redBoostBtn"
         android:layout_below="@+id/redPowerUpLbl"
@@ -340,7 +341,7 @@
 
     <Button
         android:id="@+id/redBoostBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/redBlueSwitchOwnershipBtn"
         android:layout_below="@+id/redOwnershipScaleBtn"
@@ -351,7 +352,7 @@
 
     <Button
         android:id="@+id/redForceBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/redBlueSwitchOwnershipBtn"
         android:layout_alignEnd="@+id/redBoostBtn"
@@ -363,7 +364,7 @@
 
     <TextView
         android:id="@+id/bluePowerUpLbl"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/blueOwnershipLbl"
         android:layout_alignBottom="@+id/blueOwnershipLbl"
@@ -373,7 +374,7 @@
 
     <Button
         android:id="@+id/blueLevitateBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/blueSwitchOwnershipBtn"
         android:layout_alignStart="@+id/bluePowerUpLbl"
@@ -385,19 +386,19 @@
 
     <Button
         android:id="@+id/blueBoostBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/blueSwitchOwnershipBtn"
         android:layout_alignEnd="@+id/blueLevitateBtn"
         android:layout_alignStart="@+id/blueLevitateBtn"
         android:layout_below="@+id/blueLevitateBtn"
         android:backgroundTint="@android:color/holo_blue_dark"
-        android:textColor="@android:color/white"
-        android:text="Boost" />
+        android:text="Boost"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/blueForceBtn"
-        android:layout_width="130dp"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/blueRedSwitchOwnershipBtn"
         android:layout_alignEnd="@+id/blueBoostBtn"
@@ -732,6 +733,15 @@
         android:layout_alignStart="@+id/blueScoreLbl"
         android:text="Forms Pending"
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <Button
+        android:id="@+id/btnNeutralScale"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/redPowerUpLbl"
+        android:layout_centerInParent="true"
+        android:layout_toEndOf="@+id/blueLeftYellowChk"
+        android:text="Scale Neutral" />
 
 
 </RelativeLayout>

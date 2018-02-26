@@ -28,12 +28,13 @@ public class OverallForm extends Form {
         public static final Item BLUE_SCORE = new Item(150, "Blue Score", Item.Datatype.INTEGER);
         public static final Item RED_FOUL_POINTS = new Item(151, "Red Foul Points", Item.Datatype.INTEGER);
         public static final Item BLUE_FOUL_POINTS = new Item(152, "Blue Foul Points", Item.Datatype.INTEGER);
+        public static final Item SCALE_NEUTRAL_OWNERSHIP = new Item(153, "Scale Neutral Ownership", Item.Datatype.INTEGER);
     }
 
     public static final Item[] overallItems = {
         Items.RED_CARD, Items.RED_FOUL_POINTS, Items.BLUE_FOUL_POINTS, Items.BLUE_OWNS_BLUE_SWITCH, Items.BLUE_OWNS_RED_SWITCH,
             Items.BLUE_OWNS_SCALE, Items.BLUE_SCORE, Items.BLUE_USED_BOOST, Items.BLUE_USED_FORCE, Items.BLUE_USED_LEVITATE, Items.RED_OWNS_BLUE_SWITCH,
-            Items.RED_OWNS_RED_SWITCH, Items.RED_OWNS_SCALE, Items.RED_SCORE, Items.RED_USED_BOOST, Items.RED_USED_FORCE, Items.RED_USED_LEVITATE, Items.YELLOW_CARD
+            Items.RED_OWNS_RED_SWITCH, Items.RED_OWNS_SCALE, Items.RED_SCORE, Items.RED_USED_BOOST, Items.RED_USED_FORCE, Items.RED_USED_LEVITATE, Items.YELLOW_CARD, Items.SCALE_NEUTRAL_OWNERSHIP
     };
 
     public OverallForm(int tabletNum, int[] teamNums, int matchNum, String scoutName)

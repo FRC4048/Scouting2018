@@ -738,9 +738,8 @@
         android:id="@+id/btnNeutralScale"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/redPowerUpLbl"
-        android:layout_centerInParent="true"
-        android:layout_toEndOf="@+id/blueLeftYellowChk"
+        android:layout_below="@+id/bluePowerUpLbl"
+        android:layout_toStartOf="@+id/subtractTimerBtn"
         android:text="Scale Neutral" />
 
 

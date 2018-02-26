@@ -738,8 +738,10 @@
         android:id="@+id/btnNeutralScale"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bluePowerUpLbl"
-        android:layout_toStartOf="@+id/subtractTimerBtn"
+        android:layout_toEndOf="@+id/redLevitateBtn"
+        android:layout_toStartOf="@id/blueLevitateBtn"
+        android:layout_alignBottom="@id/redLevitateBtn"
+        android:layout_alignTop="@id/redLevitateBtn"
         android:text="Scale Neutral" />
 
 

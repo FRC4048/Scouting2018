@@ -492,49 +492,6 @@ public class FormActivity extends AbstractForm {
         }
     }
 
-    private void checkRecords() {
-        System.out.println("Original Records: ");
-        printRecords();
-        ArrayList<Integer> timeStampRecords = new ArrayList<>();
-        timeStampRecords.add(R.id.blueBoostBtn);
-        timeStampRecords.add(R.id.blueForceBtn);
-        timeStampRecords.add(R.id.blueLevitateBtn);
-        timeStampRecords.add(R.id.blueRedSwitchOwnershipBtn);
-        timeStampRecords.add(R.id.blueScaleOwnershipBtn);
-        timeStampRecords.add(R.id.blueSwitchOwnershipBtn);
-        timeStampRecords.add(R.id.redBoostBtn);
-        timeStampRecords.add(R.id.redOwnershipScaleBtn);
-        timeStampRecords.add(R.id.redLevitateBtn);
-        timeStampRecords.add(R.id.redForceBtn);
-        timeStampRecords.add(R.id.redSwitchOwnershipBtn);
-        timeStampRecords.add(R.id.redBlueSwitchOwnershipBtn);
-
-        ArrayList<Record> recordsToRemove = new ArrayList<>();
-        for (Record r : allRecords) {
-            int rID = r.getItemID();
-            int index = timeStampRecords.indexOf(rID);
-            if (index > 0) {
-                double rValue = Double.parseDouble(r.getValue());
-                if (rValue < 0.0 || rValue > MATCH_DURATION) recordsToRemove.add(r);
-            }
-
-        }
-        allRecords.removeAll(recordsToRemove);
-        System.out.println();
-        System.out.println("Checked Records: ");
-        printRecords();
-    }
-
-    private void updateRecords(double adjustment) {
-        for (Record r : allRecords) {
-            double rValue = Double.parseDouble(r.getValue());
-            rValue += adjustment;
-            r.setValue(Double.toString(rValue));
-        }
-        checkRecords();
-
-    }
-
     private class EditTextWatcher implements TextWatcher {
 
         @Override
@@ -1327,76 +1284,6 @@ public class FormActivity extends AbstractForm {
                 else System.out.println("ERROR: CANNOT DETERMINE THE ID OF THE RECORD.");
             }
         }
-
-
-//            switch (itemID)
-//            {
-//                case YELLOW_CARD_ID: {
-//                    switch (val) {
-//                        case teamsPlaying[0]:
-//                            redLeftYellowLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[1]:
-//                            redCenterYellowLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[2]:
-//                            redRightYellowLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[3]:
-//                            blueLeftYellowLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[4]:
-//                            blueCenterYellowLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[5]:
-//                            blueCenterRedLbl.setChecked(true);
-//                    }
-//                }
-//                case RED_CARD_ID:
-//                {
-//                    switch(val)
-//                    {
-//                        case teamsPlaying[0]:
-//                            redLeftRedLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[1]:
-//                            redCenterRedLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[2]:
-//                            redRightRedLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[3]:
-//                            blueLeftRedLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[4]:
-//                            blueCenterRedLbl.setChecked(true);
-//                            break;
-//                        case teamsPlaying[5]:
-//                            blueRightRedLbl.setChecked(true);
-//                    }
-//                }
-//                case OverallForm.Items.RED_SCORE.getId():
-//                {
-//                    redScoreEditText.setText(Integer.toString(val));
-//                    break;
-//                }
-//                case OverallForm.Items.BLUE_SCORE.getId():
-//                {
-//                    blueScoreEditText.setText(Integer.toString(val));
-//                    break;
-//                }
-//                case OverallForm.Items.RED_FOUL_POINTS.getId():
-//                {
-//                    redFoulPoints.setText(Integer.toString(val));
-//                    break;
-//                }
-//                case OverallForm.Items.BLUE_FOUL_POINTS.getId():
-//                {
-//                    blueFoulPoints.setText(Integer.toString(val));
-//                    break;
-//                }
-//                default: System.out.println("ERROR: CANNOT DETERMINE RECORD ID.");
-//            }
     }
 }
 

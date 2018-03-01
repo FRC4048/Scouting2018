@@ -467,7 +467,7 @@ public class MainActivity extends AbstractForm {
 
         plusCubeDropBtn = (Button) findViewById(R.id.plusCubeDropBtn);
         plusCubeDropBtn.setOnClickListener(buttonListener);
-        minusCubeDropBtn = (Button) findViewById(R.id.minusCubeOpponentBtn);
+        minusCubeDropBtn = (Button) findViewById(R.id.minusCubeDropBtn); //
         minusCubeDropBtn.setOnClickListener(buttonListener);
         cubesDroppedLbl = (TextView) findViewById(R.id.cubesDroppedLbl);
         teleopDropCount = 0;
@@ -598,7 +598,7 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeOpponentBtn:
                 {
                     teleopOpponentCount--;
-                    cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Count");
+                    cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Switch");
                     rawTimestampRecords.remove(findLastTimestamp(teleopOpponent));
                     break;
                 }

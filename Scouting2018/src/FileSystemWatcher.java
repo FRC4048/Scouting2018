@@ -758,38 +758,38 @@ public class FileSystemWatcher {
 //    /** 
 //     * Obtains the average information for a specific team. 
 //     */
-//    public static ResultSet[] getAverageForm(int teamNum) {
-//        ResultSet[] resultSets = new ResultSet[2];
-//        // Checks if there's an open connection 
-//        if (!getConnection()) {
-//            output("DB Broken!");
-//        } else {
-//        	// Obtains the average data of a team 
-//            String sql = "CALL scouting.procAverages(" + teamNum + ")";
-//            try {
-//                PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-//                                                               ResultSet.CONCUR_READ_ONLY);
-//                stmt.executeQuery();
-//                resultSets[0] = stmt.getResultSet();
-//            } catch (SQLException e) {
-//                output(e.getMessage() + " error code:" + e.getErrorCode() + " sql state:" + e.getSQLState());
-//                return null;
-//            }
-//            // Obtains data for items that are represented as proportions (True/False items or accuracy) 
-//            sql = "CALL scouting.procProportions(" + teamNum + ")";
-//            try {
-//                PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-//                                                               ResultSet.CONCUR_READ_ONLY);
-//                stmt.executeQuery();
-//                stmt.getMoreResults();
-//                resultSets[1] = stmt.getResultSet();
-//            } catch (SQLException e) {
-//                output(e.getMessage() + " error code:" + e.getErrorCode() + " sql state:" + e.getSQLState());
-//                return null;
-//            }
-//        }
-//        return resultSets;
-//    }
+    public static ResultSet[] getAverageForm(int teamNum) {
+        ResultSet[] resultSets = new ResultSet[2];
+        // Checks if there's an open connection 
+        if (!getConnection()) {
+            output("DB Broken!");
+        } else {
+        	// Obtains the average data of a team 
+            String sql = "CALL scouting.procAverages(" + teamNum + ")";
+            try {
+                PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                                               ResultSet.CONCUR_READ_ONLY);
+                stmt.executeQuery();
+                resultSets[0] = stmt.getResultSet();
+            } catch (SQLException e) {
+                output(e.getMessage() + " error code:" + e.getErrorCode() + " sql state:" + e.getSQLState());
+                return null;
+            }
+            // Obtains data for items that are represented as proportions (True/False items or accuracy) 
+            sql = "CALL scouting.procProportions(" + teamNum + ")";
+            try {
+                PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                                               ResultSet.CONCUR_READ_ONLY);
+                stmt.executeQuery();
+                stmt.getMoreResults();
+                resultSets[1] = stmt.getResultSet();
+            } catch (SQLException e) {
+                output(e.getMessage() + " error code:" + e.getErrorCode() + " sql state:" + e.getSQLState());
+                return null;
+            }
+        }
+        return resultSets;
+    }
 //    
 //    /** 
 //     * Visualizes all the comments about a specific team 

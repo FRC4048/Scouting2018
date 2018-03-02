@@ -222,6 +222,7 @@ public class Form {
 			int type = Integer.parseInt(items[FormOrder.FORM_TYPE]);
 			if (type == FormType.MATCH_FORM.ordinal())
 			{
+				form = new MatchForm(-1, Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]), Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME], Integer.parseInt(items[FormOrder.ALLIANCE]), -1);
 				// TO-DO: Dan deal with this later
 //				form = new MatchForm(-1, Integer.parseInt(items[FormOrder.TABLET_NUM]), Integer.parseInt(items[FormOrder.TEAM_NUM]),
 //						Integer.parseInt(items[FormOrder.MATCH_NUM]), items[FormOrder.SCOUT_NAME],

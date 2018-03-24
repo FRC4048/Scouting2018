@@ -6,13 +6,45 @@
         <item>"Lucas"</item>
     </array>
     <array name="team_numbers">
+        <item>"61"</item>
+        <item>"78"</item>
+        <item>"121"</item>
         <item>"125"</item>
-        <item>"4048"</item>
-        <item>"467"</item>
-        <item>"195"</item>
-        <item>"1519"</item>
-        <item>"4565"</item>
+        <item>"126"</item>
+        <item>"157"</item>
+        <item>"173"</item>
+        <item>"175"</item>
         <item>"190"</item>
+        <item>"1100"</item>
+        <item>"1153"</item>
+        <item>"1277"</item>
+        <item>"1350"</item>
+        <item>"1517"</item>
+        <item>"1729"</item>
+        <item>"1740"</item>
+        <item>"1757"</item>
+        <item>"1922"</item>
+        <item>"1973"</item>
+        <item>"2079"</item>
+        <item>"2168"</item>
+        <item>"2262"</item>
+        <item>"3146"</item>
+        <item>"3236"</item>
+        <item>"3719"</item>
+        <item>"4048"</item>
+        <item>"4097"</item>
+        <item>"4151"</item>
+        <item>"4176"</item>
+        <item>"4796"</item>
+        <item>"4908"</item>
+        <item>"5000"</item>
+        <item>"5112"</item>
+        <item>"5846"</item>
+        <item>"6328"</item>
+        <item>"6333"</item>
+        <item>"6620"</item>
+        <item>"6812"</item>
+        <item>"7164"</item>
     </array>
     <array name="rating_values">
         <item>"1"</item>

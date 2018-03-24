@@ -70,7 +70,7 @@ public class OverallForm extends Form {
     public String toString()
     {
         String returnString = "";
-        returnString += getFormType() + Form.ITEM_DELIMITER;
+        returnString += getFormType().ordinal() + Form.ITEM_DELIMITER;
         returnString += getTabletNum() + Form.ITEM_DELIMITER;
         returnString += getScoutName() + Form.ITEM_DELIMITER;
         for (int i = 0; i < teamNums.length - 1; i++)

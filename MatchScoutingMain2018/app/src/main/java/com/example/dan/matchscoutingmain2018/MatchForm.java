@@ -1,5 +1,7 @@
 package com.example.dan.matchscoutingmain2018;
 
+import java.util.ArrayList;
+
 public class MatchForm extends Form {
 
 	public static final class Items {
@@ -48,6 +50,12 @@ public class MatchForm extends Form {
 		super(reportID, FormType.MATCH_FORM, tabletNum, teamNum, matchNum, scoutName, alliance, formID);
 	} // End constructor
 
+	public MatchForm(int tabletNum, int teamNum, int matchNum, String scoutName, int alliance, ArrayList<Record> records)
+	{
+		super(FormType.MATCH_FORM, tabletNum, teamNum, matchNum, scoutName, alliance);
+		this.records = records;
+		System.out.println(this.toString());
+	}
 	public MatchForm(String rawForm) {
 		super(rawForm);
 	} // End constructor

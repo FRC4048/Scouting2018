@@ -55,7 +55,7 @@ public class MainActivity extends AbstractForm {
     private Handler timerHandler;
     Timer timer;
     volatile long timeInMilliseconds = 0;
-    private final int MATCH_DURATION = 150;
+    private final int MATCH_DURATION = 15;
     private Button plusTimerBtn;
     private Button minusTimerBtn;
 
@@ -1003,7 +1003,7 @@ public class MainActivity extends AbstractForm {
     }
 
     @Override
-    Form makeForm() { return new MatchForm(tabletNum, teamNum, matchNum, scoutName, alliance); }
+    Form makeForm() { return new MatchForm(tabletNum, teamNum, matchNum, scoutName, alliance, allRecords); }
 
     @Override
     boolean readyToSave() {

@@ -184,29 +184,19 @@ public class MainActivity extends AbstractForm {
         initArchiveSystem();
     }
 
-    private class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
-
+    private class ToggleCheckBoxListener implements CompoundButton.OnCheckedChangeListener{
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             CheckBox checkbox = (CheckBox) compoundButton;
             int currID = checkbox.getId();
-            switch (currID)
-            {
-                case R.id.chkShow:
-                {
-                    if (checkbox.isChecked()) absent.setValue(TRUE);
-                    else absent.setValue(FALSE);
-                    break;
-                }
-                case R.id.btnToggleButton:
-                {
+            switch (currID) {
+                case R.id.btnToggleButton: {
                     if (checkbox.isChecked()) // Blue switches to red
                     {
                         System.out.println("BLUE SWITCHING TO RED");
                         allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
                         alliance = RED_ALLIANCE_NUMBER;
-                    }
-                    else // Red switches to blue
+                    } else // Red switches to blue
                     {
                         System.out.println("RED SWITCHING TO BLUE");
                         allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
@@ -215,71 +205,126 @@ public class MainActivity extends AbstractForm {
                     System.out.println("ALLIANCE: " + alliance);
                     break;
                 }
-                case R.id.chkAutoBaseline:
-                {
-                    if (checkbox.isChecked()) auto_cross_baseline.setValue(TRUE);
-                    else auto_cross_baseline.setValue(FALSE);
-                    break;
+            }
+        }
+    }
+
+        private class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            int testcase=0;
+            try {
+                CheckBox checkbox = (CheckBox) compoundButton;
+                testcase=1;
+            }
+            catch(Exception e) {
+                //ignore this exception. it's trying to turn the compound button which is currently a togglebutton into a checkmark
+                testcase=2;
+            }
+            if(testcase==1) {
+                CheckBox checkbox = (CheckBox) compoundButton;
+
+                int currID = checkbox.getId();
+                switch (currID) {
+                    case R.id.chkShow: {
+                        if (checkbox.isChecked()) absent.setValue(TRUE);
+                        else absent.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.btnToggleButton: {
+                        if (checkbox.isChecked()) // Blue switches to red
+                        {
+                            System.out.println("BLUE SWITCHING TO RED");
+                            allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                            alliance = RED_ALLIANCE_NUMBER;
+                        } else // Red switches to blue
+                        {
+                            System.out.println("RED SWITCHING TO BLUE");
+                            allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                            alliance = BLUE_ALLIANCE_NUMBER;
+                        }
+                        System.out.println("ALLIANCE: " + alliance);
+                        break;
+                    }
+                    case R.id.chkAutoBaseline: {
+                        if (checkbox.isChecked()) auto_cross_baseline.setValue(TRUE);
+                        else auto_cross_baseline.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkAutoCubeVault: {
+                        if (checkbox.isChecked()) auto_cube_in_vault.setValue(TRUE);
+                        else auto_cube_in_vault.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkAutoCubeAllySwitch: {
+                        if (checkbox.isChecked()) auto_cube_in_ally_switch.setValue(TRUE);
+                        else auto_cube_in_ally_switch.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkAutoCubeOpponentSwitch: {
+                        if (checkbox.isChecked()) auto_cube_in_opponent_switch.setValue(TRUE);
+                        else auto_cube_in_opponent_switch.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkAutoCubeScale: {
+                        if (checkbox.isChecked()) auto_cube_in_scale.setValue(TRUE);
+                        else auto_cube_in_scale.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkClimbAttempt: {
+                        if (checkbox.isChecked()) can_climb.setValue(TRUE);
+                        else can_climb.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkClimbSuccess: {
+                        if (checkbox.isChecked()) climb_success.setValue(TRUE);
+                        else climb_success.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkClimbPower: {
+                        if (checkbox.isChecked()) stays_put_when_power_out.setValue(TRUE);
+                        else stays_put_when_power_out.setValue(FALSE);
+
+                        break;
+                    }
+                    case R.id.chkClimbHelp: {
+                        if (checkbox.isChecked()) help_others_climb.setValue(TRUE);
+                        else help_others_climb.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkMiscBreak: {
+                        if (checkbox.isChecked()) did_they_break_down.setValue(TRUE);
+                        else did_they_break_down.setValue(FALSE);
+                        break;
+                    }
+                    case R.id.chkMiscDefense: {
+                        if (checkbox.isChecked()) play_defense.setValue(TRUE);
+                        else play_defense.setValue(FALSE);
+                        break;
+                    }
                 }
-                case R.id.chkAutoCubeVault:
-                {
-                    if (checkbox.isChecked()) auto_cube_in_vault.setValue(TRUE);
-                    else auto_cube_in_vault.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkAutoCubeAllySwitch:
-                {
-                    if (checkbox.isChecked()) auto_cube_in_ally_switch.setValue(TRUE);
-                    else auto_cube_in_ally_switch.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkAutoCubeOpponentSwitch:
-                {
-                    if (checkbox.isChecked()) auto_cube_in_opponent_switch.setValue(TRUE);
-                    else auto_cube_in_opponent_switch.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkAutoCubeScale:
-                {
-                    if (checkbox.isChecked()) auto_cube_in_scale.setValue(TRUE);
-                    else auto_cube_in_scale.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkClimbAttempt:
-                {
-                    if (checkbox.isChecked()) can_climb.setValue(TRUE);
-                    else can_climb.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkClimbSuccess:
-                {
-                    if (checkbox.isChecked()) climb_success.setValue(TRUE);
-                    else climb_success.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkClimbPower:
-                {
-                    if (checkbox.isChecked()) stays_put_when_power_out.setValue(TRUE);
-                    else stays_put_when_power_out.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkClimbHelp:
-                {
-                    if (checkbox.isChecked()) help_others_climb.setValue(TRUE);
-                    else help_others_climb.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkMiscBreak:
-                {
-                    if (checkbox.isChecked()) did_they_break_down.setValue(TRUE);
-                    else did_they_break_down.setValue(FALSE);
-                    break;
-                }
-                case R.id.chkMiscDefense:
-                {
-                    if (checkbox.isChecked()) play_defense.setValue(TRUE);
-                    else play_defense.setValue(FALSE);
-                    break;
+            }
+            else{
+                //test case is 2, meaning that it's the toggle button
+                ToggleButton checkbox = (ToggleButton) compoundButton;
+
+                int currID = checkbox.getId();
+                if(currID==R.id.btnToggleButton){
+
+                    if (checkbox.isChecked()) // Blue switches to red
+                    {
+                        System.out.println("BLUE SWITCHING TO RED");
+                        allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.redAlliance));
+                        alliance = RED_ALLIANCE_NUMBER;
+                    } else // Red switches to blue
+                    {
+                        System.out.println("RED SWITCHING TO BLUE");
+                        allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
+                        alliance = BLUE_ALLIANCE_NUMBER;
+                    }
+                    System.out.println("ALLIANCE: " + alliance);
+
                 }
             }
         }
@@ -387,6 +432,8 @@ public class MainActivity extends AbstractForm {
         ButtonListener buttonListener = new ButtonListener();
         EditTextWatcher editTextWatcher = new EditTextWatcher();
         CheckBoxListener checkboxListener = new CheckBoxListener();
+        //ToggleCheckBoxListener toggleCheckboxListener = new CheckBoxListener();
+
 
         scoutNameSpinner = (Spinner) findViewById(R.id.chooseName);
         ArrayAdapter scoutNameAdapter = ArrayAdapter.createFromResource(mContext, R.array.scout_names, android.R.layout.simple_spinner_item);
@@ -417,6 +464,7 @@ public class MainActivity extends AbstractForm {
 
         allianceToggleBtn = (ToggleButton) findViewById(R.id.btnToggleButton);
         allianceToggleBtn.setOnCheckedChangeListener(checkboxListener);
+        // allianceToggleBtn.setOnCheckedChangeListener(toggleCheckboxListener);
         if (allianceToggleBtn.getText().toString().equals("BLUE ALLIANCE"))
         {
             allianceToggleBtn.setBackgroundColor(getResources().getColor(R.color.blueAlliance));
@@ -547,6 +595,9 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeVaultBtn:
                 {
                     teleopVaultCount--;
+                    if(teleopVaultCount<0){
+                        teleopVaultCount=0;
+                    }
                     cubesVaultLbl.setText(teleopVaultCount + " Cubes in Vault");
                     rawTimestampRecords.remove(findLastTimestamp(teleopVault));
                     printRawTimestampRecords();
@@ -564,6 +615,9 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeAllyBtn:
                 {
                     teleopAllyCount--;
+                    if(teleopAllyCount<0){
+                        teleopAllyCount=0;
+                    }
                     cubesAllyLbl.setText(teleopAllyCount + " Cubes on Ally Switch");
                     rawTimestampRecords.remove(findLastTimestamp(teleopAlly));
                     printRawTimestampRecords();
@@ -581,6 +635,9 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeScaleBtn:
                 {
                     teleopScaleCount--;
+                    if(teleopScaleCount<0){
+                        teleopScaleCount=0;
+                    }
                     cubesScaleLbl.setText(teleopScaleCount + " Cubes on Scale");
                     rawTimestampRecords.remove(findLastTimestamp(teleopScale));
                     printRawTimestampRecords();
@@ -598,6 +655,9 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeOpponentBtn:
                 {
                     teleopOpponentCount--;
+                    if(teleopOpponentCount<0){
+                        teleopOpponentCount=0;
+                    }
                     cubesOpponentLbl.setText(teleopOpponentCount + " Cubes on Opponent Switch");
                     rawTimestampRecords.remove(findLastTimestamp(teleopOpponent));
                     break;
@@ -613,6 +673,9 @@ public class MainActivity extends AbstractForm {
                 case R.id.minusCubeDropBtn:
                 {
                     teleopDropCount--;
+                    if(teleopDropCount<0){
+                        teleopDropCount=0;
+                    }
                     cubesDroppedLbl.setText(teleopDropCount + " Cubes Dropped");
                     rawTimestampRecords.remove(findLastTimestamp(teleopCubeDrop));
                     break;

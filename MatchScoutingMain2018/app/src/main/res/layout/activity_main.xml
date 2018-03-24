@@ -401,7 +401,8 @@
         android:layout_toStartOf="@+id/txtTeamNumber"
         android:text="ToggleButton"
         android:textOff="Blue Alliance"
-        android:textOn="Red Alliance" />
+        android:textOn="Red Alliance"
+        android:background="@color/blueAlliance"/>
 
     <Button
         android:id="@+id/plusCubeDropBtn"

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="MatchScoutingMain2018/app/build/generated/source/r/debug/|MatchScoutingMain2018/app/src/test/java/|Scouting2018/src/|MatchScoutingMain2018/app/build/generated/source/r/androidTest/debug/|MatchScoutingMain2018/app/src/main/java/|OverallScoutingForm2018/app/src/androidTest/java/|MatchScoutingMain2018/app/build/generated/source/buildConfig/androidTest/debug/|MatchScoutingMain2018/app/build/generated/source/buildConfig/debug/|OverallScoutingForm2018/app/src/test/java/|OverallScoutingForm2018/app/src/main/java/|MatchScoutingMain2018/app/src/androidTest/java/" kind="src" path=""/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/build/generated/source/buildConfig/androidTest/debug"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/build/generated/source/buildConfig/debug"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/build/generated/source/r/androidTest/debug"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/build/generated/source/r/debug"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/src/main/java"/>
+	<classpathentry kind="src" path="MatchScoutingMain2018/app/src/test/java"/>
+	<classpathentry kind="src" path="OverallScoutingForm2018/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="OverallScoutingForm2018/app/src/main/java"/>
+	<classpathentry kind="src" path="OverallScoutingForm2018/app/src/test/java"/>
+	<classpathentry kind="src" path="Scouting2018/src"/>
+	<classpathentry kind="output" path="MatchScoutingMain2018/app/build/intermediates/classes/debug"/>
+</classpath>

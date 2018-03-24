@@ -586,6 +586,7 @@ public class FileSystemWatcher {
             	try {
                     stmt.executeQuery();
                     form.setFormID(stmt.getInt(11));
+                    System.out.println(form);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     output("broken");

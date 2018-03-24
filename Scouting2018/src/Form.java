@@ -269,7 +269,7 @@ public class Form {
 	public String toString() {
 		if (rawForm != null) return rawForm;
 		else {
-			rawForm = formType + ITEM_DELIMITER;
+			rawForm = formType.ordinal() + ITEM_DELIMITER;
 			rawForm += tabletNum + ITEM_DELIMITER;
 			rawForm += scoutName + ITEM_DELIMITER;
 			rawForm += teamNum + ITEM_DELIMITER;

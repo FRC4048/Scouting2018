@@ -132,8 +132,10 @@ public class FileSystemWatcher {
 			try {
 				File formFile = new File("/Users/main/Desktop/", filename);
 				System.out.println("File name: " + formFile.getName());
-				BufferedReader fileReader = new BufferedReader(new FileReader(formFile)); 
-				String rawForms = fileReader.readLine();
+//				BufferedReader fileReader = new BufferedReader(new FileReader(formFile)); 
+				String rawForms = readFromFile(formFile); 
+//				String rawForms = fileReader.readLine();
+				System.out.println("Raw Forms: " + rawForms);
 				String[] rawFormContents = rawForms.split("\\|\\|"); 
 				for (String rawForm : rawFormContents)
 				{

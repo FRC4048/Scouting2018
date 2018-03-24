@@ -371,6 +371,11 @@ public class MainActivity extends AbstractForm {
         if (tabletNumFile.exists()) System.out.println("tabletNumFile exists.");
         names = getResources().getStringArray(R.array.scout_names);
         teams = getResources().getStringArray(R.array.team_numbers);
+        System.out.print("All teams: ");
+        for (String team : teams)
+        {
+            System.out.print(team + " ");
+        }
         pcCompanion = getResources().getString(R.string.pc_companion);
         tabletNum = readTabletNumber();
         if (tabletNum == -1) showTabletNumDialog();
@@ -766,8 +771,10 @@ public class MainActivity extends AbstractForm {
         int index = -1;
         for (int i = 0; i < teams.length; i++)
         {
+            System.out.println("Looking for team number " + teamNum);
             if (Integer.parseInt(teams[i]) == teamNum)
             {
+                System.out.println("Found team " + teamNum + " at index = " + i);
                 index = i;
             }
         }
@@ -1064,6 +1071,11 @@ public class MainActivity extends AbstractForm {
                 case R.id.chooseName:
                 {
                     scoutName = (String) adapterView.getItemAtPosition(position);
+                    break;
+                }
+                case R.id.txtTeamNumber:
+                {
+                    teamNum = Integer.parseInt((String) adapterView.getItemAtPosition(position));
                     break;
                 }
 

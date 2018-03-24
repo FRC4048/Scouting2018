@@ -55,7 +55,7 @@ public class MainActivity extends AbstractForm {
     private Handler timerHandler;
     Timer timer;
     volatile long timeInMilliseconds = 0;
-    private final int MATCH_DURATION = 20;
+    private final int MATCH_DURATION = 150;
     private Button plusTimerBtn;
     private Button minusTimerBtn;
 

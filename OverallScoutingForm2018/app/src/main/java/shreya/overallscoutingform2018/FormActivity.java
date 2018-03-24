@@ -117,7 +117,7 @@ public class FormActivity extends AbstractForm {
     int[] teamsPlaying = new int[6];
     int matchNum = 0;
     int[] invalidTeamNums = new int[6];
-    private final int MATCH_DURATION = 10;
+    private final int MATCH_DURATION = 150;
     private long globalStartTime = SystemClock.uptimeMillis();
     private long globalCurrentTime = globalStartTime;
     private long globalEndTime = globalStartTime + (MATCH_DURATION)*1000;

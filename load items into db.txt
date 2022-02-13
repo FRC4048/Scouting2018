@@ -29,3 +29,4 @@ VALUES ("Auto: Cube in Vault?", 2),
 ("Blue Score", 1), 
 ("Red Foul Points", 1), 
 ("Blue Foul Points", 1);
+change

@@ -9,4 +9,3 @@
 		public static final Item CUBE_DROPPER = new Item(131, "Cube Dropper", Item.Datatype.INTEGER);
 		public static final Item HELP_OTHERS_CLIMB = new Item(132, "Help Others Climb?", Item.Datatype.BOOLEAN);
 		public static final Item PLAY_DEFENSE = new Item(133, "Play Defense?", Item.Datatype.BOOLEAN);
-		public static final Item RATE_DEFENSE = new Item(134, "Rate Defense", Item.Datatype.INTEGER);
